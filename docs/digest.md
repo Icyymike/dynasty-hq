@@ -6,8 +6,8 @@ Top counted: Jahmyr Gibbs 35.2, Jaylen Warren 33.8, Jordan Love 29.3, Pat Freier
 **Record:** 8-2, #4 of 12 · 947.2 PF
 **Odds:** playoffs 100% · bye 27% · title 18%
 
-**Playoff path:** most likely seed 3; title chance with a bye 31% vs without 14%
-**Best trade idea:** give Roschon Johnson, Jordan Love for James Cook: title chance 18% → 25%
+**Playoff path:** most likely seed 3; title chance with a bye 31% vs without 13%
+**Best trade idea:** give Roschon Johnson, Jordan Love for James Cook: title chance 18% → 24%
 **Waivers:** Tyrone Tracy would add 1.7 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 3, 2027: 2, 2028: 2.
 
@@ -22,14 +22,13 @@ Injured: Tre' Harris (Out), Matt Hibner (Out), Michael Pittman (IR)
 - Jalen Nailor's value moved 1,520 → 1,902 (+25%).
 
 ## League trades
-- **Straight Outta Hampton** get 2027 3rd (Straight Outta Hampton) (Push) ⇄ **WavySerg** get Jerry Jeudy (Push)
+- **Straight Outta Hampton** get 2027 3rd (Straight Outta Hampton) (Value win) ⇄ **WavySerg** get Jerry Jeudy (Push)
 - **Straight Outta Hampton** get 2028 3rd (Gibb Me My Trophy) (Push) ⇄ **WavySerg** get Isaac TeSlaa (Win)
 
 ## Market
-- Sell-high: Cam Skattebo: value 4,258 vs ~2,522 for 4.3 pts/wk of production
-- Sell-high: Jalen Nailor: value 1,902 vs ~1,436 for 3.3 pts/wk of production
-- Buy-low: Mike Evans (The True Behemoth): +6.9 counted pts/wk for you, value 3,728
-- Buy-low: Jalen Coker (Lava Me Tender): +5.2 counted pts/wk for you, value 3,908
-- Buy-low: DJ Moore (The True Behemoth): +4.5 counted pts/wk for you, value 3,588
+- Sell-high: Cam Skattebo: value 4,280 vs ~2,454 for 4.3 pts/wk of production
+- Buy-low: Mike Evans (The True Behemoth): +6.9 counted pts/wk for you, value 3,677
+- Buy-low: T.J. Hockenson (jreese15): +4.6 counted pts/wk for you, value 3,292
+- Buy-low: Kirk Cousins (Lava Me Tender): +3.9 counted pts/wk for you, value 2,782
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
