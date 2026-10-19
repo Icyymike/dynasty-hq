@@ -1075,7 +1075,10 @@ function renderLedger(){
     if(r.pts!=null)return r;  // still "too early" in the hand-graded list: grade it live if Sleeper has the trade
     const f=(D.feed||[]).find(f=>f.mine&&!used.has(f.id)&&mon(f.date)===r.when&&f.sides.some(x=>x.rid!==ME&&x.name===r.partner));
     if(!f)return r;used.add(f.id);return mkAuto(f)});
-  const L=(D.feed||[]).filter(f=>f.mine&&f.date>cut&&!used.has(f.id)).map(mkAuto).concat(stat);
+  const MON={Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12},sk=w=>{const m=/^([A-Z][a-z]{2}) '(\d\d)/.exec(w||'');return m?(2000+ +m[2])*100+MON[m[1]]:0};
+  const autos=(D.feed||[]).filter(f=>f.mine&&f.date>cut&&!used.has(f.id)).map(f=>Object.assign(mkAuto(f),{_d:f.date}));
+  // newest first: by month, then (same month) the later entry first
+  const L=autos.concat(stat).map((r,i)=>Object.assign(r,{_k:sk(r.when),_i:i,_d:r._d||''})).sort((a,b)=>(b._k-a._k)||(b._d>a._d?1:b._d<a._d?-1:0)||(b._i-a._i));
   if(!L.length){$('#ledgerAnswer').textContent='No trades yet.';return}
   const rows=L.map(r=>{const gv=r.gave.reduce((a,x)=>a+x[1],0),rv=r.got.reduce((a,x)=>a+x[1],0);return Object.assign(r,{gv,rv,G:grade(r.pts,gv,rv)})});
   const cnt=t=>rows.filter(r=>t.includes(r.G.t)).length;const pts=rows.reduce((a,r)=>a+(r.pts||0),0),v=rows.reduce((a,r)=>a+r.rv-r.gv,0);
