@@ -4,14 +4,14 @@
 Top counted: Jahmyr Gibbs 35.2, Jaylen Warren 33.8, Jordan Love 29.3, Pat Freiermuth 24.0
 
 **Record:** 8-2, #4 of 12 · 947.2 PF
-**Odds:** playoffs 100% · bye 41% · title 22%
+**Odds:** playoffs 100% · bye 27% · title 18%
 
-**Playoff path:** most likely seed 3; title chance with a bye 33% vs without 14%
-**Best trade idea:** give Roschon Johnson, Jordan Love for James Cook: title chance 22% → 26%
+**Playoff path:** most likely seed 3; title chance with a bye 31% vs without 13%
+**Best trade idea:** give Roschon Johnson, Jordan Love for James Cook: title chance 18% → 25%
 **Waivers:** Tyrone Tracy would add 1.7 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 3, 2027: 3, 2028: 4.
 
-**Week 6:** vs Commish in Epstein Files · projected 149.1 – 161.2 · win chance 38%
+**Week 6:** vs Commish in Epstein Files · projected 130.4 – 135.4 · win chance 6%
 On bye: Amon-Ra St. Brown, Malik Willis, Greg Dulcich, Jahmyr Gibbs, Chase Brown
 Injured: Tre' Harris (Out), Matt Hibner (Out), Michael Pittman (IR)
 
@@ -22,6 +22,6 @@ Injured: Tre' Harris (Out), Matt Hibner (Out), Michael Pittman (IR)
 ## Market
 - Sell-high: Cam Skattebo: value 4,151 vs ~2,524 for 4.3 pts/wk of production
 - Buy-low: Ollie Gordon (Lava Me Tender): +4.0 counted pts/wk for you, value 3,338
-- Buy-low: Noah Fant (MoneyMertz): +1.5 counted pts/wk for you, value 1,698
+- Buy-low: Noah Fant (MoneyMertz): +1.3 counted pts/wk for you, value 1,698
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
