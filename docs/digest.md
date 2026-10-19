@@ -9,7 +9,7 @@ Top counted: Jahmyr Gibbs 35.2, Jaylen Warren 33.8, Jordan Love 29.3, Pat Freier
 **Playoff path:** most likely seed 3; title chance with a bye 31% vs without 13%
 **Best trade idea:** give Roschon Johnson, Jordan Love for James Cook: title chance 18% → 24%
 **Waivers:** Tyrone Tracy would add 1.7 pts/wk to your lineup.
-**Window:** Window open: contend. Projected rank 2026: 3, 2027: 2, 2028: 2.
+**Window:** Window open: contend. Projected rank 2026: 3, 2027: 2, 2028: 3.
 
 **Week 6:** vs Commish in Epstein Files · projected 130.4 – 135.4 · win chance 6%
 On bye: Amon-Ra St. Brown, Malik Willis, Greg Dulcich, Jahmyr Gibbs, Chase Brown
