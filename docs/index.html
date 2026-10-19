@@ -778,12 +778,12 @@ function legendHTML(){const cell=(t,c)=>`<div class="word ${c}" style="white-spa
    <p class="sub">"About even" on value means within 10% of each other.</p>`}
 // two-part breakdown: this season (points) and long term (value)
 function breakdown(o){const gv=o.gave.reduce((a,x)=>a+x[1],0),rv=o.got.reduce((a,x)=>a+x[1],0),dv=rv-gv,mx=Math.max(gv,rv,1);
-  const col=(title,items,tot)=>`<div><div class="small" style="font-weight:600;margin-bottom:2px">${title}</div>${items.map(([n,v])=>`<div class="vr"><span>${esc(n)}</span><span>${v?fk(v):'—'}</span></div>`).join('')}<div class="vr tot"><span>Total</span><span>${fk(tot)}</span></div></div>`;
+  const col=(title,items,tot)=>`<div><div class="small" style="font-weight:600;margin-bottom:2px">${title}</div>${items.map(([n,v,st])=>`<div class="vr"><span>${esc(n)}${st?`<br><span class="muted" style="font-size:11px">${esc(st)}</span>`:''}</span><span>${v?fk(v):(st?'0':'—')}</span></div>`).join('')}<div class="vr tot"><span>Total</span><span>${fk(tot)}</span></div></div>`;
   return `<div class="bd">
    <div class="bd-box"><div class="step">This season · points</div>
     ${o.pts==null?`<div class="big2">Too early</div><div class="why">Not enough games since the trade.</div>`:`<div class="t-big ${o.pts>=0?'pos-v':'neg-v'}" style="font-family:var(--f-display);font-weight:700;font-size:32px;line-height:1">${o.pts>=0?'+':'−'}${Math.abs(o.pts).toFixed(0)}</div><div class="why">${o.ptsNote}</div>`}
     ${o.wins?`<div class="small"><b>${o.wins>0?'+':''}${o.wins}</b> win${Math.abs(o.wins)>1?'s':''} in the standings because of it</div>`:''}${o.extra||''}</div>
-   <div class="bd-box"><div class="step">Long term · trade value today</div>
+   <div class="bd-box"><div class="step">Long term · trade value today</div><div class="why" style="margin-top:-2px">Today's value of everything, wherever it is now. A player no team rosters counts as 0; a used pick counts as the player it became.</div>
     <div class="bd-cols">${col(o.gaveLabel||'You gave',o.gave,gv)}${col(o.gotLabel||'You got',o.got,rv)}</div>
     <div class="vbar"><div><i style="width:${gv/mx*70}%;background:var(--silver)"></i>gave ${fk(gv)}</div><div><i style="width:${rv/mx*70}%;background:var(--accent)"></i>got ${fk(rv)}</div></div>
     <div class="small">${Math.abs(dv)<0.1*mx?`<b>About even</b> (${dv>=0?'+':'−'}${fk(Math.abs(dv))}).`:dv>0?`<b class="pos-v">You got ${fk(dv)} more</b>, like adding ${pickWord(dv).replace('about ','')}.`:`<b class="neg-v">You gave ${fk(-dv)} more</b>, like throwing in ${pickWord(-dv).replace('about ','')}.`}</div></div></div>`}
@@ -873,7 +873,7 @@ function renderFeed(){
   $('#feedList').innerHTML=(D.feed||[]).map(f=>{const [a,b]=f.sides;if(!a||!b)return'';const rw=a.rem_w||NW;
     const items=x=>x.got_items||x.got.map(n=>[n,0]);
     const G=grade(a.ros==null?null:a.ros*rw,a.vout,a.vin);const better=/Win|Value win/.test(G.t)?a:G.t==='Loss'||G.t==='Lost value'?b:null;
-    const side=(x,y)=>{const tot=items(x).reduce((s,i)=>s+i[1],0);return `<div class="bd-box"><div class="small" style="font-weight:600">${esc(x.name)} got</div>${items(x).map(([n,v])=>`<div class="vr"><span>${esc(n)}</span><span>${v?fk(v):'—'}</span></div>`).join('')}<div class="vr tot"><span>Total value</span><span>${fk(tot)}</span></div><div class="small">Lineup: <b class="${(x.ros||0)>=0?'pos-v':'neg-v'}">${x.ros==null?'—':f1(x.ros)}</b> pts a week the rest of the season</div></div>`};
+    const side=(x,y)=>{const tot=items(x).reduce((s,i)=>s+i[1],0);return `<div class="bd-box"><div class="small" style="font-weight:600">${esc(x.name)} got</div>${items(x).map(([n,v,st])=>`<div class="vr"><span>${esc(n)}${st&&!/your team/.test(st)?`<br><span class="muted" style="font-size:11px">${esc(st)}</span>`:''}</span><span>${v?fk(v):(st?'0':'—')}</span></div>`).join('')}<div class="vr tot"><span>Total value</span><span>${fk(tot)}</span></div><div class="small">Lineup: <b class="${(x.ros||0)>=0?'pos-v':'neg-v'}">${x.ros==null?'—':f1(x.ros)}</b> pts a week the rest of the season</div></div>`};
     return `<div class="tx ${f.mine?'mine':''}"><div class="row" style="justify-content:space-between"><span class="small muted">${esc(f.date)} · Week ${f.wk}</span>${better?`<span class="word w-good">Better for ${esc(short(better.name))}</span>`:'<span class="word w-plain">About even</span>'}</div>
       <p class="small" style="margin:0">From ${esc(a.name)}'s side: ${G.why.replace('your lineup','their lineup').replace('you got','they got').replace('you gave','they gave').replace('and you ','and they ')}</p>
       <div class="tx-sides">${side(a,b)}${side(b,a)}</div></div>`}).join('')||'<p class="sub">No trades yet this season.</p>';
@@ -885,7 +885,7 @@ function renderLedger(){
   const cut=D.meta.ledger_through||'0000';const mon=d=>{const [y,m]=d.split('-');return `${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]} '${y.slice(2)}`};
   const mkAuto=f=>{const me=f.sides.find(x=>x.rid===ME),o=f.sides.find(x=>x.rid!==ME)||{};return {when:mon(f.date),partner:o.name||'',got:me.got_items||me.got.map(n=>[n,0]),gave:me.gave_items||me.gave.map(n=>[n,0]),pts:me.past+(me.ros||0)*(me.rem_w||NW),wins:me.dw,proj:true,v0:me.vin0!=null?[me.vout0,me.vin0,me.seen]:null}};
   const used=new Set();
-  const stat=LEDGER.map(r=>Array.isArray(r)?{when:r[0],partner:r[1],got:[[r[2],r[6]>0?r[6]:0]],gave:[[r[3],r[6]<0?-r[6]:0]],pts:r[4],wins:r[5]}:r).map(r=>{
+  const LN=D.ledger_now||[];const stat=LEDGER.map((r,i)=>{r=Array.isArray(r)?{when:r[0],partner:r[1],got:[[r[2],r[6]>0?r[6]:0]],gave:[[r[3],r[6]<0?-r[6]:0]],pts:r[4],wins:r[5]}:Object.assign({},r);const n=LN[i];if(n&&n.got&&n.gave){r.got=n.got;r.gave=n.gave}return r}).map(r=>{
     if(r.pts!=null)return r;  // still "too early" in the hand-graded list: grade it live if Sleeper has the trade
     const f=(D.feed||[]).find(f=>f.mine&&!used.has(f.id)&&mon(f.date)===r.when&&f.sides.some(x=>x.rid!==ME&&x.name===r.partner));
     if(!f)return r;used.add(f.id);return mkAuto(f)});

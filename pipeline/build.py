@@ -1148,6 +1148,77 @@ def main():
     def pname(pid):
         return (P.get(pid) or {}).get("n") or pinfo(pid)["n"]
 
+    # ---------- what each traded asset is worth TODAY, wherever it ended up.
+    # A player nobody in the league rosters any more counts as 0 (if no team wants him, he isn't worth anything here).
+    # A pick that has been used counts as the player it became; an unused pick counts at today's pick price.
+    rost_team = {p_: rid for rid, l_ in ids_by.items() for p_ in l_}
+    owner_of = {t["id"]: t["owner"] for t in teams}
+    def now_player(pid):
+        rid = rost_team.get(pid)
+        if rid is None:
+            return 0, "not on any roster now (counts as 0)"
+        return pval(pid), ("still on your team" if rid == me else f"now on {names.get(rid, 'another team')}")
+    def now_pick(pk):
+        y, rd, o = pk
+        if y <= season:
+            r = draft_by.get((y, rd, owner_of.get(o, o)))
+            if r and r.get("pid"):
+                v_, st_ = now_player(r["pid"])
+                return v_, f"became {pname(r['pid']) or r['n']}, {st_}"
+            return pk_val(pk), "drafted pick (player not found)"
+        return pk_val(pk), "pick not used yet"
+    def items_now(pids, picks_, faab):
+        out = []
+        for p_ in pids:
+            v_, st_ = now_player(p_); out.append([pname(p_), v_, st_])
+        for k_ in picks_:
+            v_, st_ = now_pick(k_); out.append([pk_label(k_), v_, st_])
+        if faab:
+            out.append([f"${faab} FAAB", 0, ""])
+        return out
+
+    # the hand-built trade history (docs/ledger.json, older trades) is stored by name: re-price it at today's values too
+    name_pid = {}
+    for pid_, d_ in (players_db or {}).items():
+        if d_.get("position") in POS and d_.get("full_name"):
+            k_ = re.sub(r"[^a-z]", "", d_["full_name"].lower())
+            if k_ not in name_pid or pid_ in P:
+                name_pid[k_] = pid_
+    for pid_, d_ in P.items():
+        name_pid[re.sub(r"[^a-z]", "", (d_.get("n") or "").lower())] = pid_
+    tname = {re.sub(r"[^a-z]", "", n_.lower()): t_ for t_, n_ in names.items()}
+    def ledger_item(label):
+        lab = label.strip()
+        if "FAAB" in lab:
+            return [lab, 0, ""]
+        m_ = re.match(r"(\d{4})\s+(\d)(?:st|nd|rd|th)\s*\((.*)\)$", lab)
+        if m_:
+            y_, rd_, note = int(m_.group(1)), int(m_.group(2)), m_.group(3)
+            b_ = re.match(r"became\s+(.+)$", note)
+            if b_:
+                pid_ = name_pid.get(re.sub(r"[^a-z]", "", b_.group(1).lower()))
+                if pid_:
+                    v_, st_ = now_player(pid_); return [lab, v_, st_]
+                return [lab, 0, "not on any roster now (counts as 0)"]
+            o_ = me if note.strip().lower() in ("yours", "your", "mine") else tname.get(re.sub(r"[^a-z]", "", re.sub(r"'s$", "", note.strip()).lower()))
+            v_, st_ = now_pick((y_, rd_, o_ if o_ is not None else me))
+            return [lab, v_, st_]
+        nm_ = re.sub(r"\s*\(.*\)$", "", lab)
+        pid_ = name_pid.get(re.sub(r"[^a-z]", "", nm_.lower()))
+        if not pid_:
+            return [lab, 0, "not on any roster now (counts as 0)"]
+        v_, st_ = now_player(pid_)
+        return [lab, v_, st_]
+    ledger_now = []
+    try:
+        for r_ in json.load(open(os.path.join(ROOT, "docs", "ledger.json"))):
+            if isinstance(r_, dict):
+                ledger_now.append(dict(got=[ledger_item(x[0]) for x in r_.get("got", [])], gave=[ledger_item(x[0]) for x in r_.get("gave", [])]))
+            else:
+                ledger_now.append(None)
+    except Exception as e:  # noqa
+        print(f"WARN could not re-price ledger.json: {e}")
+
     # ---------- market flags: dynasty value vs best-ball production
     def ppg(pid):
         v = [x for x in P[pid]["pr"] if x > 0]
@@ -1248,8 +1319,8 @@ def main():
         out_sides = []
         for s_ in tr["sides"]:
             rid = s_["cur"]
-            vin = sum(pval(p) for p in s_["got"]) + sum(pk_val(k) for k in s_["pin"])
-            vout = sum(pval(p) for p in s_["gave"]) + sum(pk_val(k) for k in s_["pout"])
+            gi = items_now(s_["got"], s_["pin"], s_["fin"]); go = items_now(s_["gave"], s_["pout"], s_["fout"])
+            vin = sum(x[1] for x in gi); vout = sum(x[1] for x in go)
             ros = None
             if rid in ids_by:
                 cur_ids = ids_by[rid]
@@ -1259,8 +1330,7 @@ def main():
                         got=[pname(p) for p in s_["got"]] + [pk_label(k) for k in s_["pin"]] + ([f"${s_['fin']} FAAB"] if s_["fin"] else []),
                         gave=[pname(p) for p in s_["gave"]] + [pk_label(k) for k in s_["pout"]] + ([f"${s_['fout']} FAAB"] if s_["fout"] else []),
                         got_ids=s_["got"], gave_ids=s_["gave"], vin=round(vin), vout=round(vout), ros=ros,
-                        got_items=[[pname(p), pval(p)] for p in s_["got"]] + [[pk_label(k), pk_val(k)] for k in s_["pin"]] + ([[f"${s_['fin']} FAAB", 0]] if s_["fin"] else []),
-                        gave_items=[[pname(p), pval(p)] for p in s_["gave"]] + [[pk_label(k), pk_val(k)] for k in s_["pout"]] + ([[f"${s_['fout']} FAAB", 0]] if s_["fout"] else []),
+                        got_items=gi, gave_items=go,
                         rem_w=rem_w)
             if rid == me:
                 side["past"], side["dw"] = replay(s_["got"], s_["gave"], max(tr["leg"], 1))
@@ -1734,7 +1804,7 @@ def main():
                           ktc_date=ktc.get("date"), values=val_src, backtest=backtest, checks=checks, byes=bye_src, fa_checked=len(fa_pool), faab=int(settings.get("waiver_budget", 0) or 0), sims=SIMS, ledger_through=CFG.get("ledger_through"),
                           scoring=CFG.get("scoring_label", ""), slots=" · ".join(p for p in league.get("roster_positions", []) if p != "BN")),
                 teams=tm_out, players=P, weeks=weeks, po_actual={str(k): {str(r): v for r, v in d.items()} for k, d in po_actual.items()}, sched=sched, m26={str(k): v for k, v in my_weekly.items()}, picks=picks,
-                advice=advice, outlook=outlook, feed=feed, past_picks=dict(used=used_picks, traded=traded_picks), profiles={str(k): v for k, v in profiles.items()}, rookies=rookies, digest=digest,
+                advice=advice, outlook=outlook, feed=feed, ledger_now=ledger_now, past_picks=dict(used=used_picks, traded=traded_picks), profiles={str(k): v for k, v in profiles.items()}, rookies=rookies, digest=digest,
                 analysis=dict(board=board, sugg={str(k): v for k, v in sugg.items()}, needs={str(k): v for k, v in needs.items()},
                               market=market, depth={str(k): v for k, v in depth.items()}, fa=fa, cut=cut,
                               counted={k: [round(v[0], 1), v[1]] for k, v in counted.items()},
