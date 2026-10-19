@@ -782,10 +782,21 @@ def main():
         rows = [(a, s, our_mean(pid, w, best_par)) for pid, w, a, s in bt_pts]
         mae = lambda f: st.mean(abs(a - f(s, o)) for a, s, o in rows)
         bw_err = min((mae(lambda s, o, q=q: q * s + (1 - q) * o), q) for q in [i / 20 for i in range(21)])
-        backtest = dict(n=len(rows), sleeper=round(mae(lambda s, o: s), 2), ours=round(mae(lambda s, o: o), 2), blend=round(bw_err[0], 2), w=bw_err[1])
+        # when a player's recent games disagree a lot with Sleeper (role change, new starter, injury return),
+        # test separately how much to trust Sleeper vs. what he has actually been doing
+        div_rows = [r_ for r_ in rows if abs(r_[2] - r_[1]) / max(r_[1], 3) > 0.5]
+        w_div = bw_err[1]
+        if len(div_rows) >= 60:
+            w_div = min(((st.mean(abs(a - (q * s + (1 - q) * o)) for a, s, o in div_rows)), q) for q in [i / 20 for i in range(21)])[1]
+        backtest = dict(n=len(rows), sleeper=round(mae(lambda s, o: s), 2), ours=round(mae(lambda s, o: o), 2), blend=round(bw_err[0], 2), w=bw_err[1],
+                        w_div=w_div, n_div=len(div_rows),
+                        blend2=round(mae(lambda s, o: (w_div if abs(o - s) / max(s, 3) > 0.5 else bw_err[1]) * s + (1 - (w_div if abs(o - s) / max(s, 3) > 0.5 else bw_err[1])) * o), 2))
     else:
-        backtest = dict(n=len(bt_pts), sleeper=None, ours=None, blend=None, w=0.85)
-    BW = backtest["w"]
+        backtest = dict(n=len(bt_pts), sleeper=None, ours=None, blend=None, w=0.85, w_div=0.85, n_div=0)
+    BW = backtest["w"]; BWD = backtest["w_div"]
+    def blend(s, o):
+        q = BWD if abs(o - s) / max(s, 3) > 0.5 else BW
+        return q * s + (1 - q) * o
 
     # ---------- per-player record
     P = {}
@@ -806,7 +817,7 @@ def main():
                 avail = False
             if not avail:
                 sl.append(0); ou.append(0); pr.append(0); continue
-            sl.append(round(spv, 2)); ou.append(round(o, 2)); pr.append(round(BW * spv + (1 - BW) * o, 2))
+            sl.append(round(spv, 2)); ou.append(round(o, 2)); pr.append(round(blend(spv, o), 2))
         bye = None
         prev25 = g(pid, season - 1)
         P[pid] = dict(n=info["n"], p=info["p"], t=team, age=info["age"], inj=info["inj"], r=rostered.get(pid, 0),

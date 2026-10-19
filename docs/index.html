@@ -359,10 +359,11 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
       <div class="step">Step 2 · Pick the team and tick what moves</div>
       <div class="row"><label class="lab" for="partner">Trading with</label><select id="partner"></select></div>
       <div class="grid2">
-        <div><div class="row" style="justify-content:space-between;margin-bottom:6px"><h3>You give</h3><span class="small muted" id="giveV"></span></div><div class="pick-list" id="giveList"></div></div>
+        <div><div class="row" style="justify-content:space-between;margin-bottom:6px"><h3>You give</h3><span class="row" style="gap:8px"><button class="btn ghost" id="suggestBtn" type="button" style="padding:3px 10px;font-size:12px">Suggest 3 offers</button><span class="small muted" id="giveV"></span></span></div><div class="pick-list" id="giveList"></div></div>
         <div><div class="row" style="justify-content:space-between;margin-bottom:6px"><h3>You get</h3><span class="small muted" id="getV"></span></div><div class="pick-list" id="getList"></div></div>
       </div>
     </div>
+    <div class="card" id="offers" hidden aria-live="polite"></div>
     <div class="card" id="result" aria-live="polite"><p class="sub">Your answer shows up here once both sides have something.</p></div>
   </div>
 
@@ -383,7 +384,7 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
 
 <!-- ================= PLAYERS ================= -->
 <section data-panel="players" hidden>
-  <div class="card"><h2>Who should I go after?</h2><p class="sub">Players on other teams who cost less than their scoring suggests. The points number is what your lineup gains a week after cutting your least useful player, before whatever you'd send back in the trade. Players you'd use mostly as a fill-in are flagged.</p><div id="buyList" class="list"></div></div>
+  <div class="card"><h2>Who should I go after?</h2><p class="sub">Players on other teams who cost less than their scoring suggests. The points number is what your lineup gains a week after cutting your least useful player, before whatever you'd send back in the trade. Players you'd use mostly as a fill-in are flagged.</p><div id="ptsLegend1"></div><div id="buyList" class="list"></div></div>
   <div class="card"><h2>Is anyone worth adding off waivers?</h2><p class="answer" id="faAnswer"></p><div id="faList" class="list"></div></div>
   <div class="card">
     <h2>Look up any player</h2>
@@ -561,7 +562,9 @@ function showTab(t){document.querySelectorAll('nav.tabs button').forEach(b=>b.se
 document.querySelectorAll('.tabsub button').forEach(b=>b.addEventListener('click',()=>showSub(b.dataset.sub)));
 function showSub(s){document.querySelectorAll('.tabsub button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.sub===s));document.querySelectorAll('[data-sub-panel]').forEach(p=>p.hidden=p.dataset.subPanel!==s);store.set('hq-sub2',s);
   if(s==='lab'&&!$('#giveList').innerHTML)renderLists();if(s==='ideas')renderIdeas();if(s==='feed')renderFeed();if(s==='ledger')renderLedger()}
-function openLab(partner,give,get){st.partner=+partner;$('#partner').value=partner;st.give=new Set(give||[]);st.get=new Set(get||[]);renderLists();showTab('trades');showSub('lab');scheduleRun();setTimeout(()=>$('#result').scrollIntoView({block:'start'}),50)}
+function openLab(partner,give,get){st.partner=+partner;$('#partner').value=partner;st.give=new Set(give||[]);st.get=new Set(get||[]);renderLists();showTab('trades');showSub('lab');
+  if(!st.give.size&&st.get.size&&!OFF){$('#offers').hidden=false;$('#offers').innerHTML='<h2>3 offers to try</h2><p class="sub">Working out what to offer…</p>';$('#result').innerHTML='<p class="sub">Pick one of the offers above, or tick players yourself.</p>';setTimeout(()=>{$('#offers').scrollIntoView({block:'start'});setTimeout(suggestOffers,30)},50)}
+  else{$('#offers').hidden=true;scheduleRun();setTimeout(()=>$('#result').scrollIntoView({block:'start'}),50)}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-lab]');if(!b)return;const [pt,g1,g2]=b.dataset.lab.split('|');const d=b.closest('dialog');if(d)d.close();openLab(pt,g1?g1.split(','):[],g2?g2.split(','):[])});
 
 const me0=()=>TEAMS.find(t=>t.id===ME);
@@ -663,7 +666,7 @@ function renderHome(){
   const ideas=Object.entries(A.sugg||{}).flatMap(([t,L])=>L.filter(o=>o.title1!=null).map(o=>Object.assign({t:+t},o))).filter(okI).sort((a,b)=>gE(b)-gE(a));
   if(!OFF){const se=me.title_se||0.02,bestI=ideas[0];
     $('#patCard').innerHTML=`<h2>Should I make a trade?</h2><p class="answer">If you stand pat, you win the title in about <b>${pct(me.odds.title)}</b> of simulated seasons (give or take ${Math.round(se*200)} points).${bestI?` The best fair trade we found (counting this season and the next two) raises that to <b>${pct(bestI.title1)}</b>:`:' No fair trade we found clearly raises your title chances without hurting your future.'}</p>
-      ${ideas.slice(0,3).map(o=>`<div class="li"><div class="main"><span>With <b>${esc(teamName(o.t))}</b>: give ${o.give.map(x=>esc(PL[x].n)).join(' + ')}, get <b>${o.get.map(x=>esc(PL[x].n)).join(' + ')}</b></span><span class="why">Title chance ${pct(o.title0)} → ${pct(o.title1)} · your score +${o.dm.toFixed(1)} a week · values within 30%${futLine(o)}</span></div><div class="right"><button class="btn ghost" data-lab="${o.t}|${o.give.join(',')}|${o.get.join(',')}">Check it</button></div></div>`).join('')}
+      ${ideas.slice(0,3).map(o=>`<div class="li"><div class="main"><span>With <b>${esc(teamName(o.t))}</b>: give ${o.give.map(x=>esc(PL[x].n)).join(' + ')}, get <b>${o.get.map(x=>esc(PL[x].n)).join(' + ')}</b></span><span class="why">Title chance ${pct(o.title0)} → ${pct(o.title1)} · your score ${ptsBadge(o.dm,true)} · values within 30%${futLine(o)}</span></div><div class="right"><button class="btn ghost" data-lab="${o.t}|${o.give.join(',')}|${o.get.join(',')}">Check it</button></div></div>`).join('')}
       <p class="sub">${deadline()&&deadline().open?`Trades are allowed through Week ${deadline().dl}.`:'Trading is closed for this season.'}</p>`}else $('#patCard').hidden=true;
   // last week
   const lw=D.meta.done,rowsW=D.weeks[lw]||[];
@@ -733,12 +736,12 @@ function renderTeam(){
 // ---------- PLAYERS ----------
 function renderPlayers(){
   if(!$('#buyList').dataset.done){$('#buyList').dataset.done=1;
-    const Bm=(A.market||{}).buy||[];
-    $('#buyList').innerHTML=Bm.length?Bm.slice(0,8).map(x=>{const p=PL[x.id];return `<div class="li"><div class="main"><span>${posTag(p.p)} ${pl(x.id)} <span class="muted small">${esc(p.t)} · on ${esc(teamName(p.r))}</span></span><span class="why">Scores about ${x.ppg} a game but is only worth ${pickWord(x.v)}${x.old?`, because he's ${p.age?Math.floor(p.age):'older'} and won't hold value long. Points now, little resale.`:'.'}</span></div><div class="right"><span class="big2 pos-v">+${x.add.toFixed(1)}</span><span class="why">pts/week for you</span><button class="btn ghost" data-lab="${p.r}||${x.id}">Build an offer</button></div></div>`}).join(''):'<p class="sub">No one cheap right now who would make your lineup.</p>';
+    const Bm=(A.market||{}).buy||[];$('#ptsLegend1').innerHTML=ptsLegendHTML();
+    $('#buyList').innerHTML=Bm.length?Bm.slice(0,8).map(x=>{const p=PL[x.id];return `<div class="li"><div class="main"><span>${posTag(p.p)} ${pl(x.id)} <span class="muted small">${esc(p.t)} · on ${esc(teamName(p.r))}</span></span><span class="why">Scores about ${x.ppg} a game but is only worth ${pickWord(x.v)}${x.old?`, because he's ${p.age?Math.floor(p.age):'older'} and won't hold value long. Points now, little resale.`:'.'}${(x.why||[]).filter(w=>/already have/.test(w)).map(w=>` <span class="word w-plain" style="text-transform:none;letter-spacing:0">Fill-in only</span> ${esc(w[0].toUpperCase()+w.slice(1))}.`).join('')}</span></div><div class="right">${ptsBadge(x.add)}<button class="btn ghost" data-lab="${p.r}||${x.id}">Build an offer</button></div></div>`}).join(''):'<p class="sub">No one cheap right now who would make your lineup.</p>';
     const F=(A.fa||[]),cut=(A.cut||[]).filter(x=>PL[x]);
     $('#faAnswer').innerHTML=F.length?`These free agents would add points to your lineup. Your roster is full, so you'd have to drop someone; your least useful player right now is <b>${cut[0]?esc(PL[cut[0]].n):'—'}</b>${cut[0]?` (adds ${(PL[cut[0]].imp||0).toFixed(1)} a week, worth ${pickWord(value(cut[0]))})`:''}. You have $${me0().faab??'—'} of FAAB left.`:D.meta.fa_checked?`We checked the ${D.meta.fa_checked} best free agents and none would meaningfully help your lineup right now. This is re-checked every update, so injuries elsewhere will show up here.`:'Free agents aren\'t included in this preview. The live version checks the best ones against your lineup on every update.';
-    $('#faList').innerHTML=F.map(x=>{const p=PL[x.id];if(!p)return '';const v=p.pr.filter(y=>y>0);return `<div class="li"><div class="main"><span>${posTag(p.p)} ${pl(x.id)} <span class="muted small">${esc(p.t)}</span>${p.inj?` <span class="word w-bad">${esc(p.inj)}</span>`:''}</span><span class="why">Projected ${v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'0'} a game from here · worth ${pickWord(x.val)}</span></div><div class="right"><span><span class="big2 pos-v">+${x.add.toFixed(1)}</span> <span class="why">pts/week</span></span></div></div>`}).join('');
-    const bt=D.meta.backtest;$('#accuracy').innerHTML=bt.sleeper!=null?`<p class="sub">Checked against every completed game this season (${bt.n} player-games): Sleeper's projections missed by ${bt.sleeper} points on average, our own model by ${bt.ours}, and the mix we use (${Math.round(bt.w*100)}% Sleeper, ${Math.round(100-bt.w*100)}% ours) by ${bt.blend}. Single games swing a lot; season-long averages are much more reliable.</p>`:'<p class="sub">Not enough games yet to check accuracy.</p>';
+    $('#faList').innerHTML=F.map(x=>{const p=PL[x.id];if(!p)return '';const v=p.pr.filter(y=>y>0);return `<div class="li"><div class="main"><span>${posTag(p.p)} ${pl(x.id)} <span class="muted small">${esc(p.t)}</span>${p.inj?` <span class="word w-bad">${esc(p.inj)}</span>`:''}</span><span class="why">Projected ${v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'0'} a game from here · worth ${pickWord(x.val)}</span></div><div class="right">${ptsBadge(x.add)}</div></div>`}).join('');
+    const bt=D.meta.backtest;$('#accuracy').innerHTML=bt.sleeper!=null?`<p class="sub">Checked against every completed game this season (${bt.n} player-games): Sleeper's projections missed by ${bt.sleeper} points on average, our own model by ${bt.ours}, and the mix we use (${Math.round(bt.w*100)}% Sleeper, ${Math.round(100-bt.w*100)}% ours) by ${bt.blend}.${bt.n_div?` For players whose recent games disagree a lot with Sleeper's projection (${bt.n_div} player-games, often a role change), the best mix tested was ${Math.round(bt.w_div*100)}% Sleeper, ${Math.round(100-bt.w_div*100)}% recent games, and that's what we use for them.`:''} Single games swing a lot; season-long averages are much more reliable.</p>`:'<p class="sub">Not enough games yet to check accuracy.</p>';
     $('#pTeam').innerHTML='<option value="">All teams</option>'+TEAMS.map(t=>`<option value="${t.id}" ${t.id===ME?'selected':''}>${esc(t.name)}</option>`).join('');
     ['#pTeam','#pPos','#pSearch'].forEach(q=>$(q).addEventListener('input',renderPlayers))}
   const tm=$('#pTeam').value,ps=$('#pPos').value,q=$('#pSearch').value.trim().toLowerCase();
@@ -805,6 +808,96 @@ function renderLists(){$('#giveList').innerHTML=listHTML(ME,st.give,'give');$('#
 function updateVals(){const g=[...st.give].reduce((a,k)=>a+val(k),0),r=[...st.get].reduce((a,k)=>a+val(k),0);$('#giveV').textContent=st.give.size?`Worth ${fk(g)}`:'';$('#getV').textContent=st.get.size?`Worth ${fk(r)}`:''}
 document.addEventListener('change',e=>{const t=e.target;if(t.dataset&&t.dataset.k){const set=t.dataset.k==='give'?st.give:st.get;t.checked?set.add(t.value):set.delete(t.value);updateVals();scheduleRun()}});
 let timer;function scheduleRun(){clearTimeout(timer);$('#result').innerHTML='<p class="sub">Running the numbers…</p>';timer=setTimeout(runTrade,60)}
+// ---------- perspective for "points a week": how much is +3 really? ----------
+function ptsScale(){if(ptsScale.v)return ptsScale.v;const sc=[];for(const wk in (D.weeks||{}))for(const r of D.weeks[wk])if(r[2]>0)sc.push(r[2]);
+  const n=sc.length,avg=n?sc.reduce((a,b)=>a+b,0)/n:150,sd=n>1?Math.sqrt(sc.reduce((a,b)=>a+(b-avg)**2,0)/(n-1)):25,phi=1/Math.sqrt(2*Math.PI);
+  const regLeft=FUT.filter(w=>w<=D.meta.reg_end).length,perWk=phi/(sd*Math.SQRT2)+(D.meta.median?phi/sd:0);
+  return ptsScale.v={avg,sd,regLeft,winsPer:perWk*regLeft}}
+const PT_TIERS=[[5,'Big boost','w-good'],[2.5,'Solid upgrade','w-good'],[1,'Small help','w-mid'],[-1,'Barely matters','w-plain'],[-2.5,'Small loss','w-mid'],[-1e9,'Big loss','w-bad']];
+function ptsTier(x){return PT_TIERS.find(t=>x>=t[0])}
+function ptsPersp(x){const S=ptsScale(),a=Math.abs(x),w=a*S.winsPer;return `${x>=0?'+':'−'}${a.toFixed(1)} a week is about ${Math.round(a*(S.regLeft||NW))} points over the ${S.regLeft||NW} regular-season weeks left${S.regLeft?`, or roughly ${w<0.15?'a small fraction of a':w.toFixed(1)} ${w>=0.15&&Math.abs(w-1)<0.05?'win':'wins'} ${x>=0?'gained':'lost'}`:''}. A team's score swings about ±${Math.round(S.sd)} from week to week.`}
+function ptsBadge(x,compact){const t=ptsTier(x);const big=`<b class="${x>=1?'pos-v':x<=-1?'neg-v':''}" style="font-family:var(--f-display);font-size:${compact?'15px':'20px'}">${x>=0?'+':'−'}${Math.abs(x).toFixed(1)}</b>`;
+  return `<span title="${esc(ptsPersp(x))}">${big} <span class="why">pts/week</span> <span class="word ${t[2]}">${t[1]}</span></span>`}
+function ptsLegendHTML(){const S=ptsScale(),w1=S.winsPer;return `<details class="more"><summary>How much is +3 points a week?</summary><div>
+  <p class="sub" style="margin:0">Your league's lineups average about <b>${Math.round(S.avg)}</b> points a week and swing about <b>±${Math.round(S.sd)}</b> from week to week, so a few points a week is small in any single game but adds up. ${S.regLeft?`With ${S.regLeft} regular-season weeks left (and a head-to-head game plus the median game each week), every +1 point a week is worth about <b>${w1.toFixed(2)} extra wins</b>. In the playoffs every week is win-or-go-home, so points matter even more there.`:''}</p>
+  <div class="kv"><span>${W(['Big boost','w-good'])}</span><span>+5 or more a week. A slam dunk if the price is fair${S.regLeft?` (about ${(5*w1).toFixed(1)}+ wins)`:''}.</span>
+   <span>${W(['Solid upgrade','w-good'])}</span><span>+2.5 to +5. Clearly worth doing at a fair price.</span>
+   <span>${W(['Small help','w-mid'])}</span><span>+1 to +2.5. Worth it if it's cheap or helps later seasons too.</span>
+   <span>${W(['Barely matters','w-plain'])}</span><span>Under 1 either way. Within normal noise; decide on value instead.</span></div>
+  <p class="sub" style="margin:0"><b>Where the number comes from:</b> each player's expected points for every week left (mostly Sleeper's projections, mixed with how he has actually scored; the mix is whatever predicted this season's games best). Then the rest of the season is played out ${D.meta.sims} times with realistic boom and bust weeks, byes and injuries, your best possible lineup is taken each week, and the result is averaged. So a bench player who rarely starts can still add a little, from the weeks he has a big game while a starter is off. It's an estimate: the weekly scores themselves are noisy.</p>
+  <p class="sub" style="margin:0">Hover or long-press any points number to see what it means in wins.</p></div></details>`}
+// ---------- offer builder: 3 packages for what you want, each with the app's take ----------
+function suggestOffers(){
+  const box=$('#offers');box.hidden=false;
+  const get=[...st.get],partner=st.partner,src=st.src||'pr';
+  if(!get.length){box.innerHTML='<h2>3 offers to try</h2><p class="sub">Tick at least one player or pick under “You get” first.</p>';return}
+  const R=get.reduce((a,k)=>a+val(k),0),getIds=get.filter(k=>!k.startsWith('pk:'));
+  const CS=120,sum=a=>a.reduce((x,y)=>x+y,0),mine=roster(ME),theirs=roster(partner),CAP=(D.meta.rules||{}).roster_size||28;
+  const fit=(old,keep)=>{const n=keep.length-Math.max(CAP,old.length);if(n<=0)return keep;const cut=keep.filter(x=>old.includes(x)).sort((a,b)=>value(a)-value(b)).slice(0,n);return keep.filter(x=>!cut.includes(x))};
+  const b0=sum(simWeeks(mine,src,CS)),t0=sum(simWeeks(theirs,src,CS));
+  // what each of my assets costs my lineup (points a week) if it leaves
+  const myPicks=PICKS.filter(p=>p.own===ME).map(p=>`pk:${p.y}:${p.rd}:${p.o}`);
+  const pool=mine.filter(x=>value(x)>=Math.max(300,0.1*R)&&value(x)<=1.3*R).concat(myPicks.filter(k=>val(k)>=0.1*R&&val(k)<=1.3*R))
+    .map(k=>({k,v:val(k),c:k.startsWith('pk:')?0:(b0-sum(simWeeks(mine.filter(x=>x!==k),src,CS)))/NW}))
+    .sort((a,b)=>(a.c+a.v/4000)-(b.c+b.v/4000));
+  // two kinds of building blocks: pieces that cost your lineup least, and players who would help THEIR lineup most
+  // (a team going for it wants points back, not just value)
+  pool.forEach(x=>{x.h=x.k.startsWith('pk:')?0:(sum(simWeeks(theirs.concat([x.k]),src,CS))-t0)/NW});
+  const cheapest=pool.slice(0,12),helpful=pool.filter(x=>!cheapest.includes(x)&&x.h>=1).sort((a,b)=>b.h-a.h).slice(0,6);
+  pool.length=0;pool.push(...cheapest,...helpful);
+  const combos=[];
+  for(let i=0;i<pool.length;i++){const A=[pool[i]];combos.push(A);
+    for(let j=i+1;j<pool.length;j++){combos.push([pool[i],pool[j]]);for(let l=j+1;l<pool.length;l++)combos.push([pool[i],pool[j],pool[l]])}}
+  // the other manager values a package the way real trades work: the best piece counts fully, extra pieces count less
+  // (three 4th-round picks don't buy a starter). Offers must clear 95% of the target's value on that basis.
+  const eff=c=>{const v=c.map(x=>x.v).sort((a,b)=>b-a);return v[0]+0.65*(v[1]||0)+0.45*(v[2]||0)};
+  const cand=combos.map(c=>({c,g:sum(c.map(x=>x.v)),e:eff(c),cost:sum(c.map(x=>x.c))})).filter(o=>o.e>=0.95*R&&o.g<=1.45*R)
+    .map(o=>Object.assign(o,{score:o.cost+(o.g-R)*0.0003})).sort((a,b)=>a.score-b.score).slice(0,30);
+  if(!cand.length){box.innerHTML=`<h2>3 offers to try</h2><p class="answer">Nothing on your roster adds up to a fair price for ${esc(get.map(keyName).join(' + '))} (${fk(R)}) without overpaying by more than 30%.</p>`;return}
+  const PR=(D.profiles||{})[partner]||{},rebuild=/Rebuild/.test(PR.style||''),contend=/Win-now/.test(PR.style||'');
+  for(const o of cand){const giveKeys=o.c.map(x=>x.k),gi=giveKeys.filter(k=>!k.startsWith('pk:'));
+    const nm=fit(mine,mine.filter(x=>!gi.includes(x)).concat(getIds)),nt=fit(theirs,theirs.filter(x=>!getIds.includes(x)).concat(gi));
+    o.giveKeys=giveKeys;o.nm=nm;o.nt=nt;o.dm=(sum(simWeeks(nm,src,CS))-b0)/NW;o.dt=(sum(simWeeks(nt,src,CS))-t0)/NW;
+    o.young=o.c.every(x=>x.k.startsWith('pk:')||(PL[x.k].age||30)<=24.5);
+    // would they say yes? contenders won't take a big hit to their lineup; rebuilders want youth and picks
+    o.ok=rebuild?true:o.dt>=-2;
+    o.rank=o.dm-(o.g-R)*0.0003+(o.dt>=0?0.3:0)+(rebuild&&o.young?0.8:0)+(rebuild&&!o.young?-0.5:0)}
+  cand.sort((a,b)=>(b.ok-a.ok)||(b.rank-a.rank));
+  // three different offers: each one built around a different main piece
+  const pick=[],usedMain=new Set();
+  for(const o of cand){const main=o.c.slice().sort((a,b)=>b.v-a.v)[0].k;if(usedMain.has(main))continue;usedMain.add(main);pick.push(o);if(pick.length===3)break}
+  // full season simulation for the finalists (same draws, so differences are the trade, not noise)
+  const R0={};TEAMS.forEach(t=>R0[t.id]=roster(t.id));const O0=seasonOdds(R0,{},{},src);const me0=O0[ME];
+  const b=D.outlook?D.outlook.teams[ME].title:null,E0=b?b[0]*DISC[0]+b[1]*DISC[1]+b[2]*DISC[2]:null;
+  for(const o of pick){const R1=Object.assign({},R0);R1[ME]=o.nm;R1[partner]=o.nt;const O1=seasonOdds(R1,{},{},src);
+    o.t0=me0.title;o.t1=O1[ME].title;o.se=diffSE(O0.tv,O1.tv);o.G=gradeTitle(o.t1-o.t0,o.se,o.g,R);
+    if(b){const tf=futureAfter(o.nm,o.giveKeys.filter(k=>k.startsWith('pk:')),get.filter(k=>k.startsWith('pk:')));o.tf=tf;o.E1=o.t1*DISC[0]+tf[0]*DISC[1]+tf[1]*DISC[2]}}
+  pick.sort((a,b)=>(b.ok-a.ok)||((b.E1??b.t1)-(a.E1??a.t1)));const best=pick[0];
+  const allTough=pick.every(o=>!o.ok),tgtTeam=esc(teamName(partner));
+  const label=o=>o===best?'Best overall':o.c.some(x=>x.k.startsWith('pk:'))?'Uses draft picks':o.g===Math.min(...pick.map(x=>x.g))?'Cheapest':'Another option';
+  const yes=o=>o.dt<=-3&&!rebuild?`<b>Tough sell:</b> their lineup gets about ${(-o.dt).toFixed(1)} points a week worse.`:
+    rebuild&&o.young?`<b>Good fit for them:</b> they're building for later, and this is all young players and picks.`:
+    rebuild?`<b>Mixed fit:</b> they're building for later, so they may want younger players or picks instead of veterans.`:
+    contend&&o.dt>0?`<b>Good fit for them:</b> they're going for it, and this makes their lineup about ${o.dt.toFixed(1)} a week better.`:
+    o.dt>=0?`<b>Reasonable for them:</b> fair value and their lineup doesn't get worse.`:`<b>Fair value</b>, though their lineup gets about ${(-o.dt).toFixed(1)} a week worse.`;
+  const take=o=>{const fut=o.tf&&E0!=null?(o.E1<E0-0.01?' But it costs your next two seasons, so it is a short-term move.':o.E1>E0+0.01?' It also helps your next two seasons.':''):'';
+    const verdict=(o.t1-o.t0<=-Math.max(0.01,2*o.se)||(o.E1!=null&&o.E1<E0-0.02&&o.t1-o.t0<0.02))?'Not worth it.':o.G.t==='Win'?'Worth offering.':o.G.P==='up'?'Worth offering if you are pushing for this year.':o.G.V==='up'?'Fine on value; small effect on this season.':'Only if you like the player more than the numbers do.';
+    return `${verdict} ${o.G.why}${fut}`};
+  box.innerHTML=`<h2>3 offers to try for ${esc(get.map(keyName).join(' + '))}</h2>
+    <p class="sub">Built from your roster and picks at a fair price for ${fk(R)} in value. A package of several pieces is counted the way managers do: the best piece fully, extras for less. Offers the other team would likely turn down are pushed to the bottom. Each was run through the full season simulation. Ranked by what they do for your title chances, with the least damage to your lineup.</p>
+    ${allTough?`<p class="answer"><b>Heads up:</b> ${tgtTeam} ${contend?'is going for it, and ':''}${esc(get.map(keyName).join(' + '))} ${get.length>1?'are':'is'} a big part of their lineup. Every fair package we found makes their team worse this season, so expect them to ask for a player who helps them now. These are still the best starting points.</p>`:''}${ptsLegendHTML()}
+    <div class="list">${pick.map((o,i)=>`<div class="li" style="grid-template-columns:minmax(0,1fr)"><div class="main">
+      <div class="row" style="justify-content:space-between"><span><b>Offer ${i+1}:</b> ${o.giveKeys.map(k=>`<b>${esc(keyName(k))}</b>`).join(' + ')}</span>${W([label(o),o===best?'w-good':'w-plain'])}</div>
+      <div class="kv" style="margin-top:4px"><span>Your lineup</span>${ptsBadge(o.dm)}
+        <span>Title chance</span><span>${pct(o.t0)} → <b>${pct(o.t1)}</b></span>
+        ${o.tf&&b?`<span>Next two seasons</span><span>${pct(b[1])} / ${pct(b[2])} → <b class="${o.E1<E0-0.01?'neg-v':''}">${pct(o.tf[0])} / ${pct(o.tf[1])}</b></span>`:''}
+        <span>Value</span><span>you give ${fk(o.g)} for ${fk(R)}${o.c.length>1?` <span class="muted">(counts as about ${fk(o.e)} to them, since extra pieces are worth less in one deal)</span>`:''}${o.e-R>0.15*R?` · <b>you overpay</b>`:''}</span>
+        <span>Will they bite?</span><span>${yes(o)}</span></div>
+      <p class="small" style="margin:6px 0 0"><b>The app's take:</b> ${take(o)}</p>
+      <div style="margin-top:6px"><button class="btn ghost" data-lab="${partner}|${o.giveKeys.join(',')}|${get.join(',')}">Check this trade in full</button></div>
+    </div></div>`).join('')}</div>`;
+}
+$('#suggestBtn').addEventListener('click',()=>{$('#offers').hidden=false;$('#offers').innerHTML='<h2>3 offers to try</h2><p class="sub">Working out what to offer…</p>';setTimeout(suggestOffers,30)});
 function runTrade(){
   const giveIds=[...st.give].filter(k=>!k.startsWith('pk:')),getIds=[...st.get].filter(k=>!k.startsWith('pk:'));
   const gv=[...st.give].reduce((a,k)=>a+val(k),0),rv=[...st.get].reduce((a,k)=>a+val(k),0);
@@ -825,7 +918,7 @@ function runTrade(){
   let FU=null;if(D.outlook){const tf=futureAfter(newMine,[...st.give].filter(k=>k.startsWith('pk:')),[...st.get].filter(k=>k.startsWith('pk:'))),b=D.outlook.teams[ME].title;
     const E0=b[0]*DISC[0]+b[1]*DISC[1]+b[2]*DISC[2],E1=me1.title*DISC[0]+tf[0]*DISC[1]+tf[1]*DISC[2];FU={tf,b,E0,E1}}
   const C=(G.t==='Win')?[]:counters(giveIds,getIds,gv,rv,mAll);const po=FUT.map((w,i)=>w>D.meta.reg_end?i:-1).filter(i=>i>=0);
-  const lineTxt=Math.abs(mAll)<0.5?'barely changes':mAll>0?`gets about <b>${mAll.toFixed(1)} points a week better</b>`:`gets about <b>${(-mAll).toFixed(1)} points a week worse</b>`;
+  const lineTxt=(Math.abs(mAll)<0.5?'barely changes':mAll>0?`gets about <b>${mAll.toFixed(1)} points a week better</b>`:`gets about <b>${(-mAll).toFixed(1)} points a week worse</b>`)+` <span class="word ${ptsTier(mAll)[2]}" title="${esc(ptsPersp(mAll))}">${ptsTier(mAll)[1]}</span>`;
   const valT=Math.abs(vd)<Math.max(gv,rv)*0.05?'The values are about even.':vd>0?`You get <b>${fk(vd)} more</b> in trade value than you give (${pickWord(vd).replace('about ','about ')} extra).`:`You give <b>${fk(-vd)} more</b> in trade value than you get, which is like throwing in ${pickWord(-vd).replace('about ','')}.`;
   const arrow=(a,b)=>`${pct(a)} → <b class="${b-a>=0.005?'pos-v':b-a<=-0.005?'neg-v':''}">${pct(b)}</b>`;
   const mx=Math.max(1,...dM.map(Math.abs),...dT.map(Math.abs)),Wd=560,H=150,bw=Wd/NW,mid=H/2-8;
@@ -867,7 +960,7 @@ function renderIdeas(){
   g.innerHTML=order.map(t=>{const nd=needTxt(t.id),sp=spareOf(t.id),deals=(A.sugg[t.id]||[]).slice(0,2);
     return `<div class="card"><div class="row" style="justify-content:space-between"><h3>${esc(t.name)}</h3>${W(poWord(t.odds.playoffs))}</div>
       <div class="kv"><span>Record</span><span>${t.w}-${t.l}</span><span>They need</span><span>${nd.length?nd.map(p=>posTag(p)).join(' '):'nothing urgent'}</span><span>They have extra</span><span>${sp.length?sp.map(o=>pl(o.s)).join(', '):'no one obvious'}</span></div>
-      ${deals.length?deals.map(d=>`<div class="tx"><div class="small"><span class="muted">Idea:</span> you give <b>${d.give.map(s=>esc(PL[s]?.n)).join(' + ')}</b>, you get <b>${d.get.map(s=>esc(PL[s]?.n)).join(' + ')}</b></div><div class="small muted">Your score +${d.dm.toFixed(1)} a week, theirs ${f1(d.dt)}. Values are close (${fk(d.kg)} for ${fk(d.kr)}).${d.title1!=null?` Your title chance ${pct(d.title0)} → <b>${pct(d.title1)}</b>.`:''}${futLine(d)}</div><div><button class="btn ghost" data-lab="${t.id}|${d.give.join(',')}|${d.get.join(',')}">Check this trade</button></div></div>`).join(''):'<p class="sub">No fair deal found that helps you.</p>'}</div>`}).join('');
+      ${deals.length?deals.map(d=>`<div class="tx"><div class="small"><span class="muted">Idea:</span> you give <b>${d.give.map(s=>esc(PL[s]?.n)).join(' + ')}</b>, you get <b>${d.get.map(s=>esc(PL[s]?.n)).join(' + ')}</b></div><div class="small muted">Your score ${ptsBadge(d.dm,true)}, theirs ${f1(d.dt)}. Values are close (${fk(d.kg)} for ${fk(d.kr)}).${d.title1!=null?` Your title chance ${pct(d.title0)} → <b>${pct(d.title1)}</b>.`:''}${futLine(d)}</div><div><button class="btn ghost" data-lab="${t.id}|${d.give.join(',')}|${d.get.join(',')}">Check this trade</button></div></div>`).join(''):'<p class="sub">No fair deal found that helps you.</p>'}</div>`}).join('');
 }
 
 // ---------- TRADES: league feed ----------
