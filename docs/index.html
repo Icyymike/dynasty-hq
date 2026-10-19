@@ -356,10 +356,10 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
       <div class="step">Step 1 · Paste the offer, or skip to step 2</div>
       <textarea id="offerText" placeholder="Example: Darnell Washington for my 2027 3rd"></textarea>
       <div class="row"><button class="btn" id="offerBtn" type="button">Read this offer</button><span class="small muted" id="offerNote" aria-live="polite"></span></div>
-      <div class="step">Step 2 · Pick the team and tick what moves</div>
+      <div class="step">Step 2 · Pick the team and tick what moves</div><p class="sub" style="margin:0">Want <i>them</i> to pick? Tick only what you want and press <b>Suggest 3 offers</b>. Ticked both sides but the values are off? Press <b>Balance it</b> for 2–3 ways to even it out.</p>
       <div class="row"><label class="lab" for="partner">Trading with</label><select id="partner"></select></div>
       <div class="grid2">
-        <div><div class="row" style="justify-content:space-between;margin-bottom:6px"><h3>You give</h3><span class="row" style="gap:8px"><button class="btn ghost" id="suggestBtn" type="button" style="padding:3px 10px;font-size:12px">Suggest 3 offers</button><span class="small muted" id="giveV"></span></span></div><div class="pick-list" id="giveList"></div></div>
+        <div><div class="row" style="justify-content:space-between;margin-bottom:6px"><h3>You give</h3><span class="row" style="gap:8px"><button class="btn ghost" id="suggestBtn" type="button" style="padding:3px 10px;font-size:12px">Suggest 3 offers</button><button class="btn ghost" id="balanceBtn" type="button" style="padding:3px 10px;font-size:12px">Balance it</button><span class="small muted" id="giveV"></span></span></div><div class="pick-list" id="giveList"></div></div>
         <div><div class="row" style="justify-content:space-between;margin-bottom:6px"><h3>You get</h3><span class="small muted" id="getV"></span></div><div class="pick-list" id="getList"></div></div>
       </div>
     </div>
@@ -828,7 +828,8 @@ function focusToggleHTML(){if(!POK().length||OFF)return '';const po=D.meta.reg_e
 document.addEventListener('click',e=>{const b=e.target.closest('[data-focus]');if(!b)return;FOCUS=b.dataset.focus;try{localStorage.setItem('hq-focus',FOCUS)}catch(x){}
   document.querySelectorAll('[data-focus]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.focus===FOCUS));
   $('#buyList').dataset.done='';$('#ideas').dataset.done='';renderBuyFA();if(!$('[data-sub-panel=ideas]').hidden)renderIdeas();
-  if(!$('#offers').hidden&&st.get.size&&/Offer 1/.test($('#offers').textContent)){$('#offers').innerHTML='<h2>3 offers to try</h2><p class="sub">Working out what to offer…</p>';setTimeout(suggestOffers,30)}});
+  if(!$('#offers').hidden&&st.get.size&&/Offer 1/.test($('#offers').textContent)){$('#offers').innerHTML='<h2>3 offers to try</h2><p class="sub">Working out what to offer…</p>';setTimeout(suggestOffers,30)}
+  else if(!$('#offers').hidden&&/Option 1/.test($('#offers').textContent)){$('#offers').innerHTML='<h2>Balance this trade</h2><p class="sub">Evening it out…</p>';setTimeout(balanceTrade,30)}});
 const addOf=x=>isPO()?(x.add_po??x.add):x.add, dmOf=x=>isPO()?(x.dm_po??x.dm):x.dm;
 const wkWord=()=>isPO()?'projected pts/week in the playoffs':'projected pts/week';
 // ---------- perspective for "points a week": how much is +3 really? ----------
@@ -849,6 +850,59 @@ function ptsLegendHTML(){const S=ptsScale(),w1=S.winsPer;return `<details class=
    <span>${W(['Barely matters','w-plain'])}</span><span>Under 1 either way. Within normal noise; decide on value instead.</span></div>
   <p class="sub" style="margin:0"><b>Where the number comes from:</b> each player's expected points for every week left (mostly Sleeper's projections, mixed with how he has actually scored; the mix is whatever predicted this season's games best). Then the rest of the season is played out ${D.meta.sims} times with realistic boom and bust weeks, byes and injuries, your best possible lineup is taken each week, and the result is averaged. So a bench player who rarely starts can still add a little, from the weeks he has a big game while a starter is off. It's an estimate: the weekly scores themselves are noisy.</p>
   <p class="sub" style="margin:0">Hover or long-press any points number to see what it means in wins.</p></div></details>`}
+// ---------- balance a trade: you pick players on both sides, the app evens it out 3 different ways ----------
+const effV=keys=>{const v=keys.map(val).sort((a,b)=>b-a);return v.reduce((a,x,i)=>a+x*([1,0.65,0.45][i]??0.3),0)};
+function balanceTrade(){
+  const box=$('#offers');box.hidden=false;const partner=st.partner,src=st.src||'pr';
+  const give=[...st.give],get=[...st.get];
+  if(!give.length||!get.length){box.innerHTML='<h2>Balance this trade</h2><p class="sub">Tick at least one player or pick on each side first, then press “Balance it”.</p>';return}
+  const KX=isPO()?POK():FUT.map((w,i)=>i),sumK=a=>KX.reduce((x,k)=>x+a[k],0),CS=120,mine=roster(ME),theirs=roster(partner),CAP=(D.meta.rules||{}).roster_size||28;
+  const fit=(old,keep)=>{const n=keep.length-Math.max(CAP,old.length);if(n<=0)return keep;const cut=keep.filter(x=>old.includes(x)).sort((a,b)=>value(a)-value(b)).slice(0,n);return keep.filter(x=>!cut.includes(x))};
+  const b0=sumK(simWeeks(mine,src,CS)),t0=sumK(simWeeks(theirs,src,CS));
+  const ev=(g,r)=>{const gi=g.filter(k=>!k.startsWith('pk:')),ri=r.filter(k=>!k.startsWith('pk:'));
+    const nm=fit(mine,mine.filter(x=>!gi.includes(x)).concat(ri)),nt=fit(theirs,theirs.filter(x=>!ri.includes(x)).concat(gi));
+    return {g,r,nm,nt,dm:(sumK(simWeeks(nm,src,CS))-b0)/KX.length,dt:(sumK(simWeeks(nt,src,CS))-t0)/KX.length,eg:effV(g),er:effV(r)}};
+  const e0=ev(give,get),gap=e0.er-e0.eg,big=Math.max(e0.eg,e0.er,1);
+  const balanced=o=>Math.abs(o.er-o.eg)<=0.08*Math.max(o.eg,o.er,1);
+  const PR=(D.profiles||{})[partner]||{},rebuild=/Rebuild/.test(PR.style||'');
+  const keysOf=(id,excl)=>roster(id).filter(x=>!excl.includes(x)&&value(x)>=200).concat(PICKS.filter(p=>p.own===id).map(p=>`pk:${p.y}:${p.rd}:${p.o}`).filter(k=>!excl.includes(k)));
+  let opts=[];
+  if(balanced(e0)){box.innerHTML=`<h2>Balance this trade</h2><p class="answer">This one is already about even on value: you give ${fk(e0.eg)} and get ${fk(e0.er)}, counting extra pieces the way managers do. See the full grade below.</p>`;scheduleRun();return}
+  if(gap>0){ // you're getting more: add from your side, or take something off theirs
+    const mineK=keysOf(ME,give).filter(k=>val(k)<=gap*1.6+300);
+    for(const k of mineK){const o=ev(give.concat([k]),get);o.kind='add-mine';o.k=[k];if(balanced(o))opts.push(o)}
+    for(let i=0;i<mineK.length;i++)for(let j=i+1;j<mineK.length;j++){const a=mineK[i],b=mineK[j];if(val(a)+val(b)>gap*2.2+600)continue;const o=ev(give.concat([a,b]),get);o.kind='add-mine';o.k=[a,b];if(balanced(o))opts.push(o)}
+    if(get.length>1)for(const k of get){const o=ev(give,get.filter(x=>x!==k));o.kind='drop-theirs';o.k=[k];if(balanced(o)||o.er<=o.eg*1.08)opts.push(o)}
+  }else{ // you're giving more: ask for more from them, or take something off your side
+    const theirK=keysOf(partner,get).filter(k=>val(k)<=-gap*1.6+300);
+    for(const k of theirK){const o=ev(give,get.concat([k]));o.kind='add-theirs';o.k=[k];if(balanced(o))opts.push(o)}
+    for(let i=0;i<theirK.length&&i<30;i++)for(let j=i+1;j<theirK.length&&j<30;j++){const a=theirK[i],b=theirK[j];if(val(a)+val(b)>-gap*2.2+600)continue;const o=ev(give,get.concat([a,b]));o.kind='add-theirs';o.k=[a,b];if(balanced(o))opts.push(o)}
+    if(give.length>1)for(const k of give){const o=ev(give.filter(x=>x!==k),get);o.kind='drop-mine';o.k=[k];if(balanced(o)||o.eg<=o.er*1.08)opts.push(o)}
+  }
+  if(!opts.length){box.innerHTML=`<h2>Balance this trade</h2><p class="answer">Right now you ${gap>0?'get':'give'} about ${fk(Math.abs(gap))} more in value. Nothing ${gap>0?'on your roster':'on their roster'} closes that gap cleanly; try a different main piece.</p>`;return}
+  // score: your lineup first, then their lineup (they have to say yes), then fewer moving parts
+  opts.forEach(o=>{o.score=o.dm+(o.dt>=-1?0.4:o.dt<-3&&!rebuild?-2:0)-0.15*o.k.length-(Math.abs(o.er-o.eg)/big)*2;o.ok=rebuild||o.dt>=-2});
+  opts.sort((a,b)=>(b.ok-a.ok)||(b.score-a.score));
+  const pick=[],seenKind=new Set(),usedK=new Set();
+  for(const o of opts){if(o.k.some(k=>usedK.has(k)))continue;if(pick.length<2&&seenKind.has(o.kind)&&opts.some(x=>!seenKind.has(x.kind)&&!pick.includes(x)))continue;pick.push(o);seenKind.add(o.kind);o.k.forEach(k=>usedK.add(k));if(pick.length===3)break}
+  for(const o of opts){if(pick.length>=3)break;if(!pick.includes(o))pick.push(o)}
+  const R0={};TEAMS.forEach(t=>R0[t.id]=roster(t.id));const O0=seasonOdds(R0,{},{},src);
+  pick.forEach(o=>{const R1=Object.assign({},R0);R1[ME]=o.nm;R1[partner]=o.nt;const O1=seasonOdds(R1,{},{},src);o.t0=O0[ME].title;o.t1=O1[ME].title;o.se=diffSE(O0.tv,O1.tv);o.G=gradeTitle(o.t1-o.t0,o.se,o.eg,o.er)});
+  const what=o=>({'add-mine':`Add ${o.k.map(k=>`<b>${esc(keyName(k))}</b>`).join(' + ')} from your side`,'drop-theirs':`Take <b>${esc(keyName(o.k[0]))}</b> off their side`,'add-theirs':`Ask for ${o.k.map(k=>`<b>${esc(keyName(k))}</b>`).join(' + ')} too`,'drop-mine':`Take <b>${esc(keyName(o.k[0]))}</b> off your side`})[o.kind];
+  const pn=esc(teamName(partner));
+  box.innerHTML=`<h2>Balance this trade</h2>${focusToggleHTML()}
+    <p class="answer">As it stands you ${gap>0?'get':'give'} about <b>${fk(Math.abs(gap))} more</b> in value (counting extra pieces the way managers do), so ${gap>0?`${pn} would likely say no`:'you would be overpaying'}. ${pick.length} way${pick.length>1?'s':''} to even it out:</p>
+    <div class="list">${pick.map((o,i)=>`<div class="li" style="grid-template-columns:minmax(0,1fr)"><div class="main">
+      <div class="row" style="justify-content:space-between"><span><b>Option ${i+1}:</b> ${what(o)}</span>${W([o.G.t,o.G.c])}</div>
+      <div class="small muted">Deal: you give ${o.g.map(k=>esc(keyName(k))).join(' + ')} · you get ${o.r.map(k=>esc(keyName(k))).join(' + ')}</div>
+      <div class="kv" style="margin-top:4px"><span>Your lineup</span><span>${ptsBadge(o.dm,true)}</span>
+        <span>Title chance</span><span>${pct(o.t0)} → <b>${pct(o.t1)}</b></span>
+        <span>Value</span><span>you give ${fk(o.eg)} · you get ${fk(o.er)}</span>
+        <span>${pn}</span><span>${o.dt>=0?`their lineup gets ${o.dt.toFixed(1)} a week better`:`their lineup gets ${(-o.dt).toFixed(1)} a week worse${o.dt<-2&&!rebuild?' (a tough sell for a team trying to win)':''}`}</span></div>
+      <div style="margin-top:6px"><button class="btn ghost" data-lab="${partner}|${o.g.join(',')}|${o.r.join(',')}">Use this version</button></div>
+    </div></div>`).join('')}</div>`;
+}
+$('#balanceBtn').addEventListener('click',()=>{$('#offers').hidden=false;$('#offers').innerHTML='<h2>Balance this trade</h2><p class="sub">Evening it out…</p>';setTimeout(balanceTrade,30)});
 // ---------- offer builder: 3 packages for what you want, each with the app's take ----------
 function suggestOffers(){
   const box=$('#offers');box.hidden=false;
