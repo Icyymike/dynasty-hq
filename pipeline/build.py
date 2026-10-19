@@ -7,7 +7,7 @@ and writes docs/data.json for the static site.
 Stdlib only. Runs in GitHub Actions on a schedule (see .github/workflows/refresh.yml).
 Set FIXTURE_DIR to run offline against saved responses (used for testing).
 """
-import json, os, re, sys, time, math, random, statistics as st, urllib.request, datetime, itertools
+import json, os, re, sys, time, math, random, statistics as st, urllib.request, datetime, itertools, bisect
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CFG = json.load(open(os.path.join(ROOT, "config.json")))
@@ -515,43 +515,63 @@ def main():
         pl = e.get("player") or {}
         sid = pl.get("sleeperId")
         if pl.get("position") == "PICK":
-            # names seen: "2027 1st", "2027 Round 1", "2027 Early 1st", "2027 Pick 1.05"
+            # names seen: "2027 1st", "2027 1st (Early)", "2027 Early 1st", "2027 Round 1", "2027 Pick 1.05"
             nm_ = pl.get("name", "")
-            m = re.match(r"(\d{4})\s+(?:Pick\s+(\d)\.\d+|(?:(Early|Mid|Late)\s+)?(?:Round\s+)?(\d)(?:st|nd|rd|th)?)", nm_)
+            m = re.match(r"(\d{4})\s+(?:Pick\s+(\d)\.(\d+)|(?:(Early|Mid|Late)\s+)?(?:Round\s+)?(\d)(?:st|nd|rd|th)?(?:\s*\((Early|Mid|Late)\))?)\s*$", nm_)
             if m:
-                rd_ = int(m.group(2) or m.group(4)); key = (int(m.group(1)), rd_)
-                generic = not m.group(2) and not m.group(3)
-                fc_pick_raw.setdefault(key, {"g": [], "o": []})["g" if generic else "o"].append(e.get("value", 0))
+                y_ = int(m.group(1)); rd_ = int(m.group(2) or m.group(5))
+                tier = m.group(4) or m.group(6)
+                if m.group(2):  # exact pick number -> early / mid / late thirds of a 12-team round
+                    n_ = int(m.group(3)); tier = "Early" if n_ <= 4 else "Late" if n_ >= 9 else "Mid"
+                fc_pick_raw.setdefault((y_, rd_), {}).setdefault(tier or "", []).append(e.get("value", 0))
         elif sid:
             fc_vals[str(sid)] = e.get("value", 0)
-    for key, d_ in fc_pick_raw.items():   # prefer the generic round value; otherwise average the specific picks
-        fc_picks[key] = max(d_["g"]) if d_["g"] else sum(d_["o"]) / len(d_["o"])
+    fc_tier = {}
+    for key, d_ in fc_pick_raw.items():
+        for tier, vs in d_.items():
+            fc_tier[key + (tier,)] = sum(vs) / len(vs)
+        if d_.get(""):
+            fc_picks[key] = fc_tier[key + ("",)]
+        elif d_.get("Mid"):
+            fc_picks[key] = fc_tier[key + ("Mid",)]
+        else:
+            fc_picks[key] = sum(sum(v) for v in d_.values()) / sum(len(v) for v in d_.values())
     ktc_path = os.path.join(ROOT, "pipeline", "ktc_snapshot.json")
     ktc = json.load(open(ktc_path)) if os.path.exists(ktc_path) else {"date": None, "players": {}, "picks": {}}
-    # ---------- one value scale for players AND picks: FantasyCalc (updates daily) converted onto the
-    # KeepTradeCut superflex TE-premium scale with a per-position fit against the latest KTC snapshot.
+    # ---------- one value scale for players AND picks.
+    # FantasyCalc (built from real trades, updated daily, set to 12-team superflex 0.5 PPR) decides the ORDER and
+    # the gaps between everything, picks included. Its numbers are then laid onto the KeepTradeCut superflex
+    # TE-premium scale by rank: the Nth most valuable asset on FantasyCalc gets the KTC value of the Nth most
+    # valuable player in the KTC snapshot. One curve for everyone keeps players and picks on the same footing.
+    # A per-position factor from the snapshot then adds back what FantasyCalc doesn't price, mainly TE premium.
     KP = ktc.get("players") or {}
+    both = [(fc_vals[p_], KP[p_], (players_db.get(p_) or {}).get("position")) for p_ in KP if fc_vals.get(p_, 0) > 0 and KP[p_] > 0]
+    qf = sorted(x[0] for x in both); qk = sorted(x[1] for x in both); nq = len(qf)
+    def conv(f):
+        if nq < 30 or f <= 0:
+            return None
+        if f <= qf[0]:
+            return qk[0] * f / qf[0]
+        if f >= qf[-1]:
+            return qk[-1]
+        i = bisect.bisect_left(qf, f)
+        lo, hi = qf[i - 1], qf[i]
+        t_ = (f - lo) / (hi - lo) if hi > lo else 0.0
+        return qk[i - 1] + t_ * (qk[i] - qk[i - 1])
     cal = {}
     for ps in POS:
-        pairs = [(fc_vals[p_], KP[p_]) for p_ in KP if p_ in fc_vals and (players_db.get(p_) or {}).get("position") == ps and fc_vals[p_] > 300 and KP[p_] > 300]
-        if len(pairs) >= 8:
-            b_, a_ = linfit([math.log(x) for x, _ in pairs], [math.log(y) for _, y in pairs])
-            cal[ps] = (a_, b_, len(pairs))
-    pk_pairs = []
-    for k_, v_ in (ktc.get("picks") or {}).items():
-        yk = (int(k_[:4]), int(k_[5:]))
-        if yk in fc_picks and fc_picks[yk] > 0:
-            pk_pairs.append(v_ / fc_picks[yk])
-    pick_ratio = st.median(pk_pairs) if len(pk_pairs) >= 3 else None
+        rs = [k_ / conv(f_) for f_, k_, pp_ in both if pp_ == ps and k_ >= 1500 and conv(f_)]
+        if len(rs) >= 8:
+            cal[ps] = (min(1.35, max(0.8, st.median(rs))), len(rs))
     def unified(pid, f=None, pos=None):
         f = fc_vals.get(pid) if f is None else f
         pos = pos or (players_db.get(pid) or {}).get("position")
-        if f and pos in cal:
-            a_, b_, _ = cal[pos]
-            return int(round(math.exp(a_ + b_ * math.log(max(f, 1)))))
-        return KP.get(pid) or f or 0
-    val_src = dict(live=bool(cal), snapshot=ktc.get("date"), fitted={ps: cal[ps][2] for ps in cal},
-                   label=("FantasyCalc, updated daily, converted to the KeepTradeCut superflex TE-premium scale" if cal
+        c_ = conv(f) if f else None
+        if c_ is not None:
+            return int(round(min(9999, c_ * (cal[pos][0] if pos in cal else 1.0))))
+        return KP.get(pid) or 0
+    val_src = dict(live=nq >= 30, snapshot=ktc.get("date"), fitted={ps: round(cal[ps][0], 2) for ps in cal}, matched=nq,
+                   label=("FantasyCalc, updated daily, laid onto the KeepTradeCut superflex TE-premium scale" if nq >= 30
                           else f"KeepTradeCut snapshot from {ktc.get('date')} (live values unavailable this run)"))
 
     # ---------- matchups (past scores, future pairings, weekly rosters)
@@ -1087,14 +1107,16 @@ def main():
     # ---------- picks (next 3 rookie drafts) with projected slots for next year's draft
     PV = ktc.get("picks") or {}
     def pick_base(y, rd):
-        f = fc_picks.get((y, rd))
-        if f and pick_ratio:
-            return f * pick_ratio
-        return PV.get(f"{y}-{rd}") or f or {1: 5000, 2: 3200, 3: 2300, 4: 1600}.get(rd, 1000)
+        f = conv(fc_picks.get((y, rd), 0))
+        if f:
+            return f
+        return PV.get(f"{y}-{rd}") or {1: 5000, 2: 3200, 3: 2300, 4: 1600}.get(rd, 1000)
     def pick_val(y, rd, orig=None):
         v = pick_base(y, rd)
-        if y == season + 1 and orig in slot:  # early / mid / late, the way KTC prices next year's picks
-            v *= 1.15 if slot[orig] <= nT / 3 else 0.87 if slot[orig] > 2 * nT / 3 else 1.0
+        if y == season + 1 and orig in slot:  # early / mid / late: FantasyCalc's own price for that tier when it has one
+            tier = "Early" if slot[orig] <= nT / 3 else "Late" if slot[orig] > 2 * nT / 3 else "Mid"
+            ft = conv(fc_tier.get((y, rd, tier), 0))
+            v = ft if ft else v * (1.15 if tier == "Early" else 0.87 if tier == "Late" else 1.0)
         return round(v)
     years = [season + 1, season + 2, season + 3]
     owner = {(y, rd, t["id"]): t["id"] for y in years for rd in range(1, int(settings.get("draft_rounds", 4)) + 1) for t in teams}
