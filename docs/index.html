@@ -424,7 +424,7 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
     <div class="card"><h2>Buy low</h2><p class="sub">On other teams: a solid role but scoring below what that role is usually worth. Bad luck tends to even out; the price may not.</p><div id="rsBuy" class="list"></div></div>
     <div class="card"><h2>Sell high</h2><p class="sub">On your team: scoring well above what his role is usually worth, or his trade value jumped without a bigger role. Usually the best time to cash in.</p><div id="rsSell" class="list"></div></div>
     <div class="card"><h2>Roles shrinking</h2><p class="sub">Fewer snaps or opportunities lately. On your team, that's a warning before the trade value drops.</p><div id="rsDown" class="list"></div></div>
-    <div class="card"><h2>Market movers (30 days)</h2><p class="sub">Biggest trade-value changes over the last month, from FantasyCalc's real trades.</p><div id="rsMove" class="list"></div></div>
+    <div class="card"><h2>Market movers (30 days)</h2><p class="sub">Biggest trade-value changes over the last month (by percent), from FantasyCalc's real trades. Players who were barely valued a month ago are left out.</p><div id="rsMove" class="list"></div></div>
   </div>
   <div class="card"><h2>Player explorer</h2>
     <div class="row small" style="gap:10px"><select id="rsOwn" aria-label="Owner"><option value="all">Everyone</option><option value="me">My team</option><option value="oth">Other teams</option><option value="fa">Free agents</option></select>
@@ -1187,11 +1187,11 @@ function renderResearch(){
   const buy=M.filter(m=>m.x.r&&m.x.r!==ME&&m.cold&&!m.down).sort((a,b)=>a.luck-b.luck);
   $('#rsBuy').innerHTML=buy.slice(0,8).map(m=>rsItem(m,`His role is worth <b>${f1x(m.xfL)}</b> a game but he's scored <b>${f1x(m.fpL)}</b> over his last ${N}. ${roleTxt(m)} Trade value ${fk(m.x.v)}${m.x.vt?` (${m.x.vt>0?'+':'−'}${fk(Math.abs(m.x.vt))} in 30 days)`:''}.`)).join('')||none;
   const CL={QB:33,RB:26,WR:29,TE:30},core=m=>m.x.v>=6500&&(m.x.age||30)<(CL[m.x.p]||28);  // don't tell you to sell young cornerstones on a hot streak
-  const sell=M.filter(m=>m.x.r===ME&&!core(m)&&((m.hot&&!m.up&&m.luck/Math.max(m.xfL,1)>=0.3)||(m.x.v>0&&m.x.vt/m.x.v>=0.12&&!m.up))).sort((a,b)=>(b.luck||0)-(a.luck||0));
+  const sell=M.filter(m=>m.x.r===ME&&!core(m)&&((m.hot&&!m.up&&m.luck/Math.max(m.xfL,1)>=0.3)||(m.x.v>=2500&&m.x.v-m.x.vt>=1500&&m.x.vt/(m.x.v-m.x.vt)>=0.15&&!m.up&&!(m.oppB!=null&&m.oppL>=m.oppB*1.15)))).sort((a,b)=>(b.luck||0)-(a.luck||0));
   $('#rsSell').innerHTML=sell.slice(0,8).map(m=>rsItem(m,`${m.hot?`Scoring <b>${f1x(m.fpL)}</b> a game on a role worth <b>${f1x(m.xfL)}</b>, so expect some cooling. `:''}${m.x.vt?`Trade value ${m.x.vt>0?'up':'down'} ${fk(Math.abs(m.x.vt))} in 30 days (now ${fk(m.x.v)}). `:''}${roleTxt(m)}`)).join('')||'<p class="sub">No one on your team is clearly running hot right now.</p>';
   const dn=M.filter(m=>m.down&&m.x.r&&(m.x.r===ME||m.x.v>=2000)).sort((a,b)=>(b.x.r===ME)-(a.x.r===ME)||(a.dOpp/Math.max(a.oppB,1))-(b.dOpp/Math.max(b.oppB,1)));
   $('#rsDown').innerHTML=dn.slice(0,8).map(m=>rsItem(m,roleTxt(m)+(m.x.inj?` Listed ${esc(m.x.inj)}.`:''))).join('')||none;
-  const mv=M.filter(m=>m.x.r&&m.x.vt&&m.x.v>=1000).sort((a,b)=>Math.abs(b.x.vt)-Math.abs(a.x.vt));
+  const mv=M.filter(m=>m.x.r&&m.x.vt&&m.x.v>=1500&&m.x.v-m.x.vt>=800).sort((a,b)=>Math.abs(b.x.vt/(b.x.v-b.x.vt))-Math.abs(a.x.vt/(a.x.v-a.x.vt)));
   $('#rsMove').innerHTML=mv.slice(0,10).map(m=>rsItem(m,`Trade value <b class="${m.x.vt>0?'pos-v':'neg-v'}">${m.x.vt>0?'+':'−'}${fk(Math.abs(m.x.vt))}</b> (${Math.round(m.x.vt/Math.max(1,m.x.v-m.x.vt)*100)}%) to ${fk(m.x.v)}. ${m.up?'Role is growing too, so the move looks real.':m.down?'Role is shrinking, so the drop may continue.':m.hot?'Driven by a hot streak more than his role.':''}`)).join('')||'<p class="sub">Value trends show up once FantasyCalc reports them.</p>';
   // explorer
   const own=$('#rsOwn').value,pos=$('#rsPos').value,flag=$('#rsFlag').value,q=$('#rsQ').value.trim().toLowerCase();
