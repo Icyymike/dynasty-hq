@@ -1139,16 +1139,17 @@ def main():
     # ---------- picks (next 3 rookie drafts) with projected slots for next year's draft
     PV = ktc.get("picks") or {}
     def pick_base(y, rd):
-        f = conv(fc_picks.get((y, rd), 0))
-        if f:
-            return f
-        return PV.get(f"{y}-{rd}") or {1: 5000, 2: 3200, 3: 2300, 4: 1600}.get(rd, 1000)
+        f = conv(fc_picks.get((y, rd), 0)); k_ = PV.get(f"{y}-{rd}")
+        if f and k_:
+            # the all-players curve runs a little hot at the low end (late-round picks), so average it with KTC's own pick price
+            return 0.5 * f + 0.5 * k_
+        return f or k_ or {1: 5000, 2: 3200, 3: 2300, 4: 1600}.get(rd, 1000)
     def pick_val(y, rd, orig=None):
         v = pick_base(y, rd)
         if y == season + 1 and orig in slot:  # early / mid / late: FantasyCalc's own price for that tier when it has one
             tier = "Early" if slot[orig] <= nT / 3 else "Late" if slot[orig] > 2 * nT / 3 else "Mid"
-            ft = conv(fc_tier.get((y, rd, tier), 0))
-            v = ft if ft else v * (1.15 if tier == "Early" else 0.87 if tier == "Late" else 1.0)
+            ft = conv(fc_tier.get((y, rd, tier), 0)); fg = conv(fc_picks.get((y, rd), 0))
+            v = v * (ft / fg) if ft and fg else v * (1.15 if tier == "Early" else 0.87 if tier == "Late" else 1.0)
         return round(v)
     years = [season + 1, season + 2, season + 3]
     owner = {(y, rd, t["id"]): t["id"] for y in years for rd in range(1, int(settings.get("draft_rounds", 4)) + 1) for t in teams}
