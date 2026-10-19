@@ -10,7 +10,7 @@
 <style>
 :root{
   --bg:#f3f5f7; --panel:#ffffff; --ink:#14212b; --muted:#5b6b78; --line:#d9e0e6;
-  --accent:#0076b6; --accent-soft:#e3f0f8; --silver:#a5acaf;
+  --accent:#0076b6; --s1:#0076b6; --s2:#c46a1a; --accent-soft:#e3f0f8; --silver:#a5acaf;
   --good:#1f8a4c; --good-soft:#e2f3e8; --bad:#c2402f; --bad-soft:#f8e4e1; --warn:#b7791f; --warn-soft:#f7eedb;
   --f-display:'Barlow Condensed',Impact,'Arial Narrow',sans-serif;
   --f-body:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
@@ -18,11 +18,11 @@
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0d151c; --panel:#15212b; --ink:#e6edf2; --muted:#93a3b0; --line:#25343f;
-  --accent:#3aa0e0; --accent-soft:#16324a; --silver:#7d878c;
+  --accent:#3aa0e0; --s1:#2f93d1; --s2:#d07e33; --accent-soft:#16324a; --silver:#7d878c;
   --good:#46c07a; --good-soft:#163525; --bad:#ec6f5c; --bad-soft:#3d1d19; --warn:#e0a84a; --warn-soft:#3a2d14; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0d151c; --panel:#15212b; --ink:#e6edf2; --muted:#93a3b0; --line:#25343f;
-  --accent:#3aa0e0; --accent-soft:#16324a; --silver:#7d878c;
+  --accent:#3aa0e0; --s1:#2f93d1; --s2:#d07e33; --accent-soft:#16324a; --silver:#7d878c;
   --good:#46c07a; --good-soft:#163525; --bad:#ec6f5c; --bad-soft:#3d1d19; --warn:#e0a84a; --warn-soft:#3a2d14; color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -391,6 +391,7 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
     <h2>Look up any player</h2>
     <div class="row">
       <select id="pTeam" aria-label="Fantasy team"></select>
+      <label class="small row" style="gap:4px"><input type="checkbox" id="pFA"> Include free agents</label>
       <select id="pPos" aria-label="Position"><option value="">All positions</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select>
       <input type="search" id="pSearch" placeholder="Search a name" aria-label="Search players">
     </div>
@@ -419,19 +420,19 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
     </div>
   </div>
   <div class="grid2">
-    <div class="card"><h2>Roles growing</h2><p class="sub" id="rsUpNote"></p><div id="rsUp" class="list"></div></div>
-    <div class="card"><h2>Waiver watch</h2><p class="sub">Free agents with a growing role or a real role already. These are the adds before they score.</p><div id="rsWaiver" class="list"></div></div>
-    <div class="card"><h2>Buy low</h2><p class="sub">On other teams: a solid role but scoring below what that role is usually worth. Bad luck tends to even out; the price may not.</p><div id="rsBuy" class="list"></div></div>
-    <div class="card"><h2>Sell high</h2><p class="sub">On your team: scoring well above what his role is usually worth, or his trade value jumped without a bigger role. Usually the best time to cash in.</p><div id="rsSell" class="list"></div></div>
-    <div class="card"><h2>Roles shrinking</h2><p class="sub">Fewer snaps or opportunities lately. On your team, that's a warning before the trade value drops.</p><div id="rsDown" class="list"></div></div>
-    <div class="card"><h2>Market movers (30 days)</h2><p class="sub">Biggest trade-value changes over the last month (by percent), from FantasyCalc's real trades. Players who were barely valued a month ago are left out.</p><div id="rsMove" class="list"></div></div>
+    <div class="card"><div class="row" style="justify-content:space-between"><h2>Roles growing</h2><select class="rsp" data-for="rsUp" aria-label="Position for Roles growing"><option value="">All</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select></div><p class="sub" id="rsUpNote"></p><div id="rsUp" class="list"></div></div>
+    <div class="card"><div class="row" style="justify-content:space-between"><h2>Waiver watch</h2><select class="rsp" data-for="rsWaiver" aria-label="Position for Waiver watch"><option value="">All</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select></div><p class="sub">Free agents with a growing role or a real role already. These are the adds before they score.</p><div id="rsWaiver" class="list"></div></div>
+    <div class="card"><div class="row" style="justify-content:space-between"><h2>Buy low</h2><select class="rsp" data-for="rsBuy" aria-label="Position for Buy low"><option value="">All</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select></div><p class="sub">On other teams: a solid role but scoring below what that role is usually worth. Bad luck tends to even out; the price may not.</p><div id="rsBuy" class="list"></div></div>
+    <div class="card"><div class="row" style="justify-content:space-between"><h2>Sell high</h2><select class="rsp" data-for="rsSell" aria-label="Position for Sell high"><option value="">All</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select></div><p class="sub">On your team: scoring well above what his role is usually worth, or his trade value jumped without a bigger role. Usually the best time to cash in.</p><div id="rsSell" class="list"></div></div>
+    <div class="card"><div class="row" style="justify-content:space-between"><h2>Roles shrinking</h2><select class="rsp" data-for="rsDown" aria-label="Position for Roles shrinking"><option value="">All</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select></div><p class="sub">Fewer snaps or opportunities lately. On your team, that's a warning before the trade value drops.</p><div id="rsDown" class="list"></div></div>
+    <div class="card"><div class="row" style="justify-content:space-between"><h2>Market movers (30 days)</h2><select class="rsp" data-for="rsMove" aria-label="Position for Market movers (30 days)"><option value="">All</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select></div><p class="sub">Biggest trade-value changes over the last month (by percent), from FantasyCalc's real trades. Players who were barely valued a month ago are left out.</p><div id="rsMove" class="list"></div></div>
   </div>
   <div class="card"><h2>Player explorer</h2>
-    <div class="row small" style="gap:10px"><select id="rsOwn" aria-label="Owner"><option value="all">Everyone</option><option value="me">My team</option><option value="oth">Other teams</option><option value="fa">Free agents</option></select>
+    <div class="row small" style="gap:10px"><select id="rsOwn" aria-label="Owner"><option value="all">Everyone (incl. free agents)</option><option value="rost">Rostered only</option><option value="me">My team</option><option value="oth">Other teams</option><option value="fa">Free agents</option></select>
       <select id="rsPos" aria-label="Position"><option value="">All positions</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select>
       <select id="rsFlag" aria-label="Flag"><option value="">Any flag</option><option value="up">Role growing</option><option value="down">Role shrinking</option><option value="hot">Running hot</option><option value="cold">Running cold</option><option value="opp">Teammate out</option></select>
       <input type="search" id="rsQ" placeholder="Search a name" aria-label="Search"></div>
-    <p class="sub" style="margin:0">Tap a column header to sort. Arrows compare the last games with the earlier ones.</p>
+    <p class="sub" style="margin:0">Tap a column header to sort (tap again to flip). Arrows compare the last games with the earlier ones.</p>
     <div class="tbl-wrap"><table id="rsTbl" class="sortable-tbl"></table></div></div>
 </section>
 
@@ -780,14 +781,15 @@ function renderBuyFA(){
 function renderPlayers(){
   if(!$('#buyList').dataset.done){$('#buyList').dataset.done=1;renderBuyFA();
     const bt=D.meta.backtest;$('#accuracy').innerHTML=bt.sleeper!=null?`<p class="sub">Checked against every completed game this season (${bt.n} player-games): Sleeper's projections missed by ${bt.sleeper} points on average, our own model by ${bt.ours}, and the mix we use (${Math.round(bt.w*100)}% Sleeper, ${Math.round(100-bt.w*100)}% ours) by ${bt.blend}.${bt.n_div?` For players whose recent games disagree a lot with Sleeper's projection (${bt.n_div} player-games, often a role change), the best mix tested was ${Math.round(bt.w_div*100)}% Sleeper, ${Math.round(100-bt.w_div*100)}% recent games, and that's what we use for them.`:''} Single games swing a lot; season-long averages are much more reliable.</p>`:'<p class="sub">Not enough games yet to check accuracy.</p>';
-    $('#pTeam').innerHTML='<option value="">All teams</option>'+[TEAMS.find(t=>t.id===ME)].concat(standOrder().filter(t=>t.id!==ME)).map(t=>`<option value="${t.id}" ${t.id===ME?'selected':''}>${esc(t.name)}${t.id===ME?' (you)':` (${t.w}-${t.l})`}</option>`).join('');
-    ['#pTeam','#pPos','#pSearch'].forEach(q=>$(q).addEventListener('input',renderPlayers))}
+    $('#pTeam').innerHTML='<option value="">All teams</option>'+[TEAMS.find(t=>t.id===ME)].concat(standOrder().filter(t=>t.id!==ME)).map(t=>`<option value="${t.id}" ${t.id===ME?'selected':''}>${esc(t.name)}${t.id===ME?' (you)':` (${t.w}-${t.l})`}</option>`).join('')+'<option value="fa">Free agents</option>';
+    ['#pTeam','#pPos','#pSearch','#pFA'].forEach(q=>['input','change'].forEach(ev=>$(q).addEventListener(ev,renderPlayers)))}
   const tm=$('#pTeam').value,ps=$('#pPos').value,q=$('#pSearch').value.trim().toLowerCase();
-  const ids=Object.keys(PL).filter(s=>!PL[s].gone&&(!tm||PL[s].r==tm)&&(!ps||PL[s].p===ps)&&(!q||PL[s].n.toLowerCase().includes(q)));
+  const wantFA=$('#pFA').checked||tm==='fa';
+  const ids=Object.keys(PL).filter(s=>(tm==='fa'?PL[s].fa:(!PL[s].gone&&(!tm||PL[s].r==tm))||(wantFA&&!tm&&PL[s].fa))&&(!ps||PL[s].p===ps)&&(!q||PL[s].n.toLowerCase().includes(q)));
   const ros=s=>{const v=PL[s].pr.filter(x=>x>0);return v.length?v.reduce((x,y)=>x+y,0)/v.length:0};
   const avg=s=>{const v=PL[s].a.filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
-  const rows=ids.map(s=>({s,p:PL[s],rb:ros(s),av:avg(s)})).sort((a,b)=>b.rb-a.rb).slice(0,150),wk=FUT[0];
-  $('#projTbl').innerHTML=`<thead><tr><th>Player</th><th>Fantasy team</th><th class="r">Avg so far</th><th class="r" title="Average of his last 3 games vs his season average">Last 3 games</th><th class="r">Expected from here</th><th class="r">Week ${wk??''}</th><th class="r">Trade value</th></tr></thead><tbody>${rows.map(r=>`<tr class="${r.p.r===ME?'hl':''}"><td>${posTag(r.p.p)} ${pl(r.s)} <span class="muted small">${esc(r.p.t)}</span>${r.p.inj?` <span class="word w-bad">${esc(r.p.inj)}</span>`:''}</td><td class="small">${esc(short(teamName(r.p.r)))}</td><td class="r num">${r.av==null?'—':r.av.toFixed(1)}</td><td class="r num">${(f=>f?`${f.l3.toFixed(1)} <span class="${f.d>=2?'pos-v':f.d<=-2?'neg-v':'muted'}">${f.d>=2?'▲':f.d<=-2?'▼':'·'}</span>`:'—')(form(r.p))}</td><td class="r num"><b>${r.rb.toFixed(1)}</b></td><td class="r num">${OFF?'—':r.p.pr[0]>0?r.p.pr[0].toFixed(1):'<span class="muted">bye/out</span>'}</td><td class="r small">${pickWord(value(r.s)).replace('about ','≈ ')}${trendTag(r.p)}</td></tr>`).join('')}</tbody>`;
+  const rows=ids.map(s=>({s,p:PL[s],rb:ros(s),av:avg(s)})).sort((a,b)=>b.rb-a.rb).slice(0,450),wk=FUT[0];
+  $('#projTbl').innerHTML=`<thead><tr><th>Player</th><th>Fantasy team</th><th class="r">Avg so far</th><th class="r" title="Average of his last 3 games vs his season average">Last 3 games</th><th class="r">Expected from here</th><th class="r">Week ${wk??''}</th><th class="r">Trade value</th></tr></thead><tbody>${rows.map(r=>`<tr class="${r.p.r===ME?'hl':''}"><td>${posTag(r.p.p)} ${pl(r.s)} <span class="muted small">${esc(r.p.t)}</span>${r.p.inj?` <span class="word w-bad">${esc(r.p.inj)}</span>`:''}</td><td class="small">${r.p.r?esc(short(teamName(r.p.r))):'<span class="word w-good">Free agent</span>'}</td><td class="r num">${r.av==null?'—':r.av.toFixed(1)}</td><td class="r num">${(f=>f?`${f.l3.toFixed(1)} <span class="${f.d>=2?'pos-v':f.d<=-2?'neg-v':'muted'}">${f.d>=2?'▲':f.d<=-2?'▼':'·'}</span>`:'—')(form(r.p))}</td><td class="r num"><b>${r.rb.toFixed(1)}</b></td><td class="r num">${OFF?'—':r.p.pr[0]>0?r.p.pr[0].toFixed(1):'<span class="muted">bye/out</span>'}</td><td class="r small">${pickWord(value(r.s)).replace('about ','≈ ')}${trendTag(r.p)}</td></tr>`).join('')}</tbody>`;reSort('projTbl');
 }
 
 // ---------- one grading rule for every trade ----------
@@ -1171,39 +1173,42 @@ function rsMetrics(N,thr){const out=[];
   out.forEach(m=>{const o=(big[m.x.t+m.x.p]||[]).filter(n=>n!==m.x.n);m.opp=!['Out','IR','Doubtful','PUP','Sus'].includes(m.x.inj)&&o.length?o:null});
   return out}
 function spark(v){const n=v.length,mx=Math.max(1,...v.map(x=>x||0)),W=Math.max(36,n*8),H=18;return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-hidden="true" style="vertical-align:middle">${v.map((x,i)=>x==null?`<rect x="${i*8+1}" y="${H-2}" width="6" height="2" fill="var(--line)"></rect>`:`<rect x="${i*8+1}" y="${H-Math.max(2,x/mx*H)}" width="6" height="${Math.max(2,x/mx*H)}" fill="${i>=n-+$('#rsN').value?'var(--accent)':'var(--silver)'}"></rect>`).join('')}</svg>`}
-const rsName=x=>PL[x.id]?pl(x.id):esc(x.n),rsOwner=x=>x.r===ME?'<b>You</b>':x.r?esc(short(teamName(x.r))):'Free agent';
+const rsName=x=>`<button class="pl" type="button" data-pid="${x.id}">${esc(x.n)}</button>`,rsOwner=x=>x.r===ME?'<b>You</b>':x.r?esc(short(teamName(x.r))):'Free agent';
 const pctS=v=>v==null?'—':Math.round(v*100)+'%',arr=(d,thr)=>d==null?'':d>=thr?'<span class="pos-v">▲</span>':d<=-thr?'<span class="neg-v">▼</span>':'';
 function rsAction(m){const x=m.x;return x.r===ME?'':x.r?(PL[x.id]?`<button class="btn ghost" data-lab="${x.r}||${x.id}" style="padding:3px 10px;font-size:12px">Build an offer</button>`:''):'<span class="word w-good">Waiver add</span>'}
 function rsItem(m,why){const x=m.x;return `<div class="li"><div class="main"><span>${posTag(x.p)} ${rsName(x)} <span class="muted small">${esc(x.t||'')} · ${rsOwner(x)}${x.inj?` · <span class="neg-v">${esc(x.inj)}</span>`:''}</span></span><span class="why">${why}</span></div><div class="right">${spark(m.opps)}<span class="why">opportunities by week</span>${rsAction(m)}</div></div>`}
 function renderResearch(){
   if(!(D.research||[]).length){$('#rsUp').innerHTML='<p class="sub">Weekly role data shows up after the next update.</p>';return}
-  const N=+$('#rsN').value,thr=+$('#rsT').value,M=rsMetrics(N,thr),f1x=v=>v==null?'—':v.toFixed(1),none='<p class="sub">Nobody right now.</p>';
+  const N=+$('#rsN').value,thr=+$('#rsT').value,M=rsMetrics(N,thr),PF=id=>{const v=(document.querySelector(`select.rsp[data-for=${id}]`)||{}).value;return m=>!v||m.x.p===v},f1x=v=>v==null?'—':v.toFixed(1),none='<p class="sub">Nobody right now.</p>';
   $('#rsUpNote').textContent=`Over his last ${N} games, at least ${Math.round(thr*100)}% more opportunities than before (and the last two games both above his old level), or 12+ points more snap share. Sorted by size of the jump.`;
   const roleTxt=m=>m.oppB==null?`<b>${f1x(m.oppL)}</b> opportunities a game${m.snL!=null?`, ${pctS(m.snL)} of snaps`:''}${m.tsL!=null&&m.x.p!=='QB'&&m.x.p!=='RB'?`, ${pctS(m.tsL)} of team targets`:''} (only ${m.rows.length} game${m.rows.length>1?'s':''} so far).`:`${f1x(m.oppB)} → <b>${f1x(m.oppL)}</b> opportunities a game${m.snL!=null&&m.snB!=null?`, snaps ${pctS(m.snB)} → <b>${pctS(m.snL)}</b>`:''}${m.tsL!=null&&m.tsB!=null&&m.x.p!=='QB'&&m.x.p!=='RB'?`, target share ${pctS(m.tsB)} → ${pctS(m.tsL)}`:''}.`;
-  const up=M.filter(m=>m.up&&(m.x.r||m.x.v>0||m.xfL>=4)).sort((a,b)=>(b.dOpp/Math.max(b.oppB,1))-(a.dOpp/Math.max(a.oppB,1)));
+  const up=M.filter(PF('rsUp')).filter(m=>m.up&&(m.x.r||m.x.v>0||m.xfL>=4)).sort((a,b)=>(b.dOpp/Math.max(b.oppB,1))-(a.dOpp/Math.max(a.oppB,1)));
   $('#rsUp').innerHTML=up.slice(0,8).map(m=>rsItem(m,`${roleTxt(m)} Scoring ${f1x(m.fpL)} a game (role worth ${f1x(m.xfL)}).${m.opp?` ${esc(m.opp.join(', '))} out.`:''}`)).join('')||none;
-  const wv=M.filter(m=>!m.x.r&&!m.stale&&(m.up||m.opp||(m.xfL||0)>=(RS.floor[m.x.p]||8)*0.75)).sort((a,b)=>((b.up?3:0)+(b.opp?2:0)+(b.xfL||0))-((a.up?3:0)+(a.opp?2:0)+(a.xfL||0)));
+  const wv=M.filter(PF('rsWaiver')).filter(m=>!m.x.r&&!m.stale&&(m.up||m.opp||(m.xfL||0)>=(RS.floor[m.x.p]||8)*0.75)).sort((a,b)=>((b.up?3:0)+(b.opp?2:0)+(b.xfL||0))-((a.up?3:0)+(a.opp?2:0)+(a.xfL||0)));
   $('#rsWaiver').innerHTML=wv.slice(0,8).map(m=>rsItem(m,`${m.up?'<b>Role growing.</b> ':''}${m.opp?`<b>Opportunity:</b> ${esc(m.opp.join(', '))} out. `:''}${roleTxt(m)} His role is worth about <b>${f1x(m.xfL)}</b> a game; he's scored ${f1x(m.fpL)}.`)).join('')||none;
-  const buy=M.filter(m=>m.x.r&&m.x.r!==ME&&m.cold&&!m.down).sort((a,b)=>a.luck-b.luck);
+  const buy=M.filter(PF('rsBuy')).filter(m=>m.x.r&&m.x.r!==ME&&m.cold&&!m.down).sort((a,b)=>a.luck-b.luck);
   $('#rsBuy').innerHTML=buy.slice(0,8).map(m=>rsItem(m,`His role is worth <b>${f1x(m.xfL)}</b> a game but he's scored <b>${f1x(m.fpL)}</b> over his last ${N}. ${roleTxt(m)} Trade value ${fk(m.x.v)}${m.x.vt?` (${m.x.vt>0?'+':'−'}${fk(Math.abs(m.x.vt))} in 30 days)`:''}.`)).join('')||none;
   const CL={QB:33,RB:26,WR:29,TE:30},core=m=>m.x.v>=6500&&(m.x.age||30)<(CL[m.x.p]||28);  // don't tell you to sell young cornerstones on a hot streak
-  const sell=M.filter(m=>m.x.r===ME&&!core(m)&&((m.hot&&!m.up&&m.luck/Math.max(m.xfL,1)>=0.3)||(m.x.v>=2500&&m.x.v-m.x.vt>=1500&&m.x.vt/(m.x.v-m.x.vt)>=0.15&&!m.up&&!(m.oppB!=null&&m.oppL>=m.oppB*1.15)))).sort((a,b)=>(b.luck||0)-(a.luck||0));
+  const sell=M.filter(PF('rsSell')).filter(m=>m.x.r===ME&&!core(m)&&((m.hot&&!m.up&&m.luck/Math.max(m.xfL,1)>=0.3)||(m.x.v>=2500&&m.x.v-m.x.vt>=1500&&m.x.vt/(m.x.v-m.x.vt)>=0.15&&!m.up&&!(m.oppB!=null&&m.oppL>=m.oppB*1.15)))).sort((a,b)=>(b.luck||0)-(a.luck||0));
   $('#rsSell').innerHTML=sell.slice(0,8).map(m=>rsItem(m,`${m.hot?`Scoring <b>${f1x(m.fpL)}</b> a game on a role worth <b>${f1x(m.xfL)}</b>, so expect some cooling. `:''}${m.x.vt?`Trade value ${m.x.vt>0?'up':'down'} ${fk(Math.abs(m.x.vt))} in 30 days (now ${fk(m.x.v)}). `:''}${roleTxt(m)}`)).join('')||'<p class="sub">No one on your team is clearly running hot right now.</p>';
-  const dn=M.filter(m=>m.down&&m.x.r&&(m.x.r===ME||m.x.v>=2000)).sort((a,b)=>(b.x.r===ME)-(a.x.r===ME)||(a.dOpp/Math.max(a.oppB,1))-(b.dOpp/Math.max(b.oppB,1)));
+  const dn=M.filter(PF('rsDown')).filter(m=>m.down&&m.x.r&&(m.x.r===ME||m.x.v>=2000)).sort((a,b)=>(b.x.r===ME)-(a.x.r===ME)||(a.dOpp/Math.max(a.oppB,1))-(b.dOpp/Math.max(b.oppB,1)));
   $('#rsDown').innerHTML=dn.slice(0,8).map(m=>rsItem(m,roleTxt(m)+(m.x.inj?` Listed ${esc(m.x.inj)}.`:''))).join('')||none;
-  const mv=M.filter(m=>m.x.r&&m.x.vt&&m.x.v>=1500&&m.x.v-m.x.vt>=800).sort((a,b)=>Math.abs(b.x.vt/(b.x.v-b.x.vt))-Math.abs(a.x.vt/(a.x.v-a.x.vt)));
+  const mv=M.filter(PF('rsMove')).filter(m=>m.x.r&&m.x.vt&&m.x.v>=1500&&m.x.v-m.x.vt>=800).sort((a,b)=>Math.abs(b.x.vt/(b.x.v-b.x.vt))-Math.abs(a.x.vt/(a.x.v-a.x.vt)));
   $('#rsMove').innerHTML=mv.slice(0,10).map(m=>rsItem(m,`Trade value <b class="${m.x.vt>0?'pos-v':'neg-v'}">${m.x.vt>0?'+':'−'}${fk(Math.abs(m.x.vt))}</b> (${Math.round(m.x.vt/Math.max(1,m.x.v-m.x.vt)*100)}%) to ${fk(m.x.v)}. ${m.up?'Role is growing too, so the move looks real.':m.down?'Role is shrinking, so the drop may continue.':m.hot?'Driven by a hot streak more than his role.':''}`)).join('')||'<p class="sub">Value trends show up once FantasyCalc reports them.</p>';
   // explorer
   const own=$('#rsOwn').value,pos=$('#rsPos').value,flag=$('#rsFlag').value,q=$('#rsQ').value.trim().toLowerCase();
-  const rows=M.filter(m=>(own==='all'||(own==='me'&&m.x.r===ME)||(own==='oth'&&m.x.r&&m.x.r!==ME)||(own==='fa'&&!m.x.r))&&(!pos||m.x.p===pos)&&(!q||m.x.n.toLowerCase().includes(q))&&(!flag||m[flag]))
-    .sort((a,b)=>(b.xfL||0)-(a.xfL||0)).slice(0,150);
+  const rows=M.filter(m=>(own==='all'||(own==='rost'&&m.x.r)||(own==='me'&&m.x.r===ME)||(own==='oth'&&m.x.r&&m.x.r!==ME)||(own==='fa'&&!m.x.r))&&(!pos||m.x.p===pos)&&(!q||m.x.n.toLowerCase().includes(q))&&(!flag||m[flag]))
+    .sort((a,b)=>(b.xfL||0)-(a.xfL||0)).slice(0,450);
   const fl=m=>[m.up&&'<span class="word w-good">Role ▲</span>',m.down&&'<span class="word w-bad">Role ▼</span>',m.hot&&'<span class="word w-mid">Hot</span>',m.cold&&'<span class="word w-info">Cold</span>',m.opp&&'<span class="word w-good">Teammate out</span>'].filter(Boolean).join(' ');
-  $('#rsTbl').innerHTML=`<thead><tr><th>Player</th><th>Owner</th><th class="r" title="Opportunities a game, last games (arrow vs before)">Opp/g</th><th class="r" title="Share of offensive snaps, last games">Snaps</th><th class="r" title="Share of team targets, last games">Tgt share</th><th class="r" title="Red-zone targets + carries a game, last games">RZ/g</th><th class="r" title="Fantasy points a game, last games">Pts/g</th><th class="r" title="Expected points a game from his role, last games">xFP/g</th><th class="r" title="Points minus expected: + running hot, − running cold">Pts − xFP</th><th class="r">Value</th><th class="r" title="Trade value change, 30 days">30d</th><th>Flags</th><th>By week</th></tr></thead><tbody>${rows.map(m=>`<tr class="${m.x.r===ME?'hl':''}"><td>${posTag(m.x.p)} ${rsName(m.x)} <span class="muted small">${esc(m.x.t||'')}</span></td><td class="small">${rsOwner(m.x)}</td><td class="r num">${f1x(m.oppL)} ${arr(m.dOpp,RS.minAbs[m.x.p]||2.5)}</td><td class="r num">${pctS(m.snL)} ${arr(m.dSn,0.1)}</td><td class="r num">${m.x.p==='QB'?'—':pctS(m.tsL)}</td><td class="r num">${f1x(m.rzL)}</td><td class="r num">${f1x(m.fpL)}</td><td class="r num">${f1x(m.xfL)}</td><td class="r num ${m.luck>=3?'pos-v':m.luck<=-3?'neg-v':''}">${m.luck==null?'—':(m.luck>=0?'+':'')+m.luck.toFixed(1)}</td><td class="r num">${m.x.v?fk(m.x.v):'—'}</td><td class="r num ${m.x.vt>0?'pos-v':m.x.vt<0?'neg-v':''}">${m.x.vt?(m.x.vt>0?'+':'−')+fk(Math.abs(m.x.vt)):'—'}</td><td>${fl(m)}</td><td>${spark(m.opps)}</td></tr>`).join('')}</tbody>`;
+  $('#rsTbl').innerHTML=`<thead><tr><th>Player</th><th>Owner</th><th class="r" title="Opportunities a game, last games (arrow vs before)">Opp/g</th><th class="r" title="Share of offensive snaps, last games">Snaps</th><th class="r" title="Share of team targets, last games">Tgt share</th><th class="r" title="Red-zone targets + carries a game, last games">RZ/g</th><th class="r" title="Fantasy points a game, last games">Pts/g</th><th class="r" title="Expected points a game from his role, last games">xFP/g</th><th class="r" title="Points minus expected: + running hot, − running cold">Pts − xFP</th><th class="r">Value</th><th class="r" title="Trade value change, 30 days">30d</th><th>Flags</th><th>By week</th></tr></thead><tbody>${rows.map(m=>`<tr class="${m.x.r===ME?'hl':''}"><td>${posTag(m.x.p)} ${rsName(m.x)} <span class="muted small">${esc(m.x.t||'')}</span></td><td class="small">${rsOwner(m.x)}</td><td class="r num">${f1x(m.oppL)} ${arr(m.dOpp,RS.minAbs[m.x.p]||2.5)}</td><td class="r num">${pctS(m.snL)} ${arr(m.dSn,0.1)}</td><td class="r num">${m.x.p==='QB'?'—':pctS(m.tsL)}</td><td class="r num">${f1x(m.rzL)}</td><td class="r num">${f1x(m.fpL)}</td><td class="r num">${f1x(m.xfL)}</td><td class="r num ${m.luck>=3?'pos-v':m.luck<=-3?'neg-v':''}">${m.luck==null?'—':(m.luck>=0?'+':'')+m.luck.toFixed(1)}</td><td class="r num">${m.x.v?fk(m.x.v):'—'}</td><td class="r num ${m.x.vt>0?'pos-v':m.x.vt<0?'neg-v':''}">${m.x.vt?(m.x.vt>0?'+':'−')+fk(Math.abs(m.x.vt)):'—'}</td><td>${fl(m)}</td><td>${spark(m.opps)}</td></tr>`).join('')}</tbody>`;reSort('rsTbl');
+  if(!rows.length){const fl={up:'role growing',down:'role shrinking',hot:'running hot',cold:'running cold',opp:'teammate out'}[flag],ow={me:'on your team',oth:'on other teams',fa:'among free agents',rost:'on a roster'}[own];
+    $('#rsTbl').innerHTML=`<tbody><tr><td class="sub">No ${pos||''} players ${fl?`with “${fl}”`:''} ${ow||''}${q?` matching “${esc(q)}”`:''} over the last ${N} games. Try “Everyone”, another position, or a smaller role-change setting at the top.</td></tr></tbody>`}
 }
-['#rsN','#rsT','#rsOwn','#rsPos','#rsFlag','#rsQ'].forEach(q=>document.addEventListener('input',e=>{if(e.target.matches&&e.target.matches(q))renderResearch()}));
+['input','change'].forEach(ev=>document.addEventListener(ev,e=>{if(e.target.matches&&['#rsN','#rsT','#rsOwn','#rsPos','#rsFlag','#rsQ','select.rsp'].some(q=>e.target.matches(q)))renderResearch()}));
 document.addEventListener('change',e=>{if(e.target.id==='tmSort'){$('#mgrGrid').dataset.done='';renderTeams()}if(e.target.id==='idSort'){$('#ideas').dataset.done='';renderIdeas()}});
-// generic: tap a header to sort any table marked sortable-tbl (numbers, %, ordinals and text all work)
-document.addEventListener('click',e=>{const th=e.target.closest('table.sortable-tbl th');if(!th)return;const tb=th.closest('table'),i=[...th.parentNode.children].indexOf(th),dir=th.dataset.dir==='d'?'a':'d';
+// generic: tap a header to sort any table marked sortable-tbl (numbers, %, ordinals and text all work); the choice sticks when the table redraws
+const SORTS={};function reSort(id){const tb=document.getElementById(id),s0=SORTS[id];if(!tb||!s0||!tb.tHead)return;const th=tb.tHead.rows[0].children[s0.i];if(!th)return;th.dataset.dir=s0.dir==='d'?'a':'d';th.click()}
+document.addEventListener('click',e=>{const th=e.target.closest('table.sortable-tbl th');if(!th)return;const tb=th.closest('table'),i=[...th.parentNode.children].indexOf(th),dir=th.dataset.dir==='d'?'a':'d';if(tb.id)SORTS[tb.id]={i,dir};
   [...th.parentNode.children].forEach(x=>{delete x.dataset.dir;x.textContent=x.textContent.replace(/ [▲▼]$/,'')});th.dataset.dir=dir;th.textContent+=dir==='d'?' ▼':' ▲';
   const key=td=>{const t=(td?.textContent||'').trim();const m=t.replace(/,/g,'').match(/^[−+-]?\d+(\.\d+)?/);return m?parseFloat(m[0].replace('−','-')):t.toLowerCase()};
   const body=tb.tBodies[0],rows=[...body.rows].filter(r=>!r.classList.contains('sep'));
@@ -1227,9 +1232,75 @@ function renderTeams(){
      ${mine?'':`<div><button class="btn ghost" data-lab="${t.id}||">Build a trade with them</button></div>`}</div>`}).join('');
 }
 
+// role section for the player card: weekly usage table + what changed, using the Research settings
+// ---------- player profile charts (one axis each; legend + tooltips; table view under "Show the numbers") ----------
+function wkChart(o){ // o: {weeks:[1..], hiFrom, series:[{name,color,vals,kind:'bar'|'stack'|'line'|'tick'}], max, fmt, refs:[{v,label}], h}
+  const W=window.innerWidth<520?Math.max(300,window.innerWidth-60):560,H=o.h||(W<520?150:140),L=30,R=6,T=10,B=20,n=o.weeks.length,cw=(W-L-R)/Math.max(n,1),fmt=o.fmt||(v=>v.toFixed(1));
+  const mx=o.max||Math.max(1,...o.series.flatMap(sr=>sr.kind==='stack'?[]:sr.vals.map(v=>v||0)),...(o.stackMax||[0]))*1.1;
+  const y=v=>T+(H-T-B)*(1-Math.min(v,mx)/mx),bw=Math.min(22,cw*0.56);let g='';
+  const hi=o.hiFrom!=null?o.weeks.findIndex(w=>w>=o.hiFrom):-1;
+  if(hi>=0)g+=`<rect x="${L+hi*cw}" y="${T}" width="${(n-hi)*cw}" height="${H-T-B}" fill="var(--accent-soft)" opacity=".6"></rect><text x="${L+hi*cw+4}" y="${T+10}" style="font-size:9px">last ${n-hi}</text>`;
+  [0,0.5,1].forEach(f=>{const v=mx*f;g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"></line><text x="${L-4}" y="${y(v)+3}" text-anchor="end">${o.pct?Math.round(v*100)+'%':Math.round(v)}</text>`});
+  let refsSvg='';(o.refs||[]).forEach((r,ri)=>{if(r.v==null)return;refsSvg+=`<line x1="${L}" x2="${W-R}" y1="${y(r.v)}" y2="${y(r.v)}" stroke="var(--ink)" stroke-opacity=".55" stroke-dasharray="4 3" stroke-width="1.5"></line><text x="${W-R-2}" y="${y(r.v)+(ri?11:-4)}" text-anchor="end" style="font-size:10px;fill:var(--ink);paint-order:stroke;stroke:var(--panel);stroke-width:3px">${r.label}</text>`});
+  const stacks=o.series.filter(sr=>sr.kind==='stack');
+  o.weeks.forEach((w,i)=>{const cx=L+i*cw+cw/2;let base=0;
+    stacks.forEach((sr,si)=>{const v=sr.vals[i];if(v==null||v<=0)return;const y0=y(base),y1=y(base+v);g+=`<rect x="${cx-bw/2}" y="${y1+(si?1:0)}" width="${bw}" height="${Math.max(1,y0-y1-(si?2:0))}" rx="${si===stacks.length-1?3:0}" fill="${sr.color}"></rect>`;base+=v});
+    o.series.forEach(sr=>{const v=sr.vals[i];if(v==null)return;
+      if(sr.kind==='bar')g+=`<rect x="${cx-bw/2}" y="${y(Math.max(v,0))}" width="${bw}" height="${Math.max(1,y(0)-y(Math.max(v,0)))}" rx="3" fill="${sr.color}"></rect>`;
+      if(sr.kind==='tick')g+=`<line x1="${cx-bw/2-3}" x2="${cx+bw/2+3}" y1="${y(v)}" y2="${y(v)}" stroke="${sr.color}" stroke-width="3" stroke-linecap="round"></line>`});
+    g+=`<text x="${cx}" y="${H-6}" text-anchor="middle">${w}</text>`;
+    const tip=`Week ${w}: `+o.series.map(sr=>`${sr.name} ${sr.vals[i]==null?'—':fmt(sr.vals[i])}`).join(' · ');
+    g+=`<rect x="${L+i*cw}" y="${T}" width="${cw}" height="${H-T-B}" fill="transparent"><title>${esc(tip)}</title></rect>`});
+  o.series.filter(sr=>sr.kind==='line').forEach(sr=>{const pts=sr.vals.map((v,i)=>v==null?null:[L+i*cw+cw/2,y(v)]);let d='',pen=false;pts.forEach(p=>{if(!p){pen=false;return}d+=(pen?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1);pen=true});
+    g+=`<path d="${d}" fill="none" stroke="${sr.color}" stroke-width="2"></path>`+pts.filter(Boolean).map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="${sr.color}" stroke="var(--panel)" stroke-width="2"></circle>`).join('')});
+  g+=refsSvg;
+  // keep hover hit-targets on top of lines
+  g=g.replace(/(<rect x="[^"]+" y="[^"]+" width="[^"]+" height="[^"]+" fill="transparent">.*?<\/rect>)/g,m=>{o._hits=(o._hits||'')+m;return ''})+(o._hits||'');
+  const legend=o.series.length>1?`<div class="row small" style="gap:12px;margin-bottom:2px">${o.series.map(sr=>`<span class="row" style="gap:5px"><i style="display:inline-block;width:${sr.kind==='line'||sr.kind==='tick'?14:10}px;height:${sr.kind==='line'||sr.kind==='tick'?3:10}px;border-radius:2px;background:${sr.color}"></i>${esc(sr.name)}</span>`).join('')}</div>`:'';
+  return `<div><div style="font-weight:600;font-size:13.5px">${esc(o.title)}</div>${o.sub?`<div class="muted" style="font-size:12px;margin-bottom:2px">${o.sub}</div>`:''}${legend}<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${esc(o.title)}" style="display:block;max-width:${W}px">${g}</svg></div>`}
+function statTile(label,val,sub,cls){return `<div class="tile" style="padding:8px 10px;gap:2px"><span class="t-label" style="font-size:12px">${label}</span><span class="t-big ${cls||''}" style="font-size:24px">${val}</span>${sub?`<span class="t-note" style="font-size:11.5px">${sub}</span>`:''}</div>`}
+function roleHTML(s){const x=(D.research||[]).find(r=>r.id===s);if(!x)return '';
+  const N=+($('#rsN')?.value||3),thr=+($('#rsT')?.value||0.25),m=rsMetrics(N,thr).find(q=>q.x.id===s);if(!m)return '';
+  const f1x=v=>v==null?'—':v.toFixed(1),qb=x.p==='QB',dl=(a,b,f,u)=>a==null||b==null?'':`${a-b>=0?'▲':'▼'} ${f(Math.abs(a-b))}${u||''} vs before`,cl=(d,t)=>d==null?'':d>=t?'pos-v':d<=-t?'neg-v':'';
+  const flags=[m.up&&['Role growing','w-good'],m.down&&['Role shrinking','w-bad'],m.hot&&['Running hot','w-mid'],m.cold&&['Running cold','w-info'],m.opp&&['Teammate out','w-good']].filter(Boolean);
+  const rows=x.w.map((r,i)=>({wk:i+1,r})).filter(o=>o.r),weeks=rows.map(o=>o.wk),hiFrom=rows.length>N?rows[rows.length-N].wk:null,col=k=>rows.map(o=>o.r[k]);
+  const ng=Math.min(N,rows.length);
+  // plain-English read
+  const say=[];
+  if(m.up)say.push(`His role is <b>growing</b>: ${f1x(m.oppB)} → ${f1x(m.oppL)} opportunities a game.`);else if(m.down)say.push(`His role is <b>shrinking</b>: ${f1x(m.oppB)} → ${f1x(m.oppL)} opportunities a game.`);else if(m.oppB!=null)say.push(`His role is <b>steady</b> (${f1x(m.oppB)} → ${f1x(m.oppL)} opportunities a game).`);
+  if(m.luck!=null)say.push(m.hot?`He's <b>running hot</b>: ${f1x(m.fpL)} points a game on a role worth ${f1x(m.xfL)}, so expect some cooling unless the role keeps growing.`:m.cold?`He's <b>running cold</b>: ${f1x(m.fpL)} points a game on a role worth ${f1x(m.xfL)}; if the role holds, the points usually follow.`:`His scoring (${f1x(m.fpL)} a game) matches his role (${f1x(m.xfL)}).`);
+  if(m.opp)say.push(`<b>${esc(m.opp.join(', '))}</b> ${m.opp.length>1?'are':'is'} out at his position, which can open up more work.`);
+  const tiles=[statTile(`Points / game (last ${ng})`,f1x(m.fpL),dl(m.fpL,m.B.length?m.B.reduce((a,r)=>a+r.fp,0)/m.B.length:null,f1x),cl(m.fpL-(m.B.length?m.B.reduce((a,r)=>a+r.fp,0)/m.B.length:m.fpL),2)),
+    statTile('Role worth (xFP / game)',f1x(m.xfL),m.luck==null?'':`${m.luck>=0?'+':'−'}${Math.abs(m.luck).toFixed(1)} actual vs expected`,''),
+    statTile('Opportunities / game',f1x(m.oppL),dl(m.oppL,m.oppB,f1x),cl(m.dOpp,RS.minAbs[x.p]||2.5)),
+    statTile('Snap share',pctS(m.snL),m.dSn==null?'':`${m.dSn>=0?'▲':'▼'} ${Math.round(Math.abs(m.dSn)*100)} pts vs before`,cl(m.dSn,0.08))]
+    .concat(qb?[]:[statTile('Target share',pctS(m.tsL),m.tsB==null||m.tsL==null?'':`${m.tsL-m.tsB>=0?'▲':'▼'} ${Math.round(Math.abs(m.tsL-m.tsB)*100)} pts vs before`,cl(m.tsL!=null&&m.tsB!=null?m.tsL-m.tsB:null,0.04))])
+    .concat([statTile('Trade value',x.v?fk(x.v):'—',x.vt?`${x.vt>0?'▲':'▼'} ${fk(Math.abs(x.vt))} in 30 days`:'',x.vt>0?'pos-v':x.vt<0?'neg-v':'')]);
+  const c1=wkChart({title:'Points vs. what his role was worth',sub:'Bars are his points; the orange tick is expected points from his snaps, targets, carries and red-zone work. Bars above the tick: running hot.',weeks,hiFrom,
+    series:[{name:'Points',color:'var(--s1)',vals:col(0),kind:'bar'},{name:'Role worth (xFP)',color:'var(--s2)',vals:col(7),kind:'tick'}]});
+  const c2=wkChart({title:'Opportunities each week',sub:qb?'Pass attempts and carries.':'Targets and carries stacked. Dashed lines: average before vs. recent games.',weeks,hiFrom,
+    series:qb?[{name:'Pass attempts',color:'var(--s1)',vals:col(4),kind:'stack'},{name:'Carries',color:'var(--s2)',vals:col(3),kind:'stack'}]:[{name:'Targets',color:'var(--s1)',vals:col(2),kind:'stack'},{name:'Carries',color:'var(--s2)',vals:col(3),kind:'stack'}],
+    stackMax:rows.map(o=>qb?o.r[4]+o.r[3]:o.r[2]+o.r[3]),fmt:v=>String(Math.round(v)),refs:[{v:m.oppB,label:`before ${f1x(m.oppB)}`},{v:m.oppL,label:`last ${ng}: ${f1x(m.oppL)}`}]});
+  const c3=wkChart({title:qb?'Share of snaps':'Share of snaps and team targets',weeks,hiFrom,max:1,pct:true,fmt:v=>Math.round(v*100)+'%',
+    series:qb?[{name:'Snaps',color:'var(--s1)',vals:col(1),kind:'line'}]:[{name:'Snaps',color:'var(--s1)',vals:col(1),kind:'line'},{name:'Target share',color:'var(--s2)',vals:col(6),kind:'line'}]});
+  return `<div style="display:flex;flex-direction:column;gap:10px"><div class="step">Role and usage ${flags.map(f=>W(f)).join(' ')}</div>
+    <p class="small" style="margin:0">${say.join(' ')}</p>
+    <div class="tiles" style="grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px">${tiles.join('')}</div>
+    ${c1}${c2}${c3}
+    <details class="more"><summary>Show the numbers</summary><div class="tbl-wrap"><table class="sortable-tbl" style="font-size:12px"><thead><tr><th>Wk</th><th class="r">Pts</th><th class="r" title="Expected points from his role">xFP</th><th class="r">Snaps</th>${qb?'<th class="r">Pass att</th>':'<th class="r">Targets</th>'}<th class="r">Carries</th>${qb?'':'<th class="r" title="Share of team targets">Tgt share</th>'}<th class="r" title="Red-zone targets + carries">RZ</th></tr></thead>
+    <tbody>${rows.map(({wk,r})=>`<tr${hiFrom!=null&&wk>=hiFrom?' class="hl"':''}><td class="num">${wk}</td><td class="r num">${r[0].toFixed(1)}</td><td class="r num">${r[7]==null?'—':r[7].toFixed(1)}</td><td class="r num">${pctS(r[1])}</td><td class="r num">${qb?r[4]:r[2]}</td><td class="r num">${r[3]}</td>${qb?'':`<td class="r num">${pctS(r[6])}</td>`}<td class="r num">${r[5]}</td></tr>`).join('')}</tbody></table></div></div></details>
+    <p class="sub" style="margin:0">Shaded area = the last ${ng} games, compared with the games before (change how many on the Research tab). Hover a week for exact numbers.</p></div>`}
+// card for players who aren't in the main player list (mostly free agents found by Research)
+function openResearchOnly(s){const x=(D.research||[]).find(r=>r.id===s);if(!x)return false;
+  $('#plTitle').innerHTML=`${posTag(x.p)} ${esc(x.n)}`;
+  $('#plBody').innerHTML=`<p class="answer">${esc(x.n)} plays for ${esc(x.t||'no NFL team')} and is ${x.r?`on <b>${esc(teamName(x.r))}</b>`:'<b>a free agent</b> in your league'}.${x.age?` Age ${Math.floor(x.age)}.`:''}${x.inj?` <span class="neg-v">${esc(x.inj)}</span>.`:''}</p>
+    <div class="kv"><span>Trade value</span><span>${x.v?valTxt(x.v):'not valued by the market yet'}</span>${x.ro!=null?`<span>Rostered</span><span>${Math.round(x.ro)}% of leagues on FantasyCalc</span>`:''}${(x.pr||[]).length?`<span>Projected next weeks</span><span>${x.pr.map(v=>v?v.toFixed(1):'—').join(' · ')}</span>`:''}</div>
+    ${roleHTML(s)}
+    ${x.r&&x.r!==ME?`<div><button class="btn" data-lab="${x.r}||${s}">Build an offer for him</button></div>`:!x.r?'<p class="sub">Free agent: claim him on Sleeper if you want him.</p>':''}`;
+  $('#plDlg').showModal();return true}
 // ---------- player card ----------
 document.addEventListener('click',e=>{const b=e.target.closest('[data-pid]');if(!b)return;e.preventDefault();openPlayer(b.dataset.pid)});
-function openPlayer(s){const p=PL[s];if(!p)return;const cw=new Set(((A.counted_wk||{})[s])||[]),mine=p.r===ME,B=(A.board||[]).find(b=>b.id===s),c=(A.counted||{})[s];
+function openPlayer(s){const p=PL[s];if(!p){openResearchOnly(s);return}const cw=new Set(((A.counted_wk||{})[s])||[]),mine=p.r===ME,B=(A.board||[]).find(b=>b.id===s),c=(A.counted||{})[s];
   $('#plTitle').innerHTML=`${posTag(p.p)} ${esc(p.n)}`;
   const played=p.a.filter(x=>x!=null);
   const log=p.a.map((v,i)=>`<div class="${v==null?'bye':cw.has(i+1)?'ct':''}"><small>Wk ${i+1}</small>${v==null?'—':v.toFixed(1)}</div>`).join('');
@@ -1241,6 +1312,7 @@ function openPlayer(s){const p=PL[s];if(!p)return;const cw=new Set(((A.counted_w
      ${(t=>t?`<span>Value trend</span><span class="${t.d>=0?'pos-v':'neg-v'}">${t.d>=0?'up':'down'} ${fk(Math.abs(t.d))} (${Math.round(Math.abs(t.pct)*100)}%) in ${t.days} days</span>`:'')(vtrend(p))}<span>Bye week</span><span>${p.bye??'—'}</span><span>Trade value</span><span class="num">${fk(value(s))} <span class="muted small">(${pickWord(value(s))})</span></span>${p.a25!=null?`<span>Last season</span><span>${p.a25} points a game</span>`:''}${mine?`<span>For you</span><span>${c?`${c[0].toFixed(0)} points that counted, in ${c[1]} week${c[1]===1?'':'s'}`:'hasn\'t made your lineup yet'}${p.imp!=null&&!OFF?` · adds ${p.imp.toFixed(1)} a week from here (${(p.imp_po||0).toFixed(1)} in playoff weeks)`:''}</span>`:''}</div>
     <div><div class="step" style="margin-bottom:6px">Points each week${mine?' · green = counted in your lineup':''}</div><div class="gl">${log||'<span class="sub">No games yet.</span>'}</div></div>
     <div><div class="step" style="margin-bottom:6px">Expected points the rest of the way</div><div class="gl">${fut}</div>${projWarn(s)?`<p class="sub" style="margin-top:6px">${projWarn(s)}</p>`:''}${(r=>r?`<p class="sub" style="margin-top:6px">Most weeks (8 in 10) he'll land between <b>${r[0].toFixed(0)}</b> and <b>${r[1].toFixed(0)}</b> points; big games happen more often than busts. There's also about a 1-in-20 chance he misses any given game.</p>`:'')(NW?(k=>k>=0?prange(p,k):null)(p.pr.findIndex(x=>x>0)):null)}</div>
+    ${roleHTML(s)}
     ${p.r&&p.r!==ME&&!p.gone?`<div><button class="btn" data-lab="${p.r}||${s}">Build an offer for him</button></div>`:mine?`<div><button class="btn ghost" data-lab="${st.partner}|${s}|">Shop him in a trade</button></div>`:''}`;
   $('#plDlg').showModal()}
 
