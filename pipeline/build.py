@@ -1924,8 +1924,10 @@ def main():
             continue
         fcv_ = fc_vals.get(pid_, 0); tr_, rp_ = fc_meta.get(pid_, (0, None))
         v_ = unified(pid_) if fcv_ else 0
+        # FantasyCalc's 30-day trend is a change in ITS value; convert the value 30 days ago onto our scale and diff
+        old_ = unified(pid_, max(fcv_ - tr_, 1), info_["p"]) if fcv_ and tr_ else v_
         research.append(dict(id=pid_, n=info_["n"], p=info_["p"], t=info_["t"], r=own_, age=info_["age"], inj=info_["inj"],
-                             v=v_, vt=round(v_ * tr_ / fcv_) if fcv_ and tr_ else 0, ro=rp_, w=wk_rows,
+                             v=v_, vt=round(v_ - old_) if fcv_ and tr_ else 0, ro=rp_, w=wk_rows,
                              pr=[round(x, 1) for x in (P.get(pid_, {}).get("pr") or [])[:4]]))
     print(f"research: {len(research)} players with usage, xFP fit for {sorted(k for k in XF if XF[k])}")
 
