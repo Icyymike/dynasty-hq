@@ -474,6 +474,8 @@ def main():
 
     # ---------- stats (league-scored) this season + last season
     pts, use = {}, {}
+    ext = {}       # pid -> "yr-wk" -> [snaps, team snaps, targets, carries, pass att, rz targets, rz carries, air yards]
+    tm_tot = {}    # (team, "yr-wk") -> [team targets, team carries]
 
     def load_stats(yr, wk, cache):
         url = f"{API}/stats/nfl/regular/{yr}/{wk}"
@@ -493,6 +495,11 @@ def main():
                     continue
                 pts.setdefault(pid, {})[f"{yr}-{wk}"] = score(s, pos)
                 use.setdefault(pid, {})[f"{yr}-{wk}"] = [s.get("pass_att", 0) or 0, s.get("rush_att", 0) or 0, s.get("rec_tgt", 0) or 0]
+                g_ = lambda k_: float(s.get(k_) or 0)
+                ext.setdefault(pid, {})[f"{yr}-{wk}"] = [g_("off_snp"), g_("tm_off_snp"), g_("rec_tgt"), g_("rush_att"), g_("pass_att"),
+                                                         g_("rec_rz_tgt"), g_("rush_rz_att"), g_("rec_air_yd")]
+                tk_ = (info.get("team") or "", f"{yr}-{wk}")
+                tt_ = tm_tot.setdefault(tk_, [0.0, 0.0]); tt_[0] += g_("rec_tgt"); tt_[1] += g_("rush_att")
 
     # ---------- Sleeper projections (rescored), past weeks for backtest + future weeks
     proj = {}
@@ -509,7 +516,7 @@ def main():
                 proj.setdefault(pid, {})[wk] = v
 
     # ---------- dynasty values (FantasyCalc API, auto) + optional KTC snapshot (manual file)
-    fc_vals, fc_picks, fc_pick_raw = {}, {}, {}
+    fc_vals, fc_picks, fc_pick_raw, fc_meta = {}, {}, {}, {}
     fc = get(FC, cache_hours=12, required=False) or []
     for e in fc:
         pl = e.get("player") or {}
@@ -526,6 +533,7 @@ def main():
                 fc_pick_raw.setdefault((y_, rd_), {}).setdefault(tier or "", []).append(e.get("value", 0))
         elif sid:
             fc_vals[str(sid)] = e.get("value", 0)
+            fc_meta[str(sid)] = (e.get("trend30Day") or 0, e.get("maybeRosterPercent"))
     fc_tier = {}
     for key, d_ in fc_pick_raw.items():
         for tier, vs in d_.items():
@@ -1879,6 +1887,48 @@ def main():
     elif prev_adv.get("changed_from") and prev_adv.get("date") == advice["date"]:
         advice["changed_from"] = prev_adv["changed_from"]
 
+    # ---------- research: weekly role (snaps, targets, carries, red zone) and expected points from that role
+    # xFP = what a player's usage is usually worth in this league's scoring, fit per position on this season + last season
+    XF = {}
+    def xrow(e_):
+        return [e_[4], e_[3], e_[2], e_[5], e_[6], e_[7] / 10.0, 1.0]
+    for ps in POS:
+        X_, y_ = [], []
+        for pid_, d_ in ext.items():
+            if (players_db.get(pid_) or {}).get("position") != ps:
+                continue
+            for k_, e_ in d_.items():
+                if k_ in pts.get(pid_, {}) and (e_[0] > 0 or e_[2] + e_[3] + e_[4] > 0):
+                    X_.append(xrow(e_)); y_.append(pts[pid_][k_])
+        XF[ps] = lstsq(X_, y_) if len(X_) > 60 else None
+    research = []
+    for pid_, d_ in ext.items():
+        info_ = pinfo(pid_)
+        if info_["p"] not in POS:
+            continue
+        wk_rows = []; mx_opp = 0
+        for wk in range(1, done + 1):
+            k_ = f"{season}-{wk}"; e_ = d_.get(k_)
+            if not e_:
+                wk_rows.append(None); continue
+            tt_ = tm_tot.get((info_["t"] or "", k_), [0, 0])
+            xf_ = sum(c * x for c, x in zip(XF[info_["p"]], xrow(e_))) if XF.get(info_["p"]) else None
+            opp_ = e_[4] + e_[3] if info_["p"] == "QB" else e_[2] + e_[3]
+            mx_opp = max(mx_opp, opp_)
+            wk_rows.append([round(pts.get(pid_, {}).get(k_, 0), 1), round(e_[0] / e_[1], 3) if e_[1] else None, int(e_[2]), int(e_[3]), int(e_[4]),
+                            int(e_[5] + e_[6]), round(e_[2] / tt_[0], 3) if tt_[0] else None, round(max(xf_, 0), 1) if xf_ is not None else None])
+        own_ = rostered.get(pid_, 0)
+        if not own_ and (not info_["t"] or mx_opp < 3):
+            continue
+        if all(w_ is None for w_ in wk_rows):
+            continue
+        fcv_ = fc_vals.get(pid_, 0); tr_, rp_ = fc_meta.get(pid_, (0, None))
+        v_ = unified(pid_) if fcv_ else 0
+        research.append(dict(id=pid_, n=info_["n"], p=info_["p"], t=info_["t"], r=own_, age=info_["age"], inj=info_["inj"],
+                             v=v_, vt=round(v_ * tr_ / fcv_) if fcv_ and tr_ else 0, ro=rp_, w=wk_rows,
+                             pr=[round(x, 1) for x in (P.get(pid_, {}).get("pr") or [])[:4]]))
+    print(f"research: {len(research)} players with usage, xFP fit for {sorted(k for k in XF if XF[k])}")
+
     data = dict(meta=dict(league=league.get("name"), season=season, done=done, fut=fut, reg_end=reg_end, me=me, median=median_on,
                           n_playoff=n_playoff, generated=gen, this_week=this_week, actions=actions,
                           pick_prices={rd: pick_base(season + 1, rd) for rd in range(1, int(settings.get("draft_rounds", 4) or 4) + 1)},
@@ -1894,7 +1944,7 @@ def main():
                           ktc_date=ktc.get("date"), values=val_src, backtest=backtest, checks=checks, byes=bye_src, fa_checked=len(fa_pool), faab=int(settings.get("waiver_budget", 0) or 0), sims=SIMS, ledger_through=CFG.get("ledger_through"),
                           scoring=CFG.get("scoring_label", ""), slots=" · ".join(p for p in league.get("roster_positions", []) if p != "BN")),
                 teams=tm_out, players=P, weeks=weeks, po_actual={str(k): {str(r): v for r, v in d.items()} for k, d in po_actual.items()}, sched=sched, m26={str(k): v for k, v in my_weekly.items()}, picks=picks,
-                advice=advice, outlook=outlook, feed=feed, ledger_now=ledger_now, past_picks=dict(used=used_picks, traded=traded_picks), profiles={str(k): v for k, v in profiles.items()}, rookies=rookies, digest=digest,
+                advice=advice, outlook=outlook, feed=feed, ledger_now=ledger_now, research=research, past_picks=dict(used=used_picks, traded=traded_picks), profiles={str(k): v for k, v in profiles.items()}, rookies=rookies, digest=digest,
                 analysis=dict(board=board, sugg={str(k): v for k, v in sugg.items()}, needs={str(k): v for k, v in needs.items()},
                               market=market, depth={str(k): v for k, v in depth.items()}, fa=fa, cut=cut,
                               counted={k: [round(v[0], 1), v[1]] for k, v in counted.items()},

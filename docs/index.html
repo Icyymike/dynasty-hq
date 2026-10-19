@@ -284,6 +284,7 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
       <button role="tab" aria-selected="false" data-tab="trades">Trades</button>
       <button role="tab" aria-selected="false" data-tab="players">Players</button>
       <button role="tab" aria-selected="false" data-tab="draft">Draft Picks</button>
+      <button role="tab" aria-selected="false" data-tab="research">Research</button>
       <button role="tab" aria-selected="false" data-tab="teams">Other Teams</button>
     </nav>
   </div>
@@ -314,7 +315,7 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
     <h2>Standings</h2>
     <p class="sub">Ranked by record. Ties go to the team with more total points. The bar is each team's chance to make the playoffs.</p>
     <div class="tbl-wrap"><table id="standTbl"></table></div>
-    <details class="more"><summary>Show more numbers</summary><div class="tbl-wrap"><table id="standMore"></table></div><p class="sub" style="margin:0"><b>Schedule left</b> is how strong your remaining opponents are expected to be: each opponent's projected lineup score in the week you play them (so their byes and injuries that week count), averaged. It uses current rosters and projections, not records, so a 1-9 team that just traded for stars counts as tough. It only affects your head-to-head game each week; the median game is against the whole league. The odds and title chances already play out the exact schedule.</p></details>
+    <details class="more"><summary>Show more numbers</summary><div class="tbl-wrap"><table id="standMore" class="sortable-tbl"></table></div><p class="sub" style="margin:0"><b>Schedule left</b> is how strong your remaining opponents are expected to be: each opponent's projected lineup score in the week you play them (so their byes and injuries that week count), averaged. It uses current rosters and projections, not records, so a 1-9 team that just traded for stars counts as tough. It only affects your head-to-head game each week; the median game is against the whole league. The odds and title chances already play out the exact schedule.</p></details>
   </div>
   <div class="card" id="gamesCard"><h2 id="gamesTitle">This week's games</h2><div class="matchups" id="matchups"></div></div>
   <div class="card" id="poCard"></div>
@@ -368,7 +369,7 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
   </div>
 
   <div data-sub-panel="ideas" hidden style="display:flex;flex-direction:column;gap:16px">
-    <div class="card"><h2>Who should I trade with?</h2><p class="sub">Each team below: what they're short on, what they have extra, and a deal that helps your lineup without hurting theirs much, at a fair price.</p><div id="ideasFocus"></div></div>
+    <div class="card"><h2>Who should I trade with?</h2><p class="sub">Each team below: what they're short on, what they have extra, and a deal that helps your lineup without hurting theirs much, at a fair price.</p><div class="row small" style="gap:12px;flex-wrap:wrap"><div id="ideasFocus"></div><label class="muted" for="idSort">Sort by</label><select id="idSort"><option value="deal">Best deal for you</option><option value="stand">Standings</option><option value="name">Name</option></select></div></div>
     <div id="ideas" class="grid2"></div>
   </div>
 
@@ -393,7 +394,7 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
       <select id="pPos" aria-label="Position"><option value="">All positions</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select>
       <input type="search" id="pSearch" placeholder="Search a name" aria-label="Search players">
     </div>
-    <div class="tbl-wrap"><table id="projTbl"></table></div>
+    <div class="tbl-wrap"><table id="projTbl" class="sortable-tbl"></table></div>
     <details class="more"><summary>How accurate are these projections?</summary><div id="accuracy"></div></details>
   </div>
 </section>
@@ -401,7 +402,7 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
 <!-- ================= DRAFT ================= -->
 <section data-panel="draft" hidden>
   <div class="card"><h2>What picks do I have?</h2><p class="answer" id="pickAnswer"></p><div id="myPicks" class="list"></div>
-    <details class="more"><summary>See the projected 2027 draft order and every team's picks</summary><div><div class="tbl-wrap"><table id="orderTbl"></table></div><div class="tbl-wrap"><table id="capTbl"></table></div></div></details>
+    <details class="more"><summary>See the projected 2027 draft order and every team's picks</summary><div><div class="tbl-wrap"><table id="orderTbl"></table></div><div class="tbl-wrap"><table id="capTbl" class="sortable-tbl"></table></div></div></details>
   </div>
   <div class="card"><h2>How did my past picks turn out?</h2><p class="answer" id="ppAnswer"></p><div id="ppList" class="list"></div></div>
   <div class="card"><h2>What happened to picks I traded away?</h2><div id="ppTraded" class="list"></div></div>
@@ -409,8 +410,33 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
 </section>
 
 <!-- ================= OTHER TEAMS ================= -->
+<section data-panel="research" hidden>
+  <div class="card"><h2>Who's trending, and what should I do about it?</h2>
+    <p class="sub">Built from every player's weekly role: snaps, targets, carries, red-zone chances and share of his team's targets. <b>Opportunities</b> = targets + carries (pass attempts + carries for QBs). <b>Expected points (xFP)</b> = what that role is usually worth in this league's scoring, fit on this season and last; a player scoring well above it is running hot (often touchdowns), well below it is running cold. Role changes stick far more often than hot or cold streaks.</p>
+    <div class="row small" style="gap:14px">
+      <label>Compare the last <select id="rsN"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option></select> games with the games before</label>
+      <label>Flag a role change of <select id="rsT"><option value="0.15">15%+</option><option value="0.25" selected>25%+</option><option value="0.4">40%+</option></select></label>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card"><h2>Roles growing</h2><p class="sub" id="rsUpNote"></p><div id="rsUp" class="list"></div></div>
+    <div class="card"><h2>Waiver watch</h2><p class="sub">Free agents with a growing role or a real role already. These are the adds before they score.</p><div id="rsWaiver" class="list"></div></div>
+    <div class="card"><h2>Buy low</h2><p class="sub">On other teams: a solid role but scoring below what that role is usually worth. Bad luck tends to even out; the price may not.</p><div id="rsBuy" class="list"></div></div>
+    <div class="card"><h2>Sell high</h2><p class="sub">On your team: scoring well above what his role is usually worth, or his trade value jumped without a bigger role. Usually the best time to cash in.</p><div id="rsSell" class="list"></div></div>
+    <div class="card"><h2>Roles shrinking</h2><p class="sub">Fewer snaps or opportunities lately. On your team, that's a warning before the trade value drops.</p><div id="rsDown" class="list"></div></div>
+    <div class="card"><h2>Market movers (30 days)</h2><p class="sub">Biggest trade-value changes over the last month, from FantasyCalc's real trades.</p><div id="rsMove" class="list"></div></div>
+  </div>
+  <div class="card"><h2>Player explorer</h2>
+    <div class="row small" style="gap:10px"><select id="rsOwn" aria-label="Owner"><option value="all">Everyone</option><option value="me">My team</option><option value="oth">Other teams</option><option value="fa">Free agents</option></select>
+      <select id="rsPos" aria-label="Position"><option value="">All positions</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select>
+      <select id="rsFlag" aria-label="Flag"><option value="">Any flag</option><option value="up">Role growing</option><option value="down">Role shrinking</option><option value="hot">Running hot</option><option value="cold">Running cold</option><option value="opp">Teammate out</option></select>
+      <input type="search" id="rsQ" placeholder="Search a name" aria-label="Search"></div>
+    <p class="sub" style="margin:0">Tap a column header to sort. Arrows compare the last games with the earlier ones.</p>
+    <div class="tbl-wrap"><table id="rsTbl" class="sortable-tbl"></table></div></div>
+</section>
+
 <section data-panel="teams" hidden>
-  <div class="card"><h2>What is every team up to?</h2><p class="sub">Whether each team is chasing a title or rebuilding (judged from their record and playoff odds, roster age, draft picks and the last year of trades), what they need, and how they trade. Your team is first for comparison, then the teams you've traded with most.</p></div>
+  <div class="card"><h2>What is every team up to?</h2><div class="row small" style="gap:8px"><label for="tmSort" class="muted">Sort by</label><select id="tmSort"><option value="with">Traded with you most</option><option value="stand">Standings</option><option value="win">Going for it first</option><option value="build">Building first</option><option value="name">Name</option></select></div><p class="sub">Whether each team is chasing a title or rebuilding (judged from their record and playoff odds, roster age, draft picks and the last year of trades), what they need, and how they trade. Your team is first for comparison, then the teams you've traded with most.</p></div>
   <div id="mgrGrid" class="grid2"></div>
 </section>
 
@@ -554,11 +580,12 @@ function pl(s){const p=PL[s];return p?`<button class="pl" type="button" data-pid
 function deadline(){const R=D.meta.rules||{},dl=R.trade_deadline;if(!dl)return null;const wk=D.meta.this_week||D.meta.done+1;return {dl,left:dl-wk+1,open:wk<=dl}}
 function oppOf(id,wk){const pr=D.sched[wk]||[],m=pr.find(x=>x[0]===id);if(!m)return null;const o=pr.find(x=>x[1]===m[1]&&x[0]!==id);return o?o[0]:null}
 const short=n=>n.length>18?n.slice(0,17)+'…':n;
+const standOrder=()=>[...TEAMS].sort((a,b)=>b.w-a.w||b.pf-a.pf);
 
 // ---------- tabs ----------
 document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
 function showTab(t){document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));document.querySelectorAll('main section').forEach(s=>s.hidden=s.dataset.panel!==t);store.set('hq-tab3',t);
-  if(t==='team')renderTeam();if(t==='players')renderPlayers();if(t==='trades')showSub(store.get('hq-sub2')||'lab');if(t==='draft')renderDraft();if(t==='teams')renderTeams();window.scrollTo({top:0})}
+  if(t==='team')renderTeam();if(t==='players')renderPlayers();if(t==='trades')showSub(store.get('hq-sub2')||'lab');if(t==='draft')renderDraft();if(t==='teams')renderTeams();if(t==='research')renderResearch();window.scrollTo({top:0})}
 document.querySelectorAll('.tabsub button').forEach(b=>b.addEventListener('click',()=>showSub(b.dataset.sub)));
 function showSub(s){document.querySelectorAll('.tabsub button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.sub===s));document.querySelectorAll('[data-sub-panel]').forEach(p=>p.hidden=p.dataset.subPanel!==s);store.set('hq-sub2',s);
   if(s==='lab'&&!$('#giveList').innerHTML)renderLists();if(s==='ideas')renderIdeas();if(s==='feed')renderFeed();if(s==='ledger')renderLedger()}
@@ -753,7 +780,7 @@ function renderBuyFA(){
 function renderPlayers(){
   if(!$('#buyList').dataset.done){$('#buyList').dataset.done=1;renderBuyFA();
     const bt=D.meta.backtest;$('#accuracy').innerHTML=bt.sleeper!=null?`<p class="sub">Checked against every completed game this season (${bt.n} player-games): Sleeper's projections missed by ${bt.sleeper} points on average, our own model by ${bt.ours}, and the mix we use (${Math.round(bt.w*100)}% Sleeper, ${Math.round(100-bt.w*100)}% ours) by ${bt.blend}.${bt.n_div?` For players whose recent games disagree a lot with Sleeper's projection (${bt.n_div} player-games, often a role change), the best mix tested was ${Math.round(bt.w_div*100)}% Sleeper, ${Math.round(100-bt.w_div*100)}% recent games, and that's what we use for them.`:''} Single games swing a lot; season-long averages are much more reliable.</p>`:'<p class="sub">Not enough games yet to check accuracy.</p>';
-    $('#pTeam').innerHTML='<option value="">All teams</option>'+TEAMS.map(t=>`<option value="${t.id}" ${t.id===ME?'selected':''}>${esc(t.name)}</option>`).join('');
+    $('#pTeam').innerHTML='<option value="">All teams</option>'+[TEAMS.find(t=>t.id===ME)].concat(standOrder().filter(t=>t.id!==ME)).map(t=>`<option value="${t.id}" ${t.id===ME?'selected':''}>${esc(t.name)}${t.id===ME?' (you)':` (${t.w}-${t.l})`}</option>`).join('');
     ['#pTeam','#pPos','#pSearch'].forEach(q=>$(q).addEventListener('input',renderPlayers))}
   const tm=$('#pTeam').value,ps=$('#pPos').value,q=$('#pSearch').value.trim().toLowerCase();
   const ids=Object.keys(PL).filter(s=>!PL[s].gone&&(!tm||PL[s].r==tm)&&(!ps||PL[s].p===ps)&&(!q||PL[s].n.toLowerCase().includes(q)));
@@ -1047,7 +1074,8 @@ function futLine(d){if(d.E0==null||d.E1==null||!D.outlook)return '';const y=D.ou
 function renderIdeas(){
   const g=$('#ideas');if(g.dataset.done)return;g.dataset.done=1;$('#ideasFocus').innerHTML=focusToggleHTML();
   const SG={};for(const id in (A.sugg||{}))SG[id]=(A.sugg[id]||[]).filter(d=>dmOf(d)>=1).sort((a,b)=>dmOf(b)-dmOf(a));
-  const order=TEAMS.filter(t=>t.id!==ME).sort((a,b)=>(SG[b.id]||[]).length-(SG[a.id]||[]).length||b.w-a.w);
+  const IS=$('#idSort').value,best=id=>(SG[id]||[]).length?dmOf(SG[id][0]):-99,stI=id=>standOrder().findIndex(t=>t.id===id);
+  const order=TEAMS.filter(t=>t.id!==ME).sort((a,b)=>IS==='stand'?stI(a.id)-stI(b.id):IS==='name'?a.name.localeCompare(b.name):best(b.id)-best(a.id)||stI(a.id)-stI(b.id));
   g.innerHTML=order.map(t=>{const nd=needTxt(t.id),sp=spareOf(t.id),deals=(SG[t.id]||[]).slice(0,2);
     return `<div class="card"><div class="row" style="justify-content:space-between"><h3>${esc(t.name)}</h3>${W(poWord(t.odds.playoffs))}</div>
       <div class="kv"><span>Record</span><span>${t.w}-${t.l}</span><span>They need</span><span>${nd.length?nd.map(p=>posTag(p)).join(' '):'nothing urgent'}</span><span>They have extra</span><span>${sp.length?sp.map(o=>pl(o.s)).join(', '):'no one obvious'}</span></div>
@@ -1122,11 +1150,71 @@ function renderDraft(){
   $('#rookies').innerHTML=R.length?`<div class="tbl-wrap"><table><thead><tr><th>Tier</th><th>Player</th><th class="r">Value</th></tr></thead><tbody>${R.map(r=>`<tr><td class="num">${r.tier}</td><td>${posTag(r.p)} ${esc(r.n)} <span class="muted small">${esc(r.t)}</span></td><td class="r">${pickWord(r.v)}</td></tr>`).join('')}</tbody></table></div>`:`<p class="sub">Not available yet. Rookie rankings show up here after the NFL draft in late April, grouped into tiers of similar value.</p>`;
 }
 
+// ---------- RESEARCH: roles, expected points, buy/sell signals ----------
+const RS={floor:{QB:15,RB:9,WR:9,TE:7},minAbs:{QB:4,RB:3,WR:2.5,TE:2}};
+function rsMetrics(N,thr){const out=[];
+  for(const x of (D.research||[])){const rows=x.w.map((r,i)=>r?{i,fp:r[0],sn:r[1],tg:r[2],ru:r[3],pa:r[4],rz:r[5],ts:r[6],xf:r[7]}:null).filter(Boolean);if(!rows.length)continue;
+    const opp=r=>x.p==='QB'?r.pa+r.ru:r.tg+r.ru,avg=(a,f)=>{const v=a.map(f).filter(y=>y!=null);return v.length?v.reduce((m,n)=>m+n,0)/v.length:null};
+    const L=rows.slice(-N),B=rows.slice(0,-N),lastWk=rows[rows.length-1].i+1;
+    const m={x,rows,L,B,lastWk,oppL:avg(L,opp),oppB:B.length?avg(B,opp):null,snL:avg(L,r=>r.sn),snB:B.length?avg(B,r=>r.sn):null,
+      tsL:avg(L,r=>r.ts),tsB:B.length?avg(B,r=>r.ts):null,fpL:avg(L,r=>r.fp),xfL:avg(L,r=>r.xf),rzL:avg(L,r=>r.rz),fpAll:avg(rows,r=>r.fp),opps:x.w.map(r=>r?(x.p==='QB'?r[4]+r[3]:r[2]+r[3]):null)};
+    const ma=RS.minAbs[x.p]||2.5,stale=lastWk<D.meta.done-1;
+    m.dOpp=m.oppB!=null?m.oppL-m.oppB:null;m.dSn=m.snB!=null&&m.snL!=null?m.snL-m.snB:null;
+    const sustained=L.slice(-2).every(r=>opp(r)>(m.oppB??1e9));
+    m.up=!stale&&B.length>=2&&((m.oppL>=m.oppB*(1+thr)&&m.dOpp>=ma&&sustained)||(m.dSn!=null&&m.dSn>=0.12&&m.snL>=0.4));
+    m.down=B.length>=2&&((m.oppL<=m.oppB*(1-thr)&&-m.dOpp>=ma)||(m.dSn!=null&&m.dSn<=-0.12));
+    m.luck=m.xfL!=null?m.fpL-m.xfL:null;const fl=RS.floor[x.p]||8;
+    m.hot=m.luck!=null&&m.luck>=3&&m.fpL>=fl*0.8;m.cold=m.luck!=null&&m.luck<=-3&&m.xfL>=fl;
+    m.stale=stale;out.push(m)}
+  // teammate out: a high-volume player on the same NFL team & position is Out/IR/Doubtful
+  const big={};out.forEach(m=>{if(['Out','IR','Doubtful','PUP','Sus'].includes(m.x.inj)&&(m.oppB??m.oppL)>=5){(big[m.x.t+m.x.p]=big[m.x.t+m.x.p]||[]).push(m.x.n)}});
+  out.forEach(m=>{const o=(big[m.x.t+m.x.p]||[]).filter(n=>n!==m.x.n);m.opp=!['Out','IR','Doubtful','PUP','Sus'].includes(m.x.inj)&&o.length?o:null});
+  return out}
+function spark(v){const n=v.length,mx=Math.max(1,...v.map(x=>x||0)),W=Math.max(36,n*8),H=18;return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-hidden="true" style="vertical-align:middle">${v.map((x,i)=>x==null?`<rect x="${i*8+1}" y="${H-2}" width="6" height="2" fill="var(--line)"></rect>`:`<rect x="${i*8+1}" y="${H-Math.max(2,x/mx*H)}" width="6" height="${Math.max(2,x/mx*H)}" fill="${i>=n-+$('#rsN').value?'var(--accent)':'var(--silver)'}"></rect>`).join('')}</svg>`}
+const rsName=x=>PL[x.id]?pl(x.id):esc(x.n),rsOwner=x=>x.r===ME?'<b>You</b>':x.r?esc(short(teamName(x.r))):'Free agent';
+const pctS=v=>v==null?'—':Math.round(v*100)+'%',arr=(d,thr)=>d==null?'':d>=thr?'<span class="pos-v">▲</span>':d<=-thr?'<span class="neg-v">▼</span>':'';
+function rsAction(m){const x=m.x;return x.r===ME?'':x.r?(PL[x.id]?`<button class="btn ghost" data-lab="${x.r}||${x.id}" style="padding:3px 10px;font-size:12px">Build an offer</button>`:''):'<span class="word w-good">Waiver add</span>'}
+function rsItem(m,why){const x=m.x;return `<div class="li"><div class="main"><span>${posTag(x.p)} ${rsName(x)} <span class="muted small">${esc(x.t||'')} · ${rsOwner(x)}${x.inj?` · <span class="neg-v">${esc(x.inj)}</span>`:''}</span></span><span class="why">${why}</span></div><div class="right">${spark(m.opps)}<span class="why">opportunities by week</span>${rsAction(m)}</div></div>`}
+function renderResearch(){
+  if(!(D.research||[]).length){$('#rsUp').innerHTML='<p class="sub">Weekly role data shows up after the next update.</p>';return}
+  const N=+$('#rsN').value,thr=+$('#rsT').value,M=rsMetrics(N,thr),f1x=v=>v==null?'—':v.toFixed(1),none='<p class="sub">Nobody right now.</p>';
+  $('#rsUpNote').textContent=`Over his last ${N} games, at least ${Math.round(thr*100)}% more opportunities than before (and the last two games both above his old level), or 12+ points more snap share. Sorted by size of the jump.`;
+  const roleTxt=m=>m.oppB==null?`<b>${f1x(m.oppL)}</b> opportunities a game${m.snL!=null?`, ${pctS(m.snL)} of snaps`:''}${m.tsL!=null&&m.x.p!=='QB'&&m.x.p!=='RB'?`, ${pctS(m.tsL)} of team targets`:''} (only ${m.rows.length} game${m.rows.length>1?'s':''} so far).`:`${f1x(m.oppB)} → <b>${f1x(m.oppL)}</b> opportunities a game${m.snL!=null&&m.snB!=null?`, snaps ${pctS(m.snB)} → <b>${pctS(m.snL)}</b>`:''}${m.tsL!=null&&m.tsB!=null&&m.x.p!=='QB'&&m.x.p!=='RB'?`, target share ${pctS(m.tsB)} → ${pctS(m.tsL)}`:''}.`;
+  const up=M.filter(m=>m.up&&(m.x.r||m.x.v>0||m.xfL>=4)).sort((a,b)=>(b.dOpp/Math.max(b.oppB,1))-(a.dOpp/Math.max(a.oppB,1)));
+  $('#rsUp').innerHTML=up.slice(0,8).map(m=>rsItem(m,`${roleTxt(m)} Scoring ${f1x(m.fpL)} a game (role worth ${f1x(m.xfL)}).${m.opp?` ${esc(m.opp.join(', '))} out.`:''}`)).join('')||none;
+  const wv=M.filter(m=>!m.x.r&&!m.stale&&(m.up||m.opp||(m.xfL||0)>=(RS.floor[m.x.p]||8)*0.75)).sort((a,b)=>((b.up?3:0)+(b.opp?2:0)+(b.xfL||0))-((a.up?3:0)+(a.opp?2:0)+(a.xfL||0)));
+  $('#rsWaiver').innerHTML=wv.slice(0,8).map(m=>rsItem(m,`${m.up?'<b>Role growing.</b> ':''}${m.opp?`<b>Opportunity:</b> ${esc(m.opp.join(', '))} out. `:''}${roleTxt(m)} His role is worth about <b>${f1x(m.xfL)}</b> a game; he's scored ${f1x(m.fpL)}.`)).join('')||none;
+  const buy=M.filter(m=>m.x.r&&m.x.r!==ME&&m.cold&&!m.down).sort((a,b)=>a.luck-b.luck);
+  $('#rsBuy').innerHTML=buy.slice(0,8).map(m=>rsItem(m,`His role is worth <b>${f1x(m.xfL)}</b> a game but he's scored <b>${f1x(m.fpL)}</b> over his last ${N}. ${roleTxt(m)} Trade value ${fk(m.x.v)}${m.x.vt?` (${m.x.vt>0?'+':'−'}${fk(Math.abs(m.x.vt))} in 30 days)`:''}.`)).join('')||none;
+  const CL={QB:33,RB:26,WR:29,TE:30},core=m=>m.x.v>=6500&&(m.x.age||30)<(CL[m.x.p]||28);  // don't tell you to sell young cornerstones on a hot streak
+  const sell=M.filter(m=>m.x.r===ME&&!core(m)&&((m.hot&&!m.up&&m.luck/Math.max(m.xfL,1)>=0.3)||(m.x.v>0&&m.x.vt/m.x.v>=0.12&&!m.up))).sort((a,b)=>(b.luck||0)-(a.luck||0));
+  $('#rsSell').innerHTML=sell.slice(0,8).map(m=>rsItem(m,`${m.hot?`Scoring <b>${f1x(m.fpL)}</b> a game on a role worth <b>${f1x(m.xfL)}</b>, so expect some cooling. `:''}${m.x.vt?`Trade value ${m.x.vt>0?'up':'down'} ${fk(Math.abs(m.x.vt))} in 30 days (now ${fk(m.x.v)}). `:''}${roleTxt(m)}`)).join('')||'<p class="sub">No one on your team is clearly running hot right now.</p>';
+  const dn=M.filter(m=>m.down&&m.x.r&&(m.x.r===ME||m.x.v>=2000)).sort((a,b)=>(b.x.r===ME)-(a.x.r===ME)||(a.dOpp/Math.max(a.oppB,1))-(b.dOpp/Math.max(b.oppB,1)));
+  $('#rsDown').innerHTML=dn.slice(0,8).map(m=>rsItem(m,roleTxt(m)+(m.x.inj?` Listed ${esc(m.x.inj)}.`:''))).join('')||none;
+  const mv=M.filter(m=>m.x.r&&m.x.vt&&m.x.v>=1000).sort((a,b)=>Math.abs(b.x.vt)-Math.abs(a.x.vt));
+  $('#rsMove').innerHTML=mv.slice(0,10).map(m=>rsItem(m,`Trade value <b class="${m.x.vt>0?'pos-v':'neg-v'}">${m.x.vt>0?'+':'−'}${fk(Math.abs(m.x.vt))}</b> (${Math.round(m.x.vt/Math.max(1,m.x.v-m.x.vt)*100)}%) to ${fk(m.x.v)}. ${m.up?'Role is growing too, so the move looks real.':m.down?'Role is shrinking, so the drop may continue.':m.hot?'Driven by a hot streak more than his role.':''}`)).join('')||'<p class="sub">Value trends show up once FantasyCalc reports them.</p>';
+  // explorer
+  const own=$('#rsOwn').value,pos=$('#rsPos').value,flag=$('#rsFlag').value,q=$('#rsQ').value.trim().toLowerCase();
+  const rows=M.filter(m=>(own==='all'||(own==='me'&&m.x.r===ME)||(own==='oth'&&m.x.r&&m.x.r!==ME)||(own==='fa'&&!m.x.r))&&(!pos||m.x.p===pos)&&(!q||m.x.n.toLowerCase().includes(q))&&(!flag||m[flag]))
+    .sort((a,b)=>(b.xfL||0)-(a.xfL||0)).slice(0,150);
+  const fl=m=>[m.up&&'<span class="word w-good">Role ▲</span>',m.down&&'<span class="word w-bad">Role ▼</span>',m.hot&&'<span class="word w-mid">Hot</span>',m.cold&&'<span class="word w-info">Cold</span>',m.opp&&'<span class="word w-good">Teammate out</span>'].filter(Boolean).join(' ');
+  $('#rsTbl').innerHTML=`<thead><tr><th>Player</th><th>Owner</th><th class="r" title="Opportunities a game, last games (arrow vs before)">Opp/g</th><th class="r" title="Share of offensive snaps, last games">Snaps</th><th class="r" title="Share of team targets, last games">Tgt share</th><th class="r" title="Red-zone targets + carries a game, last games">RZ/g</th><th class="r" title="Fantasy points a game, last games">Pts/g</th><th class="r" title="Expected points a game from his role, last games">xFP/g</th><th class="r" title="Points minus expected: + running hot, − running cold">Pts − xFP</th><th class="r">Value</th><th class="r" title="Trade value change, 30 days">30d</th><th>Flags</th><th>By week</th></tr></thead><tbody>${rows.map(m=>`<tr class="${m.x.r===ME?'hl':''}"><td>${posTag(m.x.p)} ${rsName(m.x)} <span class="muted small">${esc(m.x.t||'')}</span></td><td class="small">${rsOwner(m.x)}</td><td class="r num">${f1x(m.oppL)} ${arr(m.dOpp,RS.minAbs[m.x.p]||2.5)}</td><td class="r num">${pctS(m.snL)} ${arr(m.dSn,0.1)}</td><td class="r num">${m.x.p==='QB'?'—':pctS(m.tsL)}</td><td class="r num">${f1x(m.rzL)}</td><td class="r num">${f1x(m.fpL)}</td><td class="r num">${f1x(m.xfL)}</td><td class="r num ${m.luck>=3?'pos-v':m.luck<=-3?'neg-v':''}">${m.luck==null?'—':(m.luck>=0?'+':'')+m.luck.toFixed(1)}</td><td class="r num">${m.x.v?fk(m.x.v):'—'}</td><td class="r num ${m.x.vt>0?'pos-v':m.x.vt<0?'neg-v':''}">${m.x.vt?(m.x.vt>0?'+':'−')+fk(Math.abs(m.x.vt)):'—'}</td><td>${fl(m)}</td><td>${spark(m.opps)}</td></tr>`).join('')}</tbody>`;
+}
+['#rsN','#rsT','#rsOwn','#rsPos','#rsFlag','#rsQ'].forEach(q=>document.addEventListener('input',e=>{if(e.target.matches&&e.target.matches(q))renderResearch()}));
+document.addEventListener('change',e=>{if(e.target.id==='tmSort'){$('#mgrGrid').dataset.done='';renderTeams()}if(e.target.id==='idSort'){$('#ideas').dataset.done='';renderIdeas()}});
+// generic: tap a header to sort any table marked sortable-tbl (numbers, %, ordinals and text all work)
+document.addEventListener('click',e=>{const th=e.target.closest('table.sortable-tbl th');if(!th)return;const tb=th.closest('table'),i=[...th.parentNode.children].indexOf(th),dir=th.dataset.dir==='d'?'a':'d';
+  [...th.parentNode.children].forEach(x=>{delete x.dataset.dir;x.textContent=x.textContent.replace(/ [▲▼]$/,'')});th.dataset.dir=dir;th.textContent+=dir==='d'?' ▼':' ▲';
+  const key=td=>{const t=(td?.textContent||'').trim();const m=t.replace(/,/g,'').match(/^[−+-]?\d+(\.\d+)?/);return m?parseFloat(m[0].replace('−','-')):t.toLowerCase()};
+  const body=tb.tBodies[0],rows=[...body.rows].filter(r=>!r.classList.contains('sep'));
+  rows.sort((a,b)=>{const x=key(a.cells[i]),y=key(b.cells[i]);const c=typeof x==='number'&&typeof y==='number'?x-y:String(x).localeCompare(String(y));return dir==='d'?-c:c});
+  body.querySelectorAll('tr.sep').forEach(r=>r.remove());rows.forEach(r=>body.appendChild(r))});
 // ---------- OTHER TEAMS ----------
 function renderTeams(){
   const g=$('#mgrGrid');if(g.dataset.done)return;g.dataset.done=1;const PR=D.profiles||{};
   const style=s=>/Win-now/.test(s)?['Going for it now','w-mid']:/Rebuild/.test(s)?['Building for later','w-info']:['In between','w-plain'];
-  const order=[TEAMS.find(t=>t.id===ME)].concat(TEAMS.filter(t=>t.id!==ME).sort((a,b)=>(PR[b.id]?.with_me||0)-(PR[a.id]?.with_me||0)||(PR[b.id]?.n||0)-(PR[a.id]?.n||0)));
+  const SO=$('#tmSort').value,stIdx=id=>standOrder().findIndex(t=>t.id===id),sty=id=>/Win-now/.test(PR[id]?.style||'')?0:/Rebuild/.test(PR[id]?.style||'')?2:1;
+  const order=[TEAMS.find(t=>t.id===ME)].concat(TEAMS.filter(t=>t.id!==ME).sort((a,b)=>SO==='stand'?stIdx(a.id)-stIdx(b.id):SO==='name'?a.name.localeCompare(b.name):SO==='win'?sty(a.id)-sty(b.id)||stIdx(a.id)-stIdx(b.id):SO==='build'?sty(b.id)-sty(a.id)||stIdx(b.id)-stIdx(a.id):(PR[b.id]?.with_me||0)-(PR[a.id]?.with_me||0)||(PR[b.id]?.n||0)-(PR[a.id]?.n||0)));
   g.innerHTML=order.map(t=>{const p=PR[t.id]||{},sw=style(p.style||''),nd=needTxt(t.id),sp=spareOf(t.id),mine=t.id===ME;
     return `<div class="card"${mine?' style="border-color:var(--accent);border-width:2px"':''}><div class="row" style="justify-content:space-between"><h3>${esc(t.name)}${mine?' <span class="word w-info">You</span>':''}</h3>${W(poWord(t.odds.playoffs))}</div>
      <p class="sub" style="margin-top:-6px">${esc(t.user)} · ${t.w}-${t.l} · ${pct(t.odds.playoffs)} to make the playoffs</p>
@@ -1185,7 +1273,7 @@ const opt=f=>fetch(f,{cache:'no-cache'}).then(r=>r.ok?r.json():[]).catch(()=>[])
 Promise.all([fetch('data.json',{cache:'no-cache'}).then(r=>r.json()),opt('ledger.json'),opt('history.json'),opt('alerts.json')]).then(([d,l,h,al])=>{
   D=d;LEDGER=l;HIST=h;ALERTS=al;PL=d.players;FUT=d.meta.fut;NW=FUT.length;OFF=NW===0;TEAMS=d.teams;PICKS=d.picks;A=d.analysis;ME=d.meta.me;
   header();renderAdvice();renderWindow();renderHome();
-  $('#partner').innerHTML=TEAMS.filter(t=>t.id!==ME).map(t=>`<option value="${t.id}">${esc(t.name)} (${t.w}-${t.l})</option>`).join('');
+  $('#partner').innerHTML=standOrder().filter(t=>t.id!==ME).map(t=>`<option value="${t.id}">${esc(t.name)} (${t.w}-${t.l})</option>`).join('');
   st.partner=+$('#partner').value;
   {const d=deadline();$('#dlBanner').innerHTML=!d?'':d.open?`${d.left<=1?'<b>This is the last week to trade.</b>':`<b>${d.left} weeks left to trade</b> (deadline is after Week ${d.dl}).`} Anyone you add now also plays for you in the playoffs.`:`<b>Trading is closed</b> until the season ends. You can still plan offseason trades here.`}
   $('#scale').innerHTML=scaleHTML();
