@@ -1341,6 +1341,49 @@ def main():
         when = datetime.datetime.fromtimestamp(tr["ts"] / 1000, datetime.timezone.utc).strftime("%Y-%m-%d") if tr["ts"] else f"{season} wk {tr['leg']}"
         feed.append(dict(id=tr["id"], date=when, wk=tr["leg"], mine=any(x["rid"] == me for x in out_sides), sides=out_sides))
 
+    # ---------- each team's approach: where they stand now + how they've traded over the last year (by value, not count)
+    pick_cap = {t["id"]: sum(p_["v"] for p_ in picks if p_["own"] == t["id"]) for t in teams}
+    cap_rank = {r: i + 1 for i, r in enumerate(sorted(pick_cap, key=lambda r: -pick_cap[r]))}
+    now_ms = time.time() * 1000
+    approach = {}
+    for t in teams:
+        rid = t["id"]; sc_ = 0; why = []
+        po = S0[rid]["playoffs"] if rid in S0 else 0
+        wl_ = f"{rec[rid][0]}-{rec[rid][1]}" if rid in rec else "" 
+        if done >= 3 or not fut:
+            if po >= 0.6: sc_ += 2; why.append(f"{wl_}, {po:.0%} to make the playoffs")
+            elif po >= 0.3: sc_ += 1; why.append(f"{wl_}, in the playoff hunt ({po:.0%})")
+            elif po < 0.05: sc_ -= 2; why.append(f"{wl_}, out of the playoff race")
+            elif po < 0.15: sc_ -= 1; why.append(f"{wl_}, long shot for the playoffs ({po:.0%})")
+        vals_ = [(v_of(p_), P[p_]["age"]) for p_ in ids_by[rid] if v_of(p_) and P[p_]["age"]]
+        ra = sum(v * a_ for v, a_ in vals_) / sum(v for v, _ in vals_) if vals_ else None
+        if ra is not None:
+            if ra <= 24.8: sc_ -= 1; why.append(f"young roster (value-weighted age {ra:.1f})")
+            elif ra >= 26.8: sc_ += 1; why.append(f"veteran roster (value-weighted age {ra:.1f})")
+        cr = cap_rank[rid]
+        if cr <= 3: sc_ -= 1; why.append(f"{ORD[cr] if cr < len(ORD) else cr} most draft-pick value in the league")
+        elif cr > nT - 3: sc_ += 1; why.append(f"little draft-pick value ({cr} of {nT})")
+        # trades in the last 12 months: value of veterans (27+) bought minus young players (24-) and picks bought
+        lean_v = 0.0
+        for tr in trades:
+            if not tr.get("ts") or now_ms - tr["ts"] > 365 * 86400 * 1000:
+                continue
+            s_ = next((x for x in tr["sides"] if x["cur"] == rid), None)
+            if not s_:
+                continue
+            def bucket(pids, pks, sign):
+                nonlocal lean_v
+                for p_ in pids:
+                    a_ = pinfo(p_)["age"] or 26; v = pval(p_)
+                    lean_v += sign * (v if a_ >= 27 else -v if a_ <= 24 else 0)
+                for k_ in pks:
+                    lean_v -= sign * pk_val(k_)
+            bucket(s_["got"], s_["pin"], 1); bucket(s_["gave"], s_["pout"], -1)
+        if lean_v >= 4000: sc_ += 1; why.append("recent trades bought proven veterans")
+        elif lean_v <= -4000: sc_ -= 1; why.append("recent trades bought young players and picks")
+        style = "Win-now" if sc_ >= 2 else "Rebuild" if sc_ <= -2 else "Balanced"
+        approach[rid] = (style, why)
+
     profiles = {}
     for t in teams:
         rid = t["id"]; my_tr = [tr for tr in trades if any(s_["cur"] == rid for s_ in tr["sides"])]
@@ -1355,20 +1398,10 @@ def main():
             val_bal += sum(pval(p) for p in s_["got"]) + sum(pk_val(k) for k in s_["pin"]) - sum(pval(p) for p in s_["gave"]) - sum(pk_val(k) for k in s_["pout"])
             picks_net += len(s_["pin"]) - len(s_["pout"]); faab_net += s_["fin"] - s_["fout"]
         ai = st.mean(age_in) if age_in else None; ao = st.mean(age_out) if age_out else None
-        lean = (0 if ai is None or ao is None else (ai - ao)) - 0.6 * picks_net
-        if len(my_tr) == 0:
-            style = "Hasn't traded"
-        elif len(my_tr) == 1:
-            style = "One trade, too few to tell"
-        elif lean >= 1.2:
-            style = "Win-now buyer"
-        elif lean <= -1.2:
-            style = "Rebuilder: buys youth and picks"
-        else:
-            style = "Balanced"
+        style, why = approach[rid]
         ids = ids_by[rid]; vals = [(v_of(p), P[p]["age"]) for p in ids if v_of(p) and P[p]["age"]]
         top_part = max(partners, key=partners.get) if partners else None
-        profiles[rid] = dict(n=len(my_tr), this=sum(1 for tr in my_tr if tr["season"] == season), style=style,
+        profiles[rid] = dict(n=len(my_tr), this=sum(1 for tr in my_tr if tr["season"] == season), style=style, why=why,
                              partners=len(partners), top=[names.get(top_part, "Former manager"), partners[top_part]] if top_part is not None else None,
                              with_me=partners.get(me, 0), bal=round(val_bal), picks=picks_net, faab=faab_net,
                              age_in=round(ai, 1) if ai else None, age_out=round(ao, 1) if ao else None,

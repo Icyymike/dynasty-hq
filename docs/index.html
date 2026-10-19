@@ -169,7 +169,8 @@ tr.cut-bye td{border-bottom:2px solid var(--good)}
 .guide dt{font-weight:600}.guide dd{margin:0;color:var(--muted)}
 .guide h4{font-family:var(--f-display);font-size:16px;text-transform:uppercase;letter-spacing:.04em;margin:14px 0 6px}
 @media (max-width:560px){.guide dl{grid-template-columns:1fr}.guide dd{margin-bottom:6px}}
-@media (max-width:560px){.tx-sides{grid-template-columns:1fr}}
+@media (max-width:560px){.tx-sides{grid-template-columns:1fr}}.bd-cols{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.vr>span:first-child{min-width:0;overflow-wrap:anywhere}@media (max-width:420px){.bd-cols{grid-template-columns:minmax(0,1fr)}}
+
 /* ---------- plain-language layout: every card asks a question and answers it first ---------- */
 .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
 .card>h2,.card>header h2{font-size:21px}
@@ -249,9 +250,9 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
 /* trade breakdown */
 .bd{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:10px}
 .bd-box{border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:6px;min-width:0}
-.bd-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bd-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
 .vr{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:2px 0;border-bottom:1px dotted var(--line)}
-.vr span:last-child{font-family:var(--f-mono);white-space:nowrap}
+.vr>span:last-child{font-family:var(--f-mono);white-space:nowrap}
 .vr.tot{border-bottom:0;font-weight:600;border-top:1px solid var(--ink);margin-top:2px;padding-top:4px}
 .vbar{display:flex;flex-direction:column;gap:3px}
 .vbar div{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
@@ -264,7 +265,8 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
 .ruler .mk{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;font-size:11px;white-space:nowrap}
 .ruler .mk b{font-size:12px}
 .ruler .mk i{width:2px;height:12px;background:var(--ink);margin:2px 0 14px}
-@media (max-width:700px){.bd{grid-template-columns:1fr}}
+@media (max-width:700px){.bd{grid-template-columns:minmax(0,1fr)}}
+.vr>span:first-child{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}.vr>span:last-child{flex:0 0 auto}.bd-box{min-width:0}
 @media (max-width:560px){.tx-sides{grid-template-columns:1fr}.vsrow .sc{font-size:32px}.tile .t-big{font-size:28px}}
 </style>
 </head>
@@ -407,7 +409,7 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
 
 <!-- ================= OTHER TEAMS ================= -->
 <section data-panel="teams" hidden>
-  <div class="card"><h2>What is every other team up to?</h2><p class="sub">Whether they're chasing a title or rebuilding, what they need, and how they trade. Teams you've traded with most are first.</p></div>
+  <div class="card"><h2>What is every team up to?</h2><p class="sub">Whether each team is chasing a title or rebuilding (judged from their record and playoff odds, roster age, draft picks and the last year of trades), what they need, and how they trade. Your team is first for comparison, then the teams you've traded with most.</p></div>
   <div id="mgrGrid" class="grid2"></div>
 </section>
 
@@ -936,18 +938,18 @@ function renderDraft(){
 // ---------- OTHER TEAMS ----------
 function renderTeams(){
   const g=$('#mgrGrid');if(g.dataset.done)return;g.dataset.done=1;const PR=D.profiles||{};
-  const style=s=>/Win-now/.test(s)?['Going for it now','w-mid','Trades picks and young players for proven scorers.']:/Rebuild/.test(s)?['Building for later','w-info','Trades proven scorers for young players and picks.']:/Balanced/.test(s)?['Balanced','w-plain','Buys and sells about equally.']:/One trade/.test(s)?['Rarely trades','w-plain','Only one trade so far.']:['No trades yet','w-plain','No trades on record.'];
-  const order=TEAMS.filter(t=>t.id!==ME).sort((a,b)=>(PR[b.id]?.with_me||0)-(PR[a.id]?.with_me||0)||(PR[b.id]?.n||0)-(PR[a.id]?.n||0));
-  g.innerHTML=order.map(t=>{const p=PR[t.id]||{},sw=style(p.style||''),nd=needTxt(t.id),sp=spareOf(t.id);
-    return `<div class="card"><div class="row" style="justify-content:space-between"><h3>${esc(t.name)}</h3>${W(poWord(t.odds.playoffs))}</div>
+  const style=s=>/Win-now/.test(s)?['Going for it now','w-mid']:/Rebuild/.test(s)?['Building for later','w-info']:['In between','w-plain'];
+  const order=[TEAMS.find(t=>t.id===ME)].concat(TEAMS.filter(t=>t.id!==ME).sort((a,b)=>(PR[b.id]?.with_me||0)-(PR[a.id]?.with_me||0)||(PR[b.id]?.n||0)-(PR[a.id]?.n||0)));
+  g.innerHTML=order.map(t=>{const p=PR[t.id]||{},sw=style(p.style||''),nd=needTxt(t.id),sp=spareOf(t.id),mine=t.id===ME;
+    return `<div class="card"${mine?' style="border-color:var(--accent);border-width:2px"':''}><div class="row" style="justify-content:space-between"><h3>${esc(t.name)}${mine?' <span class="word w-info">You</span>':''}</h3>${W(poWord(t.odds.playoffs))}</div>
      <p class="sub" style="margin-top:-6px">${esc(t.user)} · ${t.w}-${t.l} · ${pct(t.odds.playoffs)} to make the playoffs</p>
-     <div class="kv"><span>Approach</span><span>${W([sw[0],sw[1]])} ${sw[2]}</span>
-      <span>They need</span><span>${nd.length?nd.map(x=>posTag(x)).join(' '):'nothing urgent'}</span>
+     <div class="kv"><span>Approach</span><span>${W([sw[0],sw[1]])}${(p.why||[]).length?`<br><span class="small muted">Why: ${p.why.map(esc).join('; ')}.</span>`:''}</span>
+      <span>${mine?'You need':'They need'}</span><span>${nd.length?nd.map(x=>posTag(x)).join(' '):'nothing urgent'}</span>
       <span>Extra players</span><span>${sp.length?sp.map(o=>pl(o.s)).join(', '):'no one obvious'}</span>
       <span>Trades</span><span>${p.n||0} on record${p.with_me?`, ${p.with_me} with you`:''}${p.n?`. Their deals ${p.bal>=0?'gained':'lost'} ${fk(Math.abs(p.bal))} in value at today's prices.`:''}</span>
       <span>FAAB left</span><span>$${t.faab??'—'} of $${(D.meta.rules||{}).faab||100}</span>
       ${D.outlook?`<span>Next 3 seasons</span><span>${D.outlook.years.map((y,j)=>`${y}: ${ORD(D.outlook.teams[t.id].rank[j])}`).join(' → ')}</span>`:''}</div>
-     <div><button class="btn ghost" data-lab="${t.id}||">Build a trade with them</button></div></div>`}).join('');
+     ${mine?'':`<div><button class="btn ghost" data-lab="${t.id}||">Build a trade with them</button></div>`}</div>`}).join('');
 }
 
 // ---------- player card ----------
