@@ -1094,13 +1094,25 @@ def main():
         top.sort(key=lambda x: -x["dm"])
         sugg[t["id"]] = top[:4]
     # free agents: what each would add to your lineup (best ball counts byes, injuries and boom weeks)
+    cut = sorted(ids_by[me], key=lambda p_: (P[p_].get("imp", 0), P[p_].get("val") or 0))[:3]
+    roster_cap = int(settings.get("roster_size") or 0) or len([s_ for s_ in (league.get("roster_positions") or []) if s_ not in ("IR", "TAXI")]) or 28
+    def net_add(pid):
+        """Points a week gained by adding him, after cutting your least useful player if the roster is full."""
+        ids = ids_by[me]
+        if len(ids) >= roster_cap and cut:
+            c_ = next((x for x in cut if x != pid), None)
+            if c_:
+                key = tuple(ids)
+                if key not in _mcb:
+                    _mcb[key] = mc_total(ids)
+                return (mc_total([i for i in ids if i != c_] + [pid]) - _mcb[key]) / NW
+        return mc_add(ids, pid)
     fa = []
     for pid in [p for p in P if P[p].get("fa")]:
-        add = mc_add(ids_by[me], pid)
+        add = net_add(pid)
         if add >= 0.3:
             fa.append(dict(id=pid, add=round(add, 2), val=P[pid].get("val") or 0))
     fa.sort(key=lambda x: -x["add"]); fa = fa[:8]
-    cut = sorted(ids_by[me], key=lambda p_: (P[p_].get("imp", 0), P[p_].get("val") or 0))[:3]
     # title-odds check on the single best idea per team (same draws, so the change is the trade, not noise)
     best_ideas = sorted(((t_id, o) for t_id, L in sugg.items() for o in L[:1]), key=lambda x: -x[1]["dm"])[:int(CFG.get("idea_title_checks", 6))]
     for t_id, o in best_ideas:
@@ -1258,9 +1270,14 @@ def main():
         v = v_of(pid); r = (v - fair(pid)) / max(fair(pid), 800)
         if r > -0.25:
             continue
-        add = mc_add(ids_by[me], pid)
+        add = net_add(pid)
         if add >= 1.0:
             why = [f"produces {ppg(pid):.1f} pts/wk; that output usually costs ~{round(fair(pid)):,}, he's {v:,}"]
+            same = sorted([ppg(x) for x in ids_by[me] if P[x]["p"] == d["p"]], reverse=True)
+            need_n = {"QB": 2, "RB": 4, "WR": 5, "TE": 2}[d["p"]]  # starters + realistic flex use at that spot
+            better = sum(1 for x in same if x >= ppg(pid))
+            if len(same) >= need_n and better >= need_n:
+                why.append(f"you already have {better} {d['p']}s who score more, so he'd mostly fill in on byes and bad weeks")
             if d["age"] and d["age"] >= AGE_CLIFF[d["p"]]:
                 why.append(f"age {d['age']:.0f}: cheap because of age, so it's points now with little resale")
             buy.append(dict(id=pid, v=v, fair=round(fair(pid)), ppg=round(ppg(pid), 1), add=round(add, 2), old=bool(d["age"] and d["age"] >= AGE_CLIFF[d["p"]]), why=why))
