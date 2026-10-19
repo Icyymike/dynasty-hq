@@ -555,7 +555,7 @@ def main():
                           else f"KeepTradeCut snapshot from {ktc.get('date')} (live values unavailable this run)"))
 
     # ---------- matchups (past scores, future pairings, weekly rosters)
-    weeks, sched, my_weekly, live = {}, {}, {}, {}
+    weeks, sched, my_weekly, live, live_pp = {}, {}, {}, {}, {}
     checks = dict(lineups=0, lineup_bad=[], scored=0, score_bad=[])
     po_actual = {}
     for wk in range(1, last_week + 1):
@@ -565,8 +565,14 @@ def main():
         if wk > reg_end:
             if wk <= done:
                 po_actual[wk] = {x["roster_id"]: round(x.get("points") or 0, 2) for x in m}
-            elif any((x.get("points") or 0) > 0 for x in m):
-                live = {x["roster_id"]: round(x.get("points") or 0, 2) for x in m}
+            elif any(x.get("players_points") for x in m):
+                for x in m:
+                    for k_, v_ in (x.get("players_points") or {}).items():
+                        live_pp[str(k_)] = v_
+                live = {x["roster_id"]: round(best_lineup(((players_db.get(str(k_)) or {}).get("position"), v_)
+                                                          for k_, v_ in (x.get("players_points") or {}).items()), 2) for x in m}
+                if not any(live.values()):
+                    live = {}
             continue
         if wk <= done:
             weeks[wk] = [[x["roster_id"], x.get("matchup_id"), round(x.get("points") or 0, 2)] for x in m]
@@ -590,8 +596,16 @@ def main():
                 my_weekly[wk] = [str(p) for p in (mine.get("players") or [])]
         else:
             sched[wk] = [[x["roster_id"], x.get("matchup_id")] for x in m]
-            if wk == done + 1 and any((x.get("points") or 0) > 0 for x in m):
-                live = {x["roster_id"]: round(x.get("points") or 0, 2) for x in m}
+            if wk == done + 1 and any(x.get("players_points") for x in m):
+                # Sleeper's "points" mid-week only counts the manually set starters; best ball counts the best
+                # possible lineup, so rebuild it from every rostered player's points so far.
+                for x in m:
+                    for k_, v_ in (x.get("players_points") or {}).items():
+                        live_pp[str(k_)] = v_
+                live = {x["roster_id"]: round(best_lineup(((players_db.get(str(k_)) or {}).get("position"), v_)
+                                                          for k_, v_ in (x.get("players_points") or {}).items()), 2) for x in m}
+                if not any(live.values()):
+                    live = {}
 
     # ---------- trades: this season + up to 2 prior seasons (previous_league_id chain)
     team_by_owner = {t["owner"]: t["id"] for t in teams}
@@ -794,7 +808,7 @@ def main():
         for wk, flags in wmap.items():
             if len(flags) >= 2 and not any(flags):
                 team_byes[t] = wk
-    sch = get(f"https://api.sleeper.com/schedule/nfl/regular/{season}", cache_hours=24 * 7, required=False)
+    sch = get(f"https://api.sleeper.com/schedule/nfl/regular/{season}", required=False)  # fresh: game status drives live locks
     bye_src = "inferred from projections"
     if isinstance(sch, list) and sch and isinstance(sch[0], dict) and "week" in sch[0]:
         played = {}
@@ -836,6 +850,29 @@ def main():
     def cv_of(d):
         base = max(next((x for x in d["ou"] if x > 0), 1), 1)
         return min(1.2, max(0.25, d["sd"] / base))
+    # ---------- games already played this week: lock in real points instead of simulating them
+    game_state = {}
+    if fut and live_pp and isinstance(sch, list):
+        for gm in sch:
+            if isinstance(gm, dict) and str(gm.get("week")) == str(fut[0]):
+                for side in ("home", "away"):
+                    if gm.get(side):
+                        game_state[gm[side]] = gm.get("status") or ""
+    n_lock = 0
+    for pid, d in P.items():
+        st_ = game_state.get(d.get("t"))
+        if pid in live_pp and st_ in ("complete", "in_progress"):
+            # complete: the real score; in progress: real score so far plus about half the projection still to come
+            d["lk"] = [round(live_pp[pid], 2), 0 if st_ == "complete" else 0.5]
+            n_lock += 1
+    if live_pp:
+        print(f"live week {fut[0] if fut else '?'}: {n_lock} players locked to real scores ({len(game_state)} teams with status)")
+    def wk0(d, s_, cv, pid):
+        lk = d.get("lk")
+        if not lk:
+            return None
+        return lk[0] + (sim_points(d["pr"][0] * lk[1], cv, pid, d["t"], s_, fut[0], 0) if lk[1] > 0 else 0.0)
+
     VAL = {}
     sim_ids = [p for p in P if (P[p]["r"] and not P[p].get("gone")) or P[p].get("fa")]
     for pid in sim_ids:
@@ -844,6 +881,8 @@ def main():
         for s_ in range(SIMS):
             row = []
             for k, wk in enumerate(fut):
+                if k == 0 and d.get("lk"):
+                    row.append(wk0(d, s_, cv, pid)); continue
                 pm = P_MISS_STATUS.get(d["inj"], P_MISS) if k == 0 else P_MISS
                 row.append(sim_points(d["pr"][k], cv, pid, d["t"], s_, wk, pm))
             rows.append(row)

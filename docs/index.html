@@ -455,7 +455,7 @@ function cvOf(p){const base=Math.max(p.ou.find(x=>x>0)||1,1);return Math.min(1.2
 function simPts(m,cv,sid,team,s,w,pm){if(m<=0)return 0;const a=+sid||7;if(hash(a,s*37+9,w*41+17)<pm)return 0;const sig=Math.sqrt(Math.log(1+cv*cv));const zz=WI*z(a,s,w)+WT*teamZ(team,s,w);return m*Math.exp(sig*zz-sig*sig/2)}
 const VC={};
 function draws(sid,src){const S=D.meta.sims;VC[src]=VC[src]||new Map();let a=VC[src].get(sid);if(a)return a;const p=PL[sid];a=new Float64Array(S*NW);if(p){const cv=cvOf(p);
-  for(let s=0;s<S;s++)for(let k=0;k<NW;k++){const pm=k===0?(P_MISS_STATUS[p.inj]??P_MISS):P_MISS;a[s*NW+k]=simPts(proj(sid,k,src),cv,sid,p.t,s,FUT[k],pm)}}
+  for(let s=0;s<S;s++)for(let k=0;k<NW;k++){if(k===0&&p.lk){a[s*NW]=p.lk[0]+(p.lk[1]>0?simPts(p.pr[0]*p.lk[1],cv,sid,p.t,s,FUT[0],0):0);continue}const pm=k===0?(P_MISS_STATUS[p.inj]??P_MISS):P_MISS;a[s*NW+k]=simPts(proj(sid,k,src),cv,sid,p.t,s,FUT[k],pm)}}
   VC[src].set(sid,a);return a}
 function lineupAt(ids,s,k,src){const v=[];for(const sid of ids){const p=PL[sid];if(!p||p.slot)continue;const x=draws(sid,src)[s*NW+k];if(x>0)v.push([p.p,x])}return best(v)}
 function simWeeks(ids,src,sims){const out=new Array(NW).fill(0);sims=Math.min(sims,D.meta.sims);for(let s=0;s<sims;s++)for(let k=0;k<NW;k++)out[k]+=lineupAt(ids,s,k,src);return out.map(x=>x/sims)}
@@ -647,7 +647,7 @@ function renderHome(){
     $('#weekCard').innerHTML=`<h2>Who wins this week?${me.live!=null?'<span class="live">LIVE</span>':''}</h2>
       <div class="vsrow"><div><div class="nm">You</div><div class="sc num">${me.live!=null?me.live.toFixed(1):me.proj}</div></div><div class="muted" style="padding-bottom:8px">vs</div><div style="text-align:right"><div class="nm">${esc(o.name)}</div><div class="sc num">${o.live!=null?o.live.toFixed(1):o.proj}</div></div></div>
       <div class="wpbar" role="img" aria-label="Your win chance ${pct(me.wp)}"><i style="width:${Math.round(me.wp*100)}%"></i></div>
-      <p class="answer">${W(ww)} You win this one in ${chance(me.wp)}. ${me.live!=null?'Big numbers are live points so far.':`Big numbers are projected scores; you'll usually land between ${me.rng?me.rng[0].toFixed(0):'?'} and ${me.rng?me.rng[1].toFixed(0):'?'}.`}</p>
+      <p class="answer">${W(ww)} You win this one in ${chance(me.wp)}. ${me.live!=null?'Big numbers are points so far from each team\'s best possible lineup, which is how best ball scores (Sleeper\'s matchup screen can show only the set starters until the week ends). The win chance counts finished games as final.':`Big numbers are projected scores; you'll usually land between ${me.rng?me.rng[0].toFixed(0):'?'} and ${me.rng?me.rng[1].toFixed(0):'?'}.`}</p>
       ${out.length||inj.length?`<p class="sub">${out.length?`<b>Not playing (bye):</b> ${esc(out.join(', '))}. `:''}${inj.length?`<b>Hurt:</b> ${esc(inj.join(', '))}.`:''} Best ball fills your lineup with your best available players.</p>`:''}`}
   else $('#weekCard').innerHTML=`<h2>Who wins this week?</h2><p class="answer">No matchup this week.</p>`;
   // playoff path
