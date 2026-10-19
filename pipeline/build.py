@@ -546,31 +546,38 @@ def main():
     # A per-position factor from the snapshot then adds back what FantasyCalc doesn't price, mainly TE premium.
     KP = ktc.get("players") or {}
     both = [(fc_vals[p_], KP[p_], (players_db.get(p_) or {}).get("position")) for p_ in KP if fc_vals.get(p_, 0) > 0 and KP[p_] > 0]
-    qf = sorted(x[0] for x in both); qk = sorted(x[1] for x in both); nq = len(qf)
-    def conv(f):
-        if nq < 30 or f <= 0:
-            return None
-        if f <= qf[0]:
-            return qk[0] * f / qf[0]
-        if f >= qf[-1]:
-            return qk[-1]
-        i = bisect.bisect_left(qf, f)
-        lo, hi = qf[i - 1], qf[i]
-        t_ = (f - lo) / (hi - lo) if hi > lo else 0.0
-        return qk[i - 1] + t_ * (qk[i] - qk[i - 1])
+    def make_curve(prs):
+        xf = sorted(x for x, _ in prs); xk = sorted(y for _, y in prs)
+        def f_(v):
+            if not xf or v <= 0:
+                return None
+            if v <= xf[0]:
+                return xk[0] * v / xf[0]
+            if v >= xf[-1]:
+                return xk[-1]
+            i = bisect.bisect_left(xf, v)
+            lo, hi = xf[i - 1], xf[i]
+            t_ = (v - lo) / (hi - lo) if hi > lo else 0.0
+            return xk[i - 1] + t_ * (xk[i] - xk[i - 1])
+        return f_
+    nq = len(both)
+    conv_all = make_curve([(x[0], x[1]) for x in both]) if nq >= 30 else (lambda v: None)
+    def conv(f):  # for picks and anything without a position: the all-players curve
+        return conv_all(f) if f else None
+    # players: one curve per position, so each position keeps KTC's own shape (TE premium, QB premium in superflex)
     cal = {}
     for ps in POS:
-        rs = [k_ / conv(f_) for f_, k_, pp_ in both if pp_ == ps and k_ >= 1500 and conv(f_)]
-        if len(rs) >= 8:
-            cal[ps] = (min(1.35, max(0.8, st.median(rs))), len(rs))
+        prs = [(x[0], x[1]) for x in both if x[2] == ps]
+        if len(prs) >= 20:
+            cal[ps] = (make_curve(prs), len(prs))
     def unified(pid, f=None, pos=None):
         f = fc_vals.get(pid) if f is None else f
         pos = pos or (players_db.get(pid) or {}).get("position")
-        c_ = conv(f) if f else None
+        c_ = (cal[pos][0](f) if pos in cal else conv(f)) if f else None
         if c_ is not None:
-            return int(round(min(9999, c_ * (cal[pos][0] if pos in cal else 1.0))))
+            return int(round(min(9999, c_)))
         return KP.get(pid) or 0
-    val_src = dict(live=nq >= 30, snapshot=ktc.get("date"), fitted={ps: round(cal[ps][0], 2) for ps in cal}, matched=nq,
+    val_src = dict(live=nq >= 30, snapshot=ktc.get("date"), fitted={ps: cal[ps][1] for ps in cal}, matched=nq,
                    label=("FantasyCalc, updated daily, laid onto the KeepTradeCut superflex TE-premium scale" if nq >= 30
                           else f"KeepTradeCut snapshot from {ktc.get('date')} (live values unavailable this run)"))
 
