@@ -339,7 +339,7 @@ def build_advice(c):
         verdict, headline = "trade", "Make a trade"
         give = " + ".join(nm(x) for x in best["give"]); get = " + ".join(nm(x) for x in best["get"])
         moves.append(dict(kind="trade", team=best["team"], give=best["give"], get=best["get"],
-                          text=f"Offer {c['names'][best['team']]} {give} for {get}."))
+                          text=f"Offer {c['names'][best['team']]}: {give} for {get}."))
         gave_imp = sum(P[x].get("imp", 0) for x in best["give"])
         reasons.append(f"That trade raises your title chance from {pct(best['title0'])} to {pct(best['title1'])}, and your lineup comes out {best['dm']:.1f} points a week ahead overall. "
                        f"{give} add{'s' if len(best['give']) == 1 else ''} {gave_imp:.1f} points a week for you today, but {get} {'is' if len(best['get']) == 1 else 'are'} worth more to your lineup.")
