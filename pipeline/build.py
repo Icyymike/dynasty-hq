@@ -874,6 +874,61 @@ def main():
     for d in P.values():
         d["bye"] = team_byes.get(d["t"])
 
+    # ---------- matchups: how generous each NFL defense is to each position, adjusted for the offenses it faced
+    opp_tw = {}
+    if isinstance(sch, list):
+        for gm in sch:
+            if isinstance(gm, dict) and gm.get("home") and gm.get("away") and str(gm.get("week", "")).isdigit():
+                w_ = int(gm["week"]); opp_tw[(gm["home"], w_)] = gm["away"]; opp_tw[(gm["away"], w_)] = gm["home"]
+    tp = {}  # (team, pos, wk) -> points that offense's players at that position scored (QB: the top QB)
+    for pid_, d_ in pts.items():
+        inf_ = players_db.get(pid_) or {}
+        ps_, tm_ = inf_.get("position"), inf_.get("team")
+        if ps_ not in POS or not tm_:
+            continue
+        for wk in range(1, done + 1):
+            v_ = d_.get(f"{season}-{wk}")
+            if v_ is None:
+                continue
+            k_ = (tm_, ps_, wk)
+            tp[k_] = max(tp.get(k_, 0.0), v_) if ps_ == "QB" else tp.get(k_, 0.0) + v_
+    off_avg = {}
+    for (tm_, ps_, wk), v_ in tp.items():
+        off_avg.setdefault((tm_, ps_), []).append(v_)
+    off_avg = {k_: sum(v) / len(v) for k_, v in off_avg.items() if v}
+    ratios = {}
+    for (tm_, ps_, wk), v_ in tp.items():
+        d_ = opp_tw.get((tm_, wk)); o_ = off_avg.get((tm_, ps_))
+        if d_ and o_ and o_ > 1:
+            ratios.setdefault((d_, ps_), []).append(v_ / o_)
+    DEF = {}
+    for (d_, ps_), r_ in ratios.items():
+        n_ = len(r_); f_ = (sum(r_) + 4 * 1.0) / (n_ + 4)  # shrink toward average: early-season samples are small
+        DEF.setdefault(d_, {})[ps_] = round(min(1.3, max(0.75, f_)), 3)
+    def mu_of(team, pos):
+        """playoff-week opponents and how generous they are to this position (1.0 = average)"""
+        out = []
+        for wk in fut:
+            if wk <= reg_end:
+                continue
+            o_ = opp_tw.get((team, wk))
+            out.append([wk, o_ or "", (DEF.get(o_, {}) or {}).get(pos, 1.0) if o_ else None])
+        return out if any(x[1] for x in out) else []
+    n_mu = 0
+    for pid_, d_ in P.items():
+        if not d_.get("t"):
+            continue
+        mu = mu_of(d_["t"], d_["p"])
+        if mu:
+            d_["mu"] = mu
+            # a modest nudge to playoff-week projections (Sleeper's far-out projections only lightly reflect opponents)
+            for wk, o_, f_ in mu:
+                if f_ and wk in fut:
+                    k_ = fut.index(wk)
+                    d_["pr"][k_] = round(d_["pr"][k_] * min(1.10, max(0.90, f_ ** 0.5)), 2)
+            n_mu += 1
+    print(f"matchups: defense factors for {len(DEF)} teams, playoff matchups for {n_mu} players")
+
     # ---------- simulation helpers
     for t in teams:
         for pid in t["taxi"]:
@@ -1464,6 +1519,28 @@ def main():
             picks_net += len(s_["pin"]) - len(s_["pout"]); faab_net += s_["fin"] - s_["fout"]
         ai = st.mean(age_in) if age_in else None; ao = st.mean(age_out) if age_out else None
         style, why = approach[rid]
+        # trade habits (what this manager has actually said yes to), for the acceptance estimate
+        now_ms_ = time.time() * 1000; bals, n_pin, n_cons, n_spread, n_mid = [], 0, 0, 0, 0; last_ts = 0
+        for tr in my_tr:
+            s_ = next(x for x in tr["sides"] if x["cur"] == rid)
+            vin = sum(pval(p_) for p_ in s_["got"]) + sum(pk_val(k_) for k_ in s_["pin"])
+            vout = sum(pval(p_) for p_ in s_["gave"]) + sum(pk_val(k_) for k_ in s_["pout"])
+            if vin + vout > 0:
+                bals.append((vin - vout) / max(vout, vin, 1))
+            n_pin += 1 if s_["pin"] else 0
+            ni, no = len(s_["got"]) + len(s_["pin"]), len(s_["gave"]) + len(s_["pout"])
+            n_cons += 1 if no > ni else 0      # gave more pieces than they got (consolidated)
+            n_spread += 1 if ni > no else 0    # took more pieces back
+            if tr["season"] == season and 1 <= (tr.get("leg") or 0) <= reg_end:
+                n_mid += 1
+            last_ts = max(last_ts, tr.get("ts") or 0)
+        bals.sort(); nt_ = len(my_tr)
+        habits = dict(n365=sum(1 for tr in my_tr if tr.get("ts") and now_ms_ - tr["ts"] <= 365 * 86400 * 1000),
+                      days=round((now_ms_ - last_ts) / 86400000) if last_ts else None,
+                      pin=round(n_pin / nt_, 2) if nt_ else None, cons=round(n_cons / nt_, 2) if nt_ else None,
+                      spread=round(n_spread / nt_, 2) if nt_ else None, mid=n_mid,
+                      bal_lo=round(bals[max(0, int(len(bals) * 0.2) - 1)], 2) if len(bals) >= 3 else None,
+                      bal_med=round(bals[len(bals) // 2], 2) if bals else None)
         ids = ids_by[rid]; vals = [(v_of(p), P[p]["age"]) for p in ids if v_of(p) and P[p]["age"]]
         top_part = max(partners, key=partners.get) if partners else None
         profiles[rid] = dict(n=len(my_tr), this=sum(1 for tr in my_tr if tr["season"] == season), style=style, why=why,
@@ -1471,7 +1548,7 @@ def main():
                              with_me=partners.get(me, 0), bal=round(val_bal), picks=picks_net, faab=faab_net,
                              age_in=round(ai, 1) if ai else None, age_out=round(ao, 1) if ao else None,
                              roster_age=round(sum(v * a for v, a in vals) / sum(v for v, _ in vals), 1) if vals else None,
-                             value=round(sum(v_of(p) for p in ids)), pick_value=sum(p["v"] for p in picks if p["own"] == rid))
+                             value=round(sum(v_of(p) for p in ids)), pick_value=sum(p["v"] for p in picks if p["own"] == rid), habits=habits)
 
     # ---------- rookie board: unrostered first-year players once they show up in FantasyCalc (after the NFL draft)
     rookies = []
@@ -1928,8 +2005,122 @@ def main():
         old_ = unified(pid_, max(fcv_ - tr_, 1), info_["p"]) if fcv_ and tr_ else v_
         research.append(dict(id=pid_, n=info_["n"], p=info_["p"], t=info_["t"], r=own_, age=info_["age"], inj=info_["inj"],
                              v=v_, vt=round(v_ - old_) if fcv_ and tr_ else 0, ro=rp_, w=wk_rows,
-                             pr=[round(x, 1) for x in (P.get(pid_, {}).get("pr") or [])[:4]]))
+                             pr=[round(x, 1) for x in (P.get(pid_, {}).get("pr") or [])[:4]],
+                             mu=mu_of(info_["t"], info_["p"]) if info_["t"] else []))
     print(f"research: {len(research)} players with usage, xFP fit for {sorted(k for k in XF if XF[k])}")
+
+    # ---------- accuracy 1: backtest the Research flags on last season + this season (same rules as the page)
+    FLOOR = {"QB": 15, "RB": 9, "WR": 9, "TE": 7}; MINABS = {"QB": 4, "RB": 3, "WR": 2.5, "TE": 2}
+    def games_of(pid_, yr):
+        out = []
+        for wk in range(1, (last_week if yr < season else done) + 1):
+            e_ = ext.get(pid_, {}).get(f"{yr}-{wk}")
+            if not e_:
+                continue
+            ps_ = pinfo(pid_)["p"]
+            xf_ = sum(c * x for c, x in zip(XF[ps_], xrow(e_))) if XF.get(ps_) else None
+            out.append(dict(wk=wk, fp=pts.get(pid_, {}).get(f"{yr}-{wk}", 0.0), opp=(e_[4] + e_[3]) if ps_ == "QB" else (e_[2] + e_[3]),
+                            sn=(e_[0] / e_[1]) if e_[1] else None, xf=max(xf_, 0) if xf_ is not None else None))
+        return out
+    mean_ = lambda a: sum(a) / len(a) if a else None
+    bt_rows = []  # one row per player-week where a flag could be evaluated: features + what happened next
+    for pid_ in ext:
+        ps_ = pinfo(pid_)["p"]
+        if ps_ not in POS:
+            continue
+        for yr in (season - 1, season):
+            G_ = games_of(pid_, yr)
+            for i in range(5, len(G_) - 2):  # need >=2 games before the window and 3 after
+                hst, nxt = G_[:i], G_[i:i + 3]
+                L_, B_ = hst[-3:], hst[:-3]
+                if len(B_) < 2:
+                    continue
+                oL, oB = mean_([g["opp"] for g in L_]), mean_([g["opp"] for g in B_])
+                sL = mean_([g["sn"] for g in L_ if g["sn"] is not None]); sB = mean_([g["sn"] for g in B_ if g["sn"] is not None])
+                fL = mean_([g["fp"] for g in L_]); xL = mean_([g["xf"] for g in L_ if g["xf"] is not None])
+                bt_rows.append(dict(p=ps_, oL=oL, oB=oB, sus=all(g["opp"] > oB for g in L_[-2:]), dS=(sL - sB) if sL is not None and sB is not None else None, sL=sL,
+                                    fL=fL, xL=xL, fB=mean_([g["fp"] for g in B_]), oN=mean_([g["opp"] for g in nxt]), fN=mean_([g["fp"] for g in nxt])))
+    def flag_eval():
+        out = dict(n=len(bt_rows), up={}, down={}, hot={}, cold={})
+        if len(bt_rows) < 200:
+            return out
+        for thr in (0.15, 0.25, 0.4):
+            up = [r for r in bt_rows if (r["oL"] >= r["oB"] * (1 + thr) and r["oL"] - r["oB"] >= MINABS[r["p"]] and r["sus"]) or (r["dS"] is not None and r["dS"] >= 0.12 and (r["sL"] or 0) >= 0.4)]
+            dn = [r for r in bt_rows if (r["oL"] <= r["oB"] * (1 - thr) and r["oB"] - r["oL"] >= MINABS[r["p"]]) or (r["dS"] is not None and r["dS"] <= -0.12)]
+            if up:
+                kept = [r for r in up if r["oN"] >= r["oB"] + 0.5 * (r["oL"] - r["oB"])]
+                out["up"][str(thr)] = dict(n=len(up), kept=round(len(kept) / len(up), 3), lift=round(mean_([r["fN"] - r["fB"] for r in up]), 2))
+            if dn:
+                stuck = [r for r in dn if r["oN"] <= r["oB"] - 0.5 * (r["oB"] - r["oL"])]
+                out["down"][str(thr)] = dict(n=len(dn), kept=round(len(stuck) / len(dn), 3), lift=round(mean_([r["fN"] - r["fB"] for r in dn]), 2))
+        for lk in (2, 3, 4):
+            hot = [r for r in bt_rows if r["xL"] is not None and r["fL"] - r["xL"] >= lk and r["fL"] >= FLOOR[r["p"]] * 0.8]
+            cold = [r for r in bt_rows if r["xL"] is not None and r["fL"] - r["xL"] <= -lk and r["xL"] >= FLOOR[r["p"]]]
+            if hot:
+                out["hot"][str(lk)] = dict(n=len(hot), kept=round(sum(1 for r in hot if r["fN"] < r["fL"]) / len(hot), 3), lift=round(mean_([r["fN"] - r["fL"] for r in hot]), 2))
+            if cold:
+                out["cold"][str(lk)] = dict(n=len(cold), kept=round(sum(1 for r in cold if r["fN"] > r["fL"]) / len(cold), 3), lift=round(mean_([r["fN"] - r["fL"] for r in cold]), 2))
+        # baseline: how often ANY player's next 3 games beat his last 3 (so a flag's hit rate can be compared to chance)
+        out["base_up"] = round(sum(1 for r in bt_rows if r["fN"] > r["fL"]) / len(bt_rows), 3)
+        def pick(d, need=25):
+            ok = [(v["kept"], k) for k, v in d.items() if v["n"] >= need]
+            return max(ok)[1] if ok else None
+        out["rec"] = dict(up=pick(out["up"]), hot=pick(out["hot"]), cold=pick(out["cold"]))
+        return out
+    flag_bt = flag_eval()
+    print(f"flag backtest: {flag_bt.get('n')} player-windows, recommended {flag_bt.get('rec')}")
+
+    # ---------- accuracy 2: log this week's predictions before kickoff, grade past weeks as they finish
+    pred_path = os.path.join(ROOT, "docs", "predictions.json")
+    try:
+        PRED = json.load(open(pred_path))
+    except Exception:  # noqa
+        PRED = {}
+    PRED.setdefault("weeks", {}); PRED.setdefault("odds", [])
+    started = False
+    if isinstance(sch, list) and fut:
+        started = any(isinstance(gm, dict) and str(gm.get("week")) == str(fut[0]) and gm.get("status") in ("in_progress", "complete") for gm in sch)
+    if fut and not started:
+        PRED["weeks"][f"{season}-{fut[0]}"] = dict(made=gen, wp={str(r): round(S0[r]["wp"], 3) for r in S0},
+                                                   proj={str(t["id"]): proj_this.get(t["id"]) for t in teams},
+                                                   pl={pid_: d_["pr"][0] for pid_, d_ in P.items() if d_.get("r") and d_["pr"] and d_["pr"][0] > 0})
+    day_ = gen[:10]
+    if not PRED["odds"] or PRED["odds"][-1].get("d") != day_:
+        PRED["odds"].append(dict(d=day_, wk=this_week, t={str(r): [round(S0[r]["playoffs"], 3), round(S0[r]["title"], 3)] for r in S0}))
+    else:
+        PRED["odds"][-1] = dict(d=day_, wk=this_week, t={str(r): [round(S0[r]["playoffs"], 3), round(S0[r]["title"], 3)] for r in S0})
+    PRED["odds"] = PRED["odds"][-200:]
+    json.dump(PRED, open(pred_path, "w"), separators=(",", ":"))
+    graded = dict(games=[], pl_err=[], team_err=[])
+    for key_, rec_ in PRED["weeks"].items():
+        yr_, wk_ = map(int, key_.split("-"))
+        if yr_ != season or wk_ > done or wk_ not in weeks:
+            continue
+        rows_ = weeks[wk_]; act = {r_[0]: r_[2] for r_ in rows_}
+        for r_, mid_, pts_ in rows_:
+            o_ = next((x[0] for x in rows_ if x[1] == mid_ and x[0] != r_), None)
+            p_ = rec_["wp"].get(str(r_))
+            if o_ is not None and p_ is not None and r_ < o_:  # each game once
+                graded["games"].append([wk_, p_, 1 if pts_ > act[o_] else 0])
+            pj_ = rec_["proj"].get(str(r_))
+            if pj_ is not None:
+                graded["team_err"].append(abs(pj_ - pts_))
+        for pid_, pj_ in rec_["pl"].items():
+            a_ = pts.get(pid_, {}).get(f"{season}-{wk_}")
+            if a_ is not None:
+                graded["pl_err"].append(abs(pj_ - a_))
+    G_ = graded["games"]
+    bins = []
+    for lo_ in (0.0, 0.2, 0.4, 0.6, 0.8):
+        b_ = [g for g in G_ if lo_ <= g[1] < lo_ + 0.2 or (lo_ == 0.8 and g[1] == 1.0)]
+        if b_:
+            bins.append([lo_, round(lo_ + 0.2, 1), len(b_), round(mean_([g[1] for g in b_]), 3), round(mean_([g[2] for g in b_]), 3)])
+    accuracy = dict(flags=flag_bt, games=len(G_), brier=round(mean_([(g[1] - g[2]) ** 2 for g in G_]), 3) if G_ else None,
+                    favorites=round(mean_([1 if (g[1] >= 0.5) == (g[2] == 1) else 0 for g in G_]), 3) if G_ else None, bins=bins,
+                    pl_mae=round(mean_(graded["pl_err"]), 2) if graded["pl_err"] else None, pl_n=len(graded["pl_err"]),
+                    team_mae=round(mean_(graded["team_err"]), 1) if graded["team_err"] else None,
+                    weeks_logged=sorted(PRED["weeks"].keys()), backtest=backtest,
+                    odds=[dict(d=o_["d"], wk=o_["wk"], po=o_["t"].get(str(me), [None, None])[0], t=o_["t"].get(str(me), [None, None])[1]) for o_ in PRED["odds"]])
 
     data = dict(meta=dict(league=league.get("name"), season=season, done=done, fut=fut, reg_end=reg_end, me=me, median=median_on,
                           n_playoff=n_playoff, generated=gen, this_week=this_week, actions=actions,
@@ -1946,7 +2137,7 @@ def main():
                           ktc_date=ktc.get("date"), values=val_src, backtest=backtest, checks=checks, byes=bye_src, fa_checked=len(fa_pool), faab=int(settings.get("waiver_budget", 0) or 0), sims=SIMS, ledger_through=CFG.get("ledger_through"),
                           scoring=CFG.get("scoring_label", ""), slots=" · ".join(p for p in league.get("roster_positions", []) if p != "BN")),
                 teams=tm_out, players=P, weeks=weeks, po_actual={str(k): {str(r): v for r, v in d.items()} for k, d in po_actual.items()}, sched=sched, m26={str(k): v for k, v in my_weekly.items()}, picks=picks,
-                advice=advice, outlook=outlook, feed=feed, ledger_now=ledger_now, research=research, past_picks=dict(used=used_picks, traded=traded_picks), profiles={str(k): v for k, v in profiles.items()}, rookies=rookies, digest=digest,
+                advice=advice, outlook=outlook, feed=feed, ledger_now=ledger_now, research=research, defense=DEF, accuracy=accuracy, past_picks=dict(used=used_picks, traded=traded_picks), profiles={str(k): v for k, v in profiles.items()}, rookies=rookies, digest=digest,
                 analysis=dict(board=board, sugg={str(k): v for k, v in sugg.items()}, needs={str(k): v for k, v in needs.items()},
                               market=market, depth={str(k): v for k, v in depth.items()}, fa=fa, cut=cut,
                               counted={k: [round(v[0], 1), v[1]] for k, v in counted.items()},

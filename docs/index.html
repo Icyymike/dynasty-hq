@@ -297,6 +297,7 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
 <section data-panel="home">
   <div class="card advice" id="advice"></div>
   <div class="card" id="windowCard"></div>
+  <div class="card" id="planCard"></div>
   <div class="grid2">
     <div class="card" id="seasonCard"></div>
     <div class="card" id="weekCard"></div>
@@ -425,8 +426,10 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
     <div class="card"><div class="row" style="justify-content:space-between"><h2>Buy low</h2><select class="rsp" data-for="rsBuy" aria-label="Position for Buy low"><option value="">All</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select></div><p class="sub">On other teams: a solid role but scoring below what that role is usually worth. Bad luck tends to even out; the price may not.</p><div id="rsBuy" class="list"></div></div>
     <div class="card"><div class="row" style="justify-content:space-between"><h2>Sell high</h2><select class="rsp" data-for="rsSell" aria-label="Position for Sell high"><option value="">All</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select></div><p class="sub">On your team: scoring well above what his role is usually worth, or his trade value jumped without a bigger role. Usually the best time to cash in.</p><div id="rsSell" class="list"></div></div>
     <div class="card"><div class="row" style="justify-content:space-between"><h2>Roles shrinking</h2><select class="rsp" data-for="rsDown" aria-label="Position for Roles shrinking"><option value="">All</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select></div><p class="sub">Fewer snaps or opportunities lately. On your team, that's a warning before the trade value drops.</p><div id="rsDown" class="list"></div></div>
+    <div class="card"><div class="row" style="justify-content:space-between"><h2>Playoff schedule</h2><select class="rsp" data-for="rsMu" aria-label="Position for playoff schedule"><option value="">All</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select></div><p class="sub">Weeks 15–17 opponents for your players, plus the best-schedule players on other teams and waivers worth targeting before the deadline.</p><div id="rsMu" class="list"></div></div>
     <div class="card"><div class="row" style="justify-content:space-between"><h2>Market movers (30 days)</h2><select class="rsp" data-for="rsMove" aria-label="Position for Market movers (30 days)"><option value="">All</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select></div><p class="sub">Biggest trade-value changes over the last month (by percent), from FantasyCalc's real trades. Players who were barely valued a month ago are left out.</p><div id="rsMove" class="list"></div></div>
   </div>
+  <div class="card"><h2>How accurate is this app?</h2><div id="accBox" style="display:flex;flex-direction:column;gap:10px"></div></div>
   <div class="card"><h2>Player explorer</h2>
     <div class="row small" style="gap:10px"><select id="rsOwn" aria-label="Owner"><option value="all">Everyone (incl. free agents)</option><option value="rost">Rostered only</option><option value="me">My team</option><option value="oth">Other teams</option><option value="fa">Free agents</option></select>
       <select id="rsPos" aria-label="Position"><option value="">All positions</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select>
@@ -621,6 +624,39 @@ function titleFrom(strength,j){const c=D.outlook.curve[j];if(strength<=c[0][0])r
 function futureAfter(newIds,givePk,getPk){const O=D.outlook,base=O.teams[ME].title,mine=PICKS.filter(p=>p.own===ME),keyOf=p=>`pk:${p.y}:${p.rd}:${p.o}`;
   const newPicks=mine.filter(p=>!givePk.includes(keyOf(p))).concat(PICKS.filter(p=>getPk.includes(keyOf(p))));
   return [1,2].map(j=>{const s0=futureStrength(futureItems(roster(ME),mine,j),j),s1=futureStrength(futureItems(newIds,newPicks,j),j);return Math.max(0,base[j]+titleFrom(s1,j)-titleFrom(s0,j))})}
+// ---------- the two-year plan: title odds now + next year, who to sell before they decline, thin spots, picks, rookies ----------
+function renderPlan(){const box=$('#planCard'),O=D.outlook;if(!O){box.hidden=true;return}
+  const me=TEAMS.find(t=>t.id===ME),T=O.teams[ME].title,ys=O.years,t0=OFF?0:me.odds.title,t1=T[1],t2=T[2],two=1-(1-t0)*(1-t1);
+  const ids=roster(ME),CL={QB:33,RB:26,WR:29,TE:30},RX=Object.fromEntries((D.research||[]).map(x=>[x.id,x]));
+  // 1) sell before the decline: valuable players at/near the age where value usually drops
+  const sell=ids.map(s=>({s,p:PL[s]})).filter(o=>o.p.age&&value(o.s)>=2000&&o.p.age+1>=CL[o.p.p]).sort((a,b)=>value(b.s)-value(a.s));
+  const sellRow=o=>{const p=o.p,imp=p.imp||0,f=p.fp||[],vt=(RX[o.s]||{}).vt;
+    const when=imp>=2&&!OFF?`helps your lineup ${imp.toFixed(1)} a week, so keep him through the playoffs and sell in the offseason, before the market marks him down`:`only adds ${imp.toFixed(1)} a week now, so selling soon gets the most for him`;
+    return `<div class="li"><div class="main"><span>${posTag(p.p)} ${pl(o.s)} <span class="muted small">age ${Math.floor(p.age)} · worth ${fk(value(o.s))}${vt?` (${vt>0?'+':'−'}${fk(Math.abs(vt))} in 30 days)`:''}</span></span><span class="why">${f.length?`Projected ${f[0].toFixed(1)} a game in ${ys[1]}, ${f[1].toFixed(1)} in ${ys[2]}. `:''}${when.charAt(0).toUpperCase()+when.slice(1)}.</span></div></div>`};
+  // 2) thin spots: how many players you'll have who score like starters in each future season
+  const NEED={QB:3,RB:4,WR:5,TE:2},GOOD={QB:15,RB:9,WR:9,TE:7};
+  const cnt=(pos,j)=>ids.filter(s=>PL[s].p===pos&&((PL[s].fp||[])[j]||0)>=GOOD[pos]).length;
+  const depth=POS.map(pos=>({pos,a:cnt(pos,0),b:cnt(pos,1),n:NEED[pos]}));
+  const thin=depth.filter(d=>d.a<d.n||d.b<d.n);
+  // 3) picks
+  const mp=PICKS.filter(p=>p.own===ME).sort((a,b)=>a.y-b.y||a.rd-b.rd);
+  // 4) rookie board, flagged when they fill a future thin spot
+  const R=(D.rookies||[]).slice(0,8),thinPos=new Set(thin.map(d=>d.pos));
+  box.innerHTML=`<h2>Two-year plan</h2>
+   <div class="tiles">${statTile('Two-year title chance',pct(two),`at least one title in ${ys[0]} or ${ys[1]}`,'')}${statTile(`${ys[0]} title chance`,pct(t0),OFF?'season over':'this season','')}${statTile(`${ys[1]} title chance`,pct(t1),`roster ranks ${ORD(O.teams[ME].rank[1])}`,'')}${statTile(`${ys[2]} title chance`,pct(t2),`roster ranks ${ORD(O.teams[ME].rank[2])}`,t2<t1-0.03?'neg-v':'')}</div>
+   <p class="answer" style="font-size:15px">${two>=0.4?'You are well placed to win one in the next two years; protect it.':two>=0.25?'Realistic contender for the next two years. The biggest lever is this season\'s playoff lineup, then keeping next year\'s roster from aging out.':'Long shot for the next two years as built; trades that add 2027 strength matter as much as this season.'}${t2<t1-0.03?` Your roster weakens in ${ys[2]}, so plan the sells below and use your picks for ${ys[2]} help.`:''}</p>
+   <details class="more" open><summary>Sell before the decline (${sell.length})</summary><div><p class="sub" style="margin:0">Valuable players at the age where dynasty value usually drops (RB 26+, WR 29+, TE 30+, QB 33+ next season).</p><div class="list">${sell.map(sellRow).join('')||'<p class="sub">No one valuable is near the age cliff.</p>'}</div></div></details>
+   <details class="more"><summary>Where the roster gets thin${thin.length?` (${thin.map(d=>d.pos).join(', ')})`:''}</summary><div>
+     <div class="tbl-wrap"><table style="font-size:13px"><thead><tr><th>Position</th><th class="r">${ys[1]} starters</th><th class="r">${ys[2]} starters</th><th class="r">You want</th></tr></thead><tbody>${depth.map(d=>`<tr><td>${posTag(d.pos)}</td><td class="r num ${d.a<d.n?'neg-v':''}">${d.a}</td><td class="r num ${d.b<d.n?'neg-v':''}">${d.b}</td><td class="r num">${d.n}</td></tr>`).join('')}</tbody></table></div>
+     <p class="sub" style="margin:0">“Starters” = players projected to score like a starter that season (QB 15+, RB/WR 9+, TE 7+ a game), after aging. “You want” covers your lineup plus bye and injury cover in best ball.</p></div></details>
+   <details class="more"><summary>Your draft picks (${mp.length})</summary><div><div class="list">${mp.map(p=>`<div class="li"><div class="main"><span><b>${p.y} ${RD[p.rd]} round</b>${p.o!==ME?` <span class="muted small">from ${esc(teamName(p.o))}</span>`:''}${p.slot?` <span class="muted small">projected pick ${p.rd}.${String(Math.round(p.slot)).padStart(2,'0')}</span>`:''}</span></div><div class="right"><span class="num">${fk(p.v)}</span></div></div>`).join('')||'<p class="sub">No picks in the next three drafts.</p>'}</div></div></details>
+   <details class="more"><summary>Rookie board</summary><div><p class="sub" style="margin:0">Unrostered first-year players by market value. The next class shows up here after the NFL Draft in late April.</p><div class="list">${R.map(r=>`<div class="li"><div class="main"><span>${posTag(r.p)} ${esc(r.n)} <span class="muted small">${esc(r.t||'')}</span>${thinPos.has(r.p)?' <span class="word w-good">fills a future need</span>':''}</span></div><div class="right"><span class="num">${fk(r.v)}</span></div></div>`).join('')||'<p class="sub">No unrostered rookies with market value right now.</p>'}</div></div></details>
+   <details class="more"><summary>When to make which moves</summary><div><div class="kv">
+     <span>Now → Week ${(D.meta.rules||{}).trade_deadline||13}</span><span>Push for this title: buy playoff-week points, especially at your weakest spot.</span>
+     <span>January</span><span>Sell aging players right after the playoffs, before offseason news and age marks them down.</span>
+     <span>Feb – April</span><span>Rookie hype climbs into the NFL Draft. Sell picks you don't need at peak, or buy young players from impatient teams.</span>
+     <span>May</span><span>Rookie draft: draft for the thin spots above.</span>
+     <span>August</span><span>Buy proven veterans from rebuilding teams before the season starts.</span></div></div></details>`}
 function renderWindow(){
   const O=D.outlook;if(!O||OFF&&!O.window){$('#windowCard').hidden=true;return}
   const w=O.window,ys=O.years,me=O.teams[ME],n=TEAMS.length;
@@ -881,6 +917,28 @@ function ptsLegendHTML(){const S=ptsScale(),w1=S.winsPer;return `<details class=
   <p class="sub" style="margin:0">Hover or long-press any points number to see what it means in wins.</p></div></details>`}
 // ---------- balance a trade: you pick players on both sides, the app evens it out 3 different ways ----------
 const effV=keys=>{const v=keys.map(val).sort((a,b)=>b-a);return v.reduce((a,x,i)=>a+x*([1,0.65,0.45][i]??0.3),0)};
+// ---------- would they accept? an estimate from this manager's own trade history + the deal itself ----------
+function acceptOdds(pt,theyGet,theyGive,dt){
+  const PR=(D.profiles||{})[pt]||{},H=PR.habits||{},sty=PR.style||'',reb=/Rebuild/.test(sty),win=/Win-now/.test(sty),sm=a=>a.reduce((x,y)=>x+y,0);
+  let sc=0;const why=[];
+  const eIn=effV(theyGet),eOut=effV(theyGive),r=eIn/Math.max(eOut,1)-1;  // what they get vs. what they give, from their side
+  if(r>=0.1){sc+=1.2;why.push('they come out ahead on value')}
+  else if(r>=-0.05){sc+=0.5;why.push('fair value for them')}
+  else{const tol=H.bal_lo!=null?Math.min(H.bal_lo,0):-0.1;if(r>=tol){sc-=0.3;why.push('a bit under fair, but within deals they have accepted before')}else{sc-=1.6;why.push(`they'd give up about ${Math.round(-r*100)}% more value than they get`)}}
+  if(dt!=null){if(!reb&&dt<-2){sc-=1.2;why.push(`it costs their lineup ${(-dt).toFixed(1)} points a week while they're trying to win`)}else if(dt>1&&!reb){sc+=0.6;why.push('it helps their lineup now')}}
+  const gv=sm(theyGet.map(val)),pkShare=sm(theyGet.filter(k=>k.startsWith('pk:')).map(val))/Math.max(gv,1),pls=theyGet.filter(k=>!k.startsWith('pk:'));
+  const young=pls.length>0&&pls.every(k=>(PL[k]?.age||30)<=24.5);
+  if(reb&&(pkShare>0.3||young)){sc+=0.7;why.push('young players and picks fit their rebuild')}
+  if(reb&&!young&&pkShare<0.2&&pls.length){sc-=0.4;why.push("they're rebuilding and this is mostly veterans")}
+  if(win&&pkShare>0.5){sc-=0.8;why.push("they're going for it and picks don't help them this year")}
+  if(H.pin!=null&&pkShare>0.3&&(PR.n||0)>=4){if(H.pin<0.15){sc-=0.4;why.push('they almost never take picks')}else if(H.pin>0.4){sc+=0.3;why.push('they often take picks in trades')}}
+  if(theyGet.length>theyGive.length&&H.spread!=null&&H.spread<0.15&&(PR.n||0)>=4){sc-=0.4;why.push('they rarely take several pieces for one')}
+  if(theyGet.length<theyGive.length&&H.cons!=null&&H.cons<0.15&&(PR.n||0)>=4){sc-=0.3;why.push('they rarely trade several pieces for one')}
+  if(!PR.n){sc-=0.6;why.push('no trades on record')}else if(H.days!=null&&H.days>240){sc-=0.5;why.push(`no trades in ${Math.round(H.days/30)} months`)}else if((H.n365||0)>=8){sc+=0.4;why.push(`an active trader (${H.n365} trades in the last year)`)}
+  if(PR.with_me){sc+=0.25;why.push(`has traded with you ${PR.with_me} time${PR.with_me>1?'s':''}`)}
+  const p=1/(1+Math.exp(-(sc-0.2))),lab=p>=0.6?['Likely to accept','w-good']:p>=0.35?['Maybe','w-mid']:['Unlikely','w-bad'];
+  return {p,lab,why}}
+function acceptHTML(A){return `${W(A.lab)} <span class="small muted">${esc(A.why.slice(0,3).join('; '))}.</span>`}
 function balanceTrade(){
   const box=$('#offers');box.hidden=false;const partner=st.partner,src=st.src||'pr';
   const give=[...st.give],get=[...st.get];
@@ -910,7 +968,7 @@ function balanceTrade(){
   }
   if(!opts.length){box.innerHTML=`<h2>Balance this trade</h2><p class="answer">Right now you ${gap>0?'get':'give'} about ${fk(Math.abs(gap))} more in value. Nothing ${gap>0?'on your roster':'on their roster'} closes that gap cleanly; try a different main piece.</p>`;return}
   // score: your lineup first, then their lineup (they have to say yes), then fewer moving parts
-  opts.forEach(o=>{o.score=o.dm+(o.dt>=-1?0.4:o.dt<-3&&!rebuild?-2:0)-0.15*o.k.length-(Math.abs(o.er-o.eg)/big)*2;o.ok=rebuild||o.dt>=-2});
+  opts.forEach(o=>{o.acc=acceptOdds(partner,o.g,o.r,o.dt);o.score=o.dm+(o.acc.p-0.5)*2-0.15*o.k.length-(Math.abs(o.er-o.eg)/big)*2;o.ok=o.acc.p>=0.35});
   opts.sort((a,b)=>(b.ok-a.ok)||(b.score-a.score));
   const pick=[],seenKind=new Set(),usedK=new Set();
   for(const o of opts){if(o.k.some(k=>usedK.has(k)))continue;if(pick.length<2&&seenKind.has(o.kind)&&opts.some(x=>!seenKind.has(x.kind)&&!pick.includes(x)))continue;pick.push(o);seenKind.add(o.kind);o.k.forEach(k=>usedK.add(k));if(pick.length===3)break}
@@ -927,7 +985,7 @@ function balanceTrade(){
       <div class="kv" style="margin-top:4px"><span>Your lineup</span><span>${ptsBadge(o.dm,true)}</span>
         <span>Title chance</span><span>${pct(o.t0)} → <b>${pct(o.t1)}</b></span>
         <span>Value</span><span>you give ${fk(o.eg)} · you get ${fk(o.er)}</span>
-        <span>${pn}</span><span>${o.dt>=0?`their lineup gets ${o.dt.toFixed(1)} a week better`:`their lineup gets ${(-o.dt).toFixed(1)} a week worse${o.dt<-2&&!rebuild?' (a tough sell for a team trying to win)':''}`}</span></div>
+        <span>${pn}</span><span>${o.dt>=0?`their lineup gets ${o.dt.toFixed(1)} a week better`:`their lineup gets ${(-o.dt).toFixed(1)} a week worse${o.dt<-2&&!rebuild?' (a tough sell for a team trying to win)':''}`}</span><span>Will they accept?</span><span>${acceptHTML(o.acc)}</span></div>
       <div style="margin-top:6px"><button class="btn ghost" data-lab="${partner}|${o.g.join(',')}|${o.r.join(',')}">Use this version</button></div>
     </div></div>`).join('')}</div>`;
 }
@@ -972,8 +1030,8 @@ function suggestOffers(){
     o.young=o.c.every(x=>x.k.startsWith('pk:')||(PL[x.k].age||30)<=24.5);
     const pkV=sum(o.c.filter(x=>x.k.startsWith('pk:')).map(x=>x.v));o.pkShare=pkV/o.g;o.players=o.pkShare<=0.25;
     // would they say yes? contenders won't take a big hit to their lineup; rebuilders want youth and picks
-    o.ok=rebuild?true:o.dt>=-2;
-    o.rank=o.dm-(o.g-R)*0.0003+(o.dt>=0?0.3:0)+(rebuild&&o.young?0.8:0)+(rebuild&&!o.young?-0.5:0)+(!rebuild&&o.pkShare>0.5?-0.6:0)}
+    o.acc=acceptOdds(partner,o.giveKeys,get,o.dt);o.ok=o.acc.p>=0.35;
+    o.rank=(o.acc.p-0.5)*1.5+o.dm-(o.g-R)*0.0003+(o.dt>=0?0.3:0)+(rebuild&&o.young?0.8:0)+(rebuild&&!o.young?-0.5:0)+(!rebuild&&o.pkShare>0.5?-0.6:0)}
   cand.sort((a,b)=>(b.ok-a.ok)||(b.rank-a.rank));
   // three different offers: each one built around a different main piece
   const pick=[],usedMain=new Set();
@@ -1011,7 +1069,7 @@ function suggestOffers(){
         <span>Title chance</span><span>${pct(o.t0)} → <b>${pct(o.t1)}</b></span>
         ${o.tf&&b?`<span>Next two seasons</span><span>${pct(b[1])} / ${pct(b[2])} → <b class="${o.E1<E0-0.01?'neg-v':''}">${pct(o.tf[0])} / ${pct(o.tf[1])}</b></span>`:''}
         <span>Value</span><span>you give ${fk(o.g)} for ${fk(R)}${o.c.length>1?` <span class="muted">(counts as about ${fk(o.e)} to them, since extra pieces are worth less in one deal)</span>`:''}${o.e-R>0.15*R?` · <b>you overpay</b>`:''}</span>
-        <span>Will they bite?</span><span>${yes(o)}</span></div>
+        <span>Will they accept?</span><span>${acceptHTML(o.acc)}</span></div>
       <p class="small" style="margin:6px 0 0"><b>The app's take:</b> ${take(o)}</p>
       <div style="margin-top:6px"><button class="btn ghost" data-lab="${partner}|${o.giveKeys.join(',')}|${get.join(',')}">Check this trade in full</button></div>
     </div></div>`).join('')}</div>`;
@@ -1045,6 +1103,7 @@ function runTrade(){
   const bars=dM.map((v,i)=>bar(v,i,0.18,v=>v>=0?'--good':'--bad')).join('')+dT.map((v,i)=>bar(v,i,0.52,()=>'--silver')).join('')+FUT.map((w,i)=>`<text x="${i*bw+bw/2}" y="${H-2}" text-anchor="middle">${w>D.meta.reg_end?'P':'W'}${w}</text>`).join('')+`<line x1="0" x2="${Wd}" y1="${mid}" y2="${mid}" stroke="var(--line)"/>`;
   $('#result').innerHTML=`<h2>${W([txt,cls])}</h2>
    ${myCut.length||theirCut.length?`<p class="sub"><b>Roster limit (${CAP}):</b> ${myCut.length?`you'd have to cut ${myCut.map(x=>esc(PL[x].n)).join(', ')}`:''}${myCut.length&&theirCut.length?'; ':''}${theirCut.length?`${pn} would have to cut ${theirCut.map(x=>esc(PL[x].n)).join(', ')}`:''} (lowest value). The points below include that; the cut player's value isn't counted.</p>`:''}
+   <p class="small" style="margin:0"><b>Will they accept?</b> ${acceptHTML(acceptOdds(st.partner,[...st.give],[...st.get],tAll))}</p>
    <p class="answer">${G.why}${FU?(FU.E1<FU.E0-0.01&&dTitle>0?` <b>But it costs your future:</b> over this season and the next two, your title chances go down overall (next two seasons ${pct(FU.b[1])}/${pct(FU.b[2])} → ${pct(FU.tf[0])}/${pct(FU.tf[1])}). Only do it if this year is all that matters to you.`:FU.E1>FU.E0+0.01&&dTitle<=0?` <b>It does help your future</b> (next two seasons ${pct(FU.b[1])}/${pct(FU.b[2])} → ${pct(FU.tf[0])}/${pct(FU.tf[1])}).`:''):''} Here's the breakdown:</p>
    ${breakdown({pts:ptsROS,ptsNote:`Projected change in your lineup's points over the ${NW} weeks left (about ${f1(mAll)} a week, ${f1(po.length?po.reduce((a,i)=>a+dM[i],0)/po.length:0)} a week in the playoff weeks).`,extra:`<div class="small">Title chance <b>${pct(me0.title)} → ${pct(me1.title)}</b> <span class="muted">(±${(2*seT*100).toFixed(1)})</span></div><div class="small">Top-2 bye <b>${pct(me0.bye)} → ${pct(me1.bye)}</b></div>${FU?`<div class="small">${D.outlook.years[1]} title chance <b>${pct(FU.b[1])} → ${pct(FU.tf[0])}</b></div><div class="small">${D.outlook.years[2]} title chance <b>${pct(FU.b[2])} → ${pct(FU.tf[1])}</b></div>`:''}`,gave:[...st.give].map(k=>[keyName(k),val(k)]),got:[...st.get].map(k=>[keyName(k),val(k)])})}
    ${C.length?`<h3>Make it work for you</h3><div class="list">${C.map(c=>{const ng=c.kind==='drop'?[...st.give].filter(k=>k!==c.k):[...st.give],nr=c.kind==='add'?[...st.get,c.k]:[...st.get];
@@ -1081,7 +1140,7 @@ function renderIdeas(){
   g.innerHTML=order.map(t=>{const nd=needTxt(t.id),sp=spareOf(t.id),deals=(SG[t.id]||[]).slice(0,2);
     return `<div class="card"><div class="row" style="justify-content:space-between"><h3>${esc(t.name)}</h3>${W(poWord(t.odds.playoffs))}</div>
       <div class="kv"><span>Record</span><span>${t.w}-${t.l}</span><span>They need</span><span>${nd.length?nd.map(p=>posTag(p)).join(' '):'nothing urgent'}</span><span>They have extra</span><span>${sp.length?sp.map(o=>pl(o.s)).join(', '):'no one obvious'}</span></div>
-      ${deals.length?deals.map(d=>`<div class="tx"><div class="small"><span class="muted">Idea:</span> you give <b>${d.give.map(s=>esc(PL[s]?.n)).join(' + ')}</b>, you get <b>${d.get.map(s=>esc(PL[s]?.n)).join(' + ')}</b></div><div class="small muted">Your score ${ptsBadge(dmOf(d),true)}${isPO()&&d.dm_po!=null?` <span class="muted">(${f1(d.dm)} a week over the whole season)</span>`:''}, theirs ${f1(d.dt)} a week. Values are close (${fk(d.kg)} for ${fk(d.kr)}).${d.title1!=null?` Your title chance ${pct(d.title0)} → <b>${pct(d.title1)}</b>.`:''}${futLine(d)}</div><div><button class="btn ghost" data-lab="${t.id}|${d.give.join(',')}|${d.get.join(',')}">Check this trade</button></div></div>`).join(''):'<p class="sub">No fair deal found that helps you.</p>'}</div>`}).join('');
+      ${deals.length?deals.map(d=>`<div class="tx"><div class="small"><span class="muted">Idea:</span> you give <b>${d.give.map(s=>esc(PL[s]?.n)).join(' + ')}</b>, you get <b>${d.get.map(s=>esc(PL[s]?.n)).join(' + ')}</b></div><div class="small muted">Your score ${ptsBadge(dmOf(d),true)}${isPO()&&d.dm_po!=null?` <span class="muted">(${f1(d.dm)} a week over the whole season)</span>`:''}, theirs ${f1(d.dt)} a week. Values are close (${fk(d.kg)} for ${fk(d.kr)}). ${acceptHTML(acceptOdds(t.id,d.give,d.get,d.dt))}${d.title1!=null?` Your title chance ${pct(d.title0)} → <b>${pct(d.title1)}</b>.`:''}${futLine(d)}</div><div><button class="btn ghost" data-lab="${t.id}|${d.give.join(',')}|${d.get.join(',')}">Check this trade</button></div></div>`).join(''):'<p class="sub">No fair deal found that helps you.</p>'}</div>`}).join('');
 }
 
 // ---------- TRADES: league feed ----------
@@ -1152,8 +1211,28 @@ function renderDraft(){
   $('#rookies').innerHTML=R.length?`<div class="tbl-wrap"><table><thead><tr><th>Tier</th><th>Player</th><th class="r">Value</th></tr></thead><tbody>${R.map(r=>`<tr><td class="num">${r.tier}</td><td>${posTag(r.p)} ${esc(r.n)} <span class="muted small">${esc(r.t)}</span></td><td class="r">${pickWord(r.v)}</td></tr>`).join('')}</tbody></table></div>`:`<p class="sub">Not available yet. Rookie rankings show up here after the NFL draft in late April, grouped into tiers of similar value.</p>`;
 }
 
+// ---------- how accurate is this app? ----------
+function renderAccuracy(){const AC=D.accuracy;const box=$('#accBox');if(!box)return;if(!AC){box.innerHTML='<p class="sub">Accuracy tracking starts with the next update.</p>';return}
+  const F=AC.flags||{},rec=F.rec||{},pc=v=>Math.round(v*100)+'%',sg=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1);
+  const NAMES={up:['Role growing','kept at least half of the bigger role over the next 3 games','points a game vs. before the jump'],down:['Role shrinking','stayed at least half as reduced over the next 3 games','points a game vs. before the drop'],hot:['Running hot','scored less over the next 3 games','points a game vs. the hot stretch'],cold:['Running cold','scored more over the next 3 games','points a game vs. the cold stretch']};
+  const SET={up:k=>`${Math.round(k*100)}%+ role change`,down:k=>`${Math.round(k*100)}%+ role change`,hot:k=>`${k}+ pts over role`,cold:k=>`${k}+ pts under role`};
+  const flagRows=['up','down','hot','cold'].flatMap(f=>Object.entries(F[f]||{}).map(([k,v])=>`<tr${rec[f]===k?' class="hl"':''}><td>${NAMES[f][0]}</td><td>${SET[f](+k)}${rec[f]===k?' <span class="word w-good">used</span>':''}</td><td class="r num">${v.n}</td><td class="r num"><b>${pc(v.kept)}</b></td><td class="r num">${sg(v.lift)}</td></tr>`)).join('');
+  const bins=(AC.bins||[]).map(b=>`<tr><td>${Math.round(b[0]*100)}–${Math.round(b[1]*100)}%</td><td class="r num">${b[2]}</td><td class="r num">${pc(b[3])}</td><td class="r num"><b>${pc(b[4])}</b></td></tr>`).join('');
+  const od=(AC.odds||[]).filter(o=>o.t!=null);
+  const oddsChart=od.length>=2?wkChart({title:'Your title and playoff chances over time',weeks:od.map(o=>o.d.slice(5).replace('-','/')),max:1,pct:true,fmt:v=>Math.round(v*100)+'%',series:[{name:'Playoffs',color:'var(--s1)',vals:od.map(o=>o.po),kind:'line'},{name:'Title',color:'var(--s2)',vals:od.map(o=>o.t),kind:'line'}]}):`<p class="sub">Your title-odds history starts today (${od[0]?.d||''}) and grows with every update.</p>`;
+  const bt=AC.backtest||{};
+  box.innerHTML=`<p class="answer">Every flag and prediction here is checked against what actually happened, so you can see how much to trust it.</p>
+   <h3>Research flags, tested on ${F.n?F.n.toLocaleString():0} past player stretches (last season + this one)</h3>
+   <p class="sub" style="margin:0">For each stretch, the flag is computed from games up to that point, then compared with the next 3 games. The highlighted setting is the one the Research tab now uses. For reference, any random player's next 3 games beat his last 3 about ${F.base_up!=null?pc(F.base_up):'half'} of the time.</p>
+   <div class="tbl-wrap"><table class="sortable-tbl" style="font-size:12.5px"><thead><tr><th>Flag</th><th>Setting</th><th class="r">Times it fired</th><th class="r" title="${esc(Object.values(NAMES).map(n=>n[0]+': '+n[1]).join(' · '))}">Came true</th><th class="r">Points after</th></tr></thead><tbody>${flagRows||'<tr><td class="sub">Not enough history yet.</td></tr>'}</tbody></table></div>
+   <p class="sub" style="margin:0">“Came true”: role growing = ${NAMES.up[1]}; running hot = ${NAMES.hot[1]}; running cold = ${NAMES.cold[1]}. “Points after” = ${NAMES.up[2]} (role flags) or ${NAMES.hot[2]} (hot/cold).</p>
+   <h3>Weekly win chances</h3>
+   ${AC.games?`<p class="small" style="margin:0">${AC.games} matchups graded. The favorite won <b>${pc(AC.favorites)}</b> of the time. Brier score ${AC.brier} (0 is perfect, 0.25 is a coin flip).</p><div class="tbl-wrap"><table style="font-size:12.5px"><thead><tr><th>We said</th><th class="r">Games</th><th class="r">Average prediction</th><th class="r">Actually won</th></tr></thead><tbody>${bins}</tbody></table></div><p class="sub" style="margin:0">Well-calibrated means the last two columns match.</p>`:`<p class="sub" style="margin:0">Predictions are saved each week before kickoff (logged so far: ${(AC.weeks_logged||[]).map(k=>'Week '+k.split('-')[1]).join(', ')||'none'}). Grading starts once those games finish.</p>`}
+   <h3>Player projections</h3>
+   <p class="small" style="margin:0">${AC.pl_n?`Saved projections for rostered players missed by <b>${AC.pl_mae}</b> points a game on average (${AC.pl_n} player-games${AC.team_mae!=null?`; team scores missed by ${AC.team_mae}`:''}). `:''}${bt.n?`Tested on ${bt.n} player-games this season: Sleeper's projections missed by ${bt.sleeper}, our history model by ${bt.ours}, and the mix used by ${bt.blend}.`:''} Single games are noisy; season-long trends are far more reliable.</p>
+   ${oddsChart}`}
 // ---------- RESEARCH: roles, expected points, buy/sell signals ----------
-const RS={floor:{QB:15,RB:9,WR:9,TE:7},minAbs:{QB:4,RB:3,WR:2.5,TE:2}};
+const RS={floor:{QB:15,RB:9,WR:9,TE:7},minAbs:{QB:4,RB:3,WR:2.5,TE:2},luckH:3,luckC:3,init:false};
 function rsMetrics(N,thr){const out=[];
   for(const x of (D.research||[])){const rows=x.w.map((r,i)=>r?{i,fp:r[0],sn:r[1],tg:r[2],ru:r[3],pa:r[4],rz:r[5],ts:r[6],xf:r[7]}:null).filter(Boolean);if(!rows.length)continue;
     const opp=r=>x.p==='QB'?r.pa+r.ru:r.tg+r.ru,avg=(a,f)=>{const v=a.map(f).filter(y=>y!=null);return v.length?v.reduce((m,n)=>m+n,0)/v.length:null};
@@ -1166,7 +1245,7 @@ function rsMetrics(N,thr){const out=[];
     m.up=!stale&&B.length>=2&&((m.oppL>=m.oppB*(1+thr)&&m.dOpp>=ma&&sustained)||(m.dSn!=null&&m.dSn>=0.12&&m.snL>=0.4));
     m.down=B.length>=2&&((m.oppL<=m.oppB*(1-thr)&&-m.dOpp>=ma)||(m.dSn!=null&&m.dSn<=-0.12));
     m.luck=m.xfL!=null?m.fpL-m.xfL:null;const fl=RS.floor[x.p]||8;
-    m.hot=m.luck!=null&&m.luck>=3&&m.fpL>=fl*0.8;m.cold=m.luck!=null&&m.luck<=-3&&m.xfL>=fl;
+    m.hot=m.luck!=null&&m.luck>=RS.luckH&&m.fpL>=fl*0.8;m.cold=m.luck!=null&&m.luck<=-RS.luckC&&m.xfL>=fl;
     m.stale=stale;out.push(m)}
   // teammate out: a high-volume player on the same NFL team & position is Out/IR/Doubtful
   const big={};out.forEach(m=>{if(['Out','IR','Doubtful','PUP','Sus'].includes(m.x.inj)&&(m.oppB??m.oppL)>=5){(big[m.x.t+m.x.p]=big[m.x.t+m.x.p]||[]).push(m.x.n)}});
@@ -1178,6 +1257,9 @@ const pctS=v=>v==null?'—':Math.round(v*100)+'%',arr=(d,thr)=>d==null?'':d>=thr
 function rsAction(m){const x=m.x;return x.r===ME?'':x.r?(PL[x.id]?`<button class="btn ghost" data-lab="${x.r}||${x.id}" style="padding:3px 10px;font-size:12px">Build an offer</button>`:''):'<span class="word w-good">Waiver add</span>'}
 function rsItem(m,why){const x=m.x;return `<div class="li"><div class="main"><span>${posTag(x.p)} ${rsName(x)} <span class="muted small">${esc(x.t||'')} · ${rsOwner(x)}${x.inj?` · <span class="neg-v">${esc(x.inj)}</span>`:''}</span></span><span class="why">${why}</span></div><div class="right">${spark(m.opps)}<span class="why">opportunities by week</span>${rsAction(m)}</div></div>`}
 function renderResearch(){
+  if(!RS.init){RS.init=true;const rec=((D.accuracy||{}).flags||{}).rec||{};  // start from the settings that tested best
+    if(rec.up&&[...$('#rsT').options].some(o=>o.value===String(+rec.up)))$('#rsT').value=String(+rec.up);
+    if(rec.hot)RS.luckH=+rec.hot;if(rec.cold)RS.luckC=+rec.cold;renderAccuracy()}
   if(!(D.research||[]).length){$('#rsUp').innerHTML='<p class="sub">Weekly role data shows up after the next update.</p>';return}
   const N=+$('#rsN').value,thr=+$('#rsT').value,M=rsMetrics(N,thr),PF=id=>{const v=(document.querySelector(`select.rsp[data-for=${id}]`)||{}).value;return m=>!v||m.x.p===v},f1x=v=>v==null?'—':v.toFixed(1),none='<p class="sub">Nobody right now.</p>';
   $('#rsUpNote').textContent=`Over his last ${N} games, at least ${Math.round(thr*100)}% more opportunities than before (and the last two games both above his old level), or 12+ points more snap share. Sorted by size of the jump.`;
@@ -1195,12 +1277,17 @@ function renderResearch(){
   $('#rsDown').innerHTML=dn.slice(0,8).map(m=>rsItem(m,roleTxt(m)+(m.x.inj?` Listed ${esc(m.x.inj)}.`:''))).join('')||none;
   const mv=M.filter(PF('rsMove')).filter(m=>m.x.r&&m.x.vt&&m.x.v>=1500&&m.x.v-m.x.vt>=800).sort((a,b)=>Math.abs(b.x.vt/(b.x.v-b.x.vt))-Math.abs(a.x.vt/(a.x.v-a.x.vt)));
   $('#rsMove').innerHTML=mv.slice(0,10).map(m=>rsItem(m,`Trade value <b class="${m.x.vt>0?'pos-v':'neg-v'}">${m.x.vt>0?'+':'−'}${fk(Math.abs(m.x.vt))}</b> (${Math.round(m.x.vt/Math.max(1,m.x.v-m.x.vt)*100)}%) to ${fk(m.x.v)}. ${m.up?'Role is growing too, so the move looks real.':m.down?'Role is shrinking, so the drop may continue.':m.hot?'Driven by a hot streak more than his role.':''}`)).join('')||'<p class="sub">Value trends show up once FantasyCalc reports them.</p>';
+  // playoff schedule
+  const muRow=m=>{const a=muAvg(m.x.mu);return `<div class="li"><div class="main"><span>${posTag(m.x.p)} ${rsName(m.x)} <span class="muted small">${esc(m.x.t||'')} · ${rsOwner(m.x)}</span></span><span class="why">${(m.x.mu||[]).map(([w,o,f])=>`Wk ${w} ${o?esc(o):'bye'} <b class="${muGrade(f)[0]==='easy'?'pos-v':muGrade(f)[0]==='tough'?'neg-v':''}">${muGrade(f)[0]}</b>`).join(' · ')}</span></div><div class="right">${a==null?'':`<span class="big2 ${a>=1.05?'pos-v':a<=0.95?'neg-v':''}">${a>=1?'+':'−'}${Math.abs(Math.round((a-1)*100))}%</span><span class="why">vs. average</span>`}${rsAction(m)}</div></div>`};
+  const MU=M.filter(PF('rsMu')).filter(m=>(m.x.mu||[]).length&&(m.xfL||0)>=4);
+  const mine=MU.filter(m=>m.x.r===ME).sort((a,b)=>(muAvg(b.x.mu)||1)-(muAvg(a.x.mu)||1)),tgt=MU.filter(m=>m.x.r!==ME&&(m.xfL||0)>=(RS.floor[m.x.p]||8)&&(muAvg(m.x.mu)||1)>=1.06).sort((a,b)=>(muAvg(b.x.mu)||1)*(b.xfL||0)-(muAvg(a.x.mu)||1)*(a.xfL||0));
+  $('#rsMu').innerHTML=(mine.length?`<div class="step" style="margin:4px 0">Your players</div>`+mine.slice(0,10).map(muRow).join(''):'')+(tgt.length?`<div class="step" style="margin:10px 0 4px">Targets with soft playoff schedules</div>`+tgt.slice(0,6).map(muRow).join(''):'')||'<p class="sub">Playoff matchups show up after the next update.</p>';
   // explorer
   const own=$('#rsOwn').value,pos=$('#rsPos').value,flag=$('#rsFlag').value,q=$('#rsQ').value.trim().toLowerCase();
   const rows=M.filter(m=>(own==='all'||(own==='rost'&&m.x.r)||(own==='me'&&m.x.r===ME)||(own==='oth'&&m.x.r&&m.x.r!==ME)||(own==='fa'&&!m.x.r))&&(!pos||m.x.p===pos)&&(!q||m.x.n.toLowerCase().includes(q))&&(!flag||m[flag]))
     .sort((a,b)=>(b.xfL||0)-(a.xfL||0)).slice(0,450);
   const fl=m=>[m.up&&'<span class="word w-good">Role ▲</span>',m.down&&'<span class="word w-bad">Role ▼</span>',m.hot&&'<span class="word w-mid">Hot</span>',m.cold&&'<span class="word w-info">Cold</span>',m.opp&&'<span class="word w-good">Teammate out</span>'].filter(Boolean).join(' ');
-  $('#rsTbl').innerHTML=`<thead><tr><th>Player</th><th>Owner</th><th class="r" title="Opportunities a game, last games (arrow vs before)">Opp/g</th><th class="r" title="Share of offensive snaps, last games">Snaps</th><th class="r" title="Share of team targets, last games">Tgt share</th><th class="r" title="Red-zone targets + carries a game, last games">RZ/g</th><th class="r" title="Fantasy points a game, last games">Pts/g</th><th class="r" title="Expected points a game from his role, last games">xFP/g</th><th class="r" title="Points minus expected: + running hot, − running cold">Pts − xFP</th><th class="r">Value</th><th class="r" title="Trade value change, 30 days">30d</th><th>Flags</th><th>By week</th></tr></thead><tbody>${rows.map(m=>`<tr class="${m.x.r===ME?'hl':''}"><td>${posTag(m.x.p)} ${rsName(m.x)} <span class="muted small">${esc(m.x.t||'')}</span></td><td class="small">${rsOwner(m.x)}</td><td class="r num">${f1x(m.oppL)} ${arr(m.dOpp,RS.minAbs[m.x.p]||2.5)}</td><td class="r num">${pctS(m.snL)} ${arr(m.dSn,0.1)}</td><td class="r num">${m.x.p==='QB'?'—':pctS(m.tsL)}</td><td class="r num">${f1x(m.rzL)}</td><td class="r num">${f1x(m.fpL)}</td><td class="r num">${f1x(m.xfL)}</td><td class="r num ${m.luck>=3?'pos-v':m.luck<=-3?'neg-v':''}">${m.luck==null?'—':(m.luck>=0?'+':'')+m.luck.toFixed(1)}</td><td class="r num">${m.x.v?fk(m.x.v):'—'}</td><td class="r num ${m.x.vt>0?'pos-v':m.x.vt<0?'neg-v':''}">${m.x.vt?(m.x.vt>0?'+':'−')+fk(Math.abs(m.x.vt)):'—'}</td><td>${fl(m)}</td><td>${spark(m.opps)}</td></tr>`).join('')}</tbody>`;reSort('rsTbl');
+  $('#rsTbl').innerHTML=`<thead><tr><th>Player</th><th>Owner</th><th class="r" title="Opportunities a game, last games (arrow vs before)">Opp/g</th><th class="r" title="Share of offensive snaps, last games">Snaps</th><th class="r" title="Share of team targets, last games">Tgt share</th><th class="r" title="Red-zone targets + carries a game, last games">RZ/g</th><th class="r" title="Fantasy points a game, last games">Pts/g</th><th class="r" title="Expected points a game from his role, last games">xFP/g</th><th class="r" title="Points minus expected: + running hot, − running cold">Pts − xFP</th><th class="r">Value</th><th class="r" title="Trade value change, 30 days">30d</th><th class="r" title="Weeks 15–17 opponents vs. an average defense at his position">Playoff sched.</th><th>Flags</th><th>By week</th></tr></thead><tbody>${rows.map(m=>`<tr class="${m.x.r===ME?'hl':''}"><td>${posTag(m.x.p)} ${rsName(m.x)} <span class="muted small">${esc(m.x.t||'')}</span></td><td class="small">${rsOwner(m.x)}</td><td class="r num">${f1x(m.oppL)} ${arr(m.dOpp,RS.minAbs[m.x.p]||2.5)}</td><td class="r num">${pctS(m.snL)} ${arr(m.dSn,0.1)}</td><td class="r num">${m.x.p==='QB'?'—':pctS(m.tsL)}</td><td class="r num">${f1x(m.rzL)}</td><td class="r num">${f1x(m.fpL)}</td><td class="r num">${f1x(m.xfL)}</td><td class="r num ${m.luck>=3?'pos-v':m.luck<=-3?'neg-v':''}">${m.luck==null?'—':(m.luck>=0?'+':'')+m.luck.toFixed(1)}</td><td class="r num">${m.x.v?fk(m.x.v):'—'}</td><td class="r num ${m.x.vt>0?'pos-v':m.x.vt<0?'neg-v':''}">${m.x.vt?(m.x.vt>0?'+':'−')+fk(Math.abs(m.x.vt)):'—'}</td><td class="r num">${(a=>a==null?'—':`<span class="${a>=1.05?'pos-v':a<=0.95?'neg-v':''}">${a>=1?'+':'−'}${Math.abs(Math.round((a-1)*100))}%</span>`)(muAvg(m.x.mu))}</td><td>${fl(m)}</td><td>${spark(m.opps)}</td></tr>`).join('')}</tbody>`;reSort('rsTbl');
   if(!rows.length){const fl={up:'role growing',down:'role shrinking',hot:'running hot',cold:'running cold',opp:'teammate out'}[flag],ow={me:'on your team',oth:'on other teams',fa:'among free agents',rost:'on a roster'}[own];
     $('#rsTbl').innerHTML=`<tbody><tr><td class="sub">No ${pos||''} players ${fl?`with “${fl}”`:''} ${ow||''}${q?` matching “${esc(q)}”`:''} over the last ${N} games. Try “Everyone”, another position, or a smaller role-change setting at the top.</td></tr></tbody>`}
 }
@@ -1226,6 +1313,7 @@ function renderTeams(){
      <div class="kv"><span>Approach</span><span>${W([sw[0],sw[1]])}${(p.why||[]).length?`<br><span class="small muted">Why: ${p.why.map(esc).join('; ')}.</span>`:''}</span>
       <span>${mine?'You need':'They need'}</span><span>${nd.length?nd.map(x=>posTag(x)).join(' '):'nothing urgent'}</span>
       <span>Extra players</span><span>${sp.length?sp.map(o=>pl(o.s)).join(', '):'no one obvious'}</span>
+      ${(h=>p.n?`<span>Trade habits</span><span>${[h.n365!=null?`${h.n365} trade${h.n365===1?'':'s'} in the last year`:'',h.days!=null?`last one ${h.days<=1?'today':h.days+' days ago'}`:'',h.pin!=null?`takes picks in ${Math.round(h.pin*100)}% of deals`:'',h.cons!=null&&h.cons>=0.25?`often consolidates (2-for-1)`:'',h.spread!=null&&h.spread>=0.25?'often takes several pieces back':'',h.bal_med!=null?(h.bal_med>=0.05?'usually wins on value':h.bal_med<=-0.05?'often pays extra to get a target':'usually trades about even'):''].filter(Boolean).join(' · ')}</span>`:'')(p.habits||{})}
       <span>Trades</span><span>${p.n||0} on record${p.with_me?`, ${p.with_me} with you`:''}${p.n?`. Their deals ${p.bal>=0?'gained':'lost'} ${fk(Math.abs(p.bal))} in value at today's prices.`:''}</span>
       <span>FAAB left</span><span>$${t.faab??'—'} of $${(D.meta.rules||{}).faab||100}</span>
       ${D.outlook?`<span>Next 3 seasons</span><span>${D.outlook.years.map((y,j)=>`${y}: ${ORD(D.outlook.teams[t.id].rank[j])}`).join(' → ')}</span>`:''}</div>
@@ -1233,6 +1321,10 @@ function renderTeams(){
 }
 
 // role section for the player card: weekly usage table + what changed, using the Research settings
+// ---------- playoff matchups (Weeks 15–17): how generous each opponent's defense is to this position ----------
+const muGrade=f=>f==null?['bye','w-plain']:f>=1.08?['easy','w-good']:f<=0.92?['tough','w-bad']:['neutral','w-plain'];
+const muAvg=mu=>{const v=(mu||[]).map(x=>x[2]).filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
+function muHTML(mu,pos){if(!mu||!mu.length)return '';return `<div><div class="step" style="margin-bottom:4px">Playoff matchups</div><div class="row" style="gap:6px">${mu.map(([w,o,f])=>{const g=muGrade(f);return `<span class="word ${g[1]}" style="text-transform:none;letter-spacing:0" title="${f==null?'No game':`${esc(o)} has allowed ${Math.round((f-1)*100)>=0?'+':''}${Math.round((f-1)*100)}% vs. what offenses usually score at ${pos} (adjusted for who they played)`}">Wk ${w} ${o?'vs '+esc(o):'bye'} · ${g[0]}</span>`}).join('')}</div><div class="sub" style="margin-top:4px">Based on this season's games, adjusted for the offenses each defense faced. Early-season numbers are noisy, so it nudges his playoff projections by at most 10%.</div></div>`}
 // ---------- player profile charts (one axis each; legend + tooltips; table view under "Show the numbers") ----------
 function wkChart(o){ // o: {weeks:[1..], hiFrom, series:[{name,color,vals,kind:'bar'|'stack'|'line'|'tick'}], max, fmt, refs:[{v,label}], h}
   const W=window.innerWidth<520?Math.max(300,window.innerWidth-60):560,H=o.h||(W<520?150:140),L=30,R=6,T=10,B=20,n=o.weeks.length,cw=(W-L-R)/Math.max(n,1),fmt=o.fmt||(v=>v.toFixed(1));
@@ -1295,6 +1387,7 @@ function openResearchOnly(s){const x=(D.research||[]).find(r=>r.id===s);if(!x)re
   $('#plTitle').innerHTML=`${posTag(x.p)} ${esc(x.n)}`;
   $('#plBody').innerHTML=`<p class="answer">${esc(x.n)} plays for ${esc(x.t||'no NFL team')} and is ${x.r?`on <b>${esc(teamName(x.r))}</b>`:'<b>a free agent</b> in your league'}.${x.age?` Age ${Math.floor(x.age)}.`:''}${x.inj?` <span class="neg-v">${esc(x.inj)}</span>.`:''}</p>
     <div class="kv"><span>Trade value</span><span>${x.v?valTxt(x.v):'not valued by the market yet'}</span>${x.ro!=null?`<span>Rostered</span><span>${Math.round(x.ro)}% of leagues on FantasyCalc</span>`:''}${(x.pr||[]).length?`<span>Projected next weeks</span><span>${x.pr.map(v=>v?v.toFixed(1):'—').join(' · ')}</span>`:''}</div>
+    ${muHTML(x.mu,x.p)}
     ${roleHTML(s)}
     ${x.r&&x.r!==ME?`<div><button class="btn" data-lab="${x.r}||${s}">Build an offer for him</button></div>`:!x.r?'<p class="sub">Free agent: claim him on Sleeper if you want him.</p>':''}`;
   $('#plDlg').showModal();return true}
@@ -1312,6 +1405,7 @@ function openPlayer(s){const p=PL[s];if(!p){openResearchOnly(s);return}const cw=
      ${(t=>t?`<span>Value trend</span><span class="${t.d>=0?'pos-v':'neg-v'}">${t.d>=0?'up':'down'} ${fk(Math.abs(t.d))} (${Math.round(Math.abs(t.pct)*100)}%) in ${t.days} days</span>`:'')(vtrend(p))}<span>Bye week</span><span>${p.bye??'—'}</span><span>Trade value</span><span class="num">${fk(value(s))} <span class="muted small">(${pickWord(value(s))})</span></span>${p.a25!=null?`<span>Last season</span><span>${p.a25} points a game</span>`:''}${mine?`<span>For you</span><span>${c?`${c[0].toFixed(0)} points that counted, in ${c[1]} week${c[1]===1?'':'s'}`:'hasn\'t made your lineup yet'}${p.imp!=null&&!OFF?` · adds ${p.imp.toFixed(1)} a week from here (${(p.imp_po||0).toFixed(1)} in playoff weeks)`:''}</span>`:''}</div>
     <div><div class="step" style="margin-bottom:6px">Points each week${mine?' · green = counted in your lineup':''}</div><div class="gl">${log||'<span class="sub">No games yet.</span>'}</div></div>
     <div><div class="step" style="margin-bottom:6px">Expected points the rest of the way</div><div class="gl">${fut}</div>${projWarn(s)?`<p class="sub" style="margin-top:6px">${projWarn(s)}</p>`:''}${(r=>r?`<p class="sub" style="margin-top:6px">Most weeks (8 in 10) he'll land between <b>${r[0].toFixed(0)}</b> and <b>${r[1].toFixed(0)}</b> points; big games happen more often than busts. There's also about a 1-in-20 chance he misses any given game.</p>`:'')(NW?(k=>k>=0?prange(p,k):null)(p.pr.findIndex(x=>x>0)):null)}</div>
+    ${muHTML(p.mu,p.p)}
     ${roleHTML(s)}
     ${p.r&&p.r!==ME&&!p.gone?`<div><button class="btn" data-lab="${p.r}||${s}">Build an offer for him</button></div>`:mine?`<div><button class="btn ghost" data-lab="${st.partner}|${s}|">Shop him in a trade</button></div>`:''}`;
   $('#plDlg').showModal()}
@@ -1344,7 +1438,7 @@ $('#askGo').addEventListener('click',e=>{if(!$('#askQ').value.trim()){e.preventD
 const opt=f=>fetch(f,{cache:'no-cache'}).then(r=>r.ok?r.json():[]).catch(()=>[]);
 Promise.all([fetch('data.json',{cache:'no-cache'}).then(r=>r.json()),opt('ledger.json'),opt('history.json'),opt('alerts.json')]).then(([d,l,h,al])=>{
   D=d;LEDGER=l;HIST=h;ALERTS=al;PL=d.players;FUT=d.meta.fut;NW=FUT.length;OFF=NW===0;TEAMS=d.teams;PICKS=d.picks;A=d.analysis;ME=d.meta.me;
-  header();renderAdvice();renderWindow();renderHome();
+  header();renderAdvice();renderWindow();renderPlan();renderHome();
   $('#partner').innerHTML=standOrder().filter(t=>t.id!==ME).map(t=>`<option value="${t.id}">${esc(t.name)} (${t.w}-${t.l})</option>`).join('');
   st.partner=+$('#partner').value;
   {const d=deadline();$('#dlBanner').innerHTML=!d?'':d.open?`${d.left<=1?'<b>This is the last week to trade.</b>':`<b>${d.left} weeks left to trade</b> (deadline is after Week ${d.dl}).`} Anyone you add now also plays for you in the playoffs.`:`<b>Trading is closed</b> until the season ends. You can still plan offseason trades here.`}
