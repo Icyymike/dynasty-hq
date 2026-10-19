@@ -1044,6 +1044,26 @@ def main():
             P[p]["imp_po"] = round(acc_po[p] / (IMP_S * len(po_k)), 2) if po_k else 0
     def mc_total(ids, sims=IMP_S):
         return sum(lineup(ids, s_, k) for s_ in range(sims) for k in range(len(fut))) / sims if fut else 0
+    NPO = len(po_k)
+    _mcp = {}
+    def mc_pair(ids, sims=IMP_S):
+        """(total points over every week left, total over the playoff weeks only), averaged over the simulations"""
+        key = tuple(ids)
+        if key in _mcp:
+            return _mcp[key]
+        if not fut:
+            return (0.0, 0.0)
+        tot = po = 0.0; pos_ = set(po_k)
+        for s_ in range(sims):
+            for k in range(len(fut)):
+                v = lineup(ids, s_, k); tot += v
+                if k in pos_:
+                    po += v
+        r = (tot / sims, po / sims); _mcp[key] = r
+        return r
+    def gain2(before, after):
+        a, b = mc_pair(before), mc_pair(after)
+        return (b[0] - a[0]) / NW, ((b[1] - a[1]) / NPO if NPO else None)
     _mcb = {}
     def mc_add(ids, extra):
         if not fut:
@@ -1085,47 +1105,52 @@ def main():
                 if not rv or gv < 0.92 * rv or gv > 1.30 * rv:
                     continue
                 nm = [i for i in mk if i not in give] + [got]; nt = [i for i in tids if i != got] + list(give)
-                dm = (sum(det_weeks(nm)) - bm) / NW; dt = (sum(det_weeks(nt)) - bt) / NW
-                if dm >= 0.8 and dt >= -1.0:
-                    out.append(dict(give=list(give), get=[got], dm=round(dm, 2), dt=round(dt, 2), kg=gv, kr=rv))
-        out.sort(key=lambda x: -x["dm"]); seen = set(); cand = []
-        for o in out:
-            if o["get"][0] in seen:
-                continue
-            seen.add(o["get"][0]); cand.append(o)
-            if len(cand) == 10:
-                break
+                dwm = det_weeks(nm); dm = (sum(dwm) - bm) / NW; dt = (sum(det_weeks(nt)) - bt) / NW
+                dmp = (sum(dwm[k] for k in po_k) - sum(base[me][k] for k in po_k)) / NPO if NPO else -99
+                if (dm >= 0.8 or dmp >= 0.8) and dt >= -1.0:
+                    out.append(dict(give=list(give), get=[got], dm=round(dm, 2), dm_po=round(dmp, 2), dt=round(dt, 2), kg=gv, kr=rv))
+        cand = []
+        for key_, n_ in (("dm", 7), ("dm_po", 5)):  # best for the whole season, and best for the playoff weeks
+            seen = {o["get"][0] for o in cand}; k_ = 0
+            for o in sorted(out, key=lambda x: -x[key_]):
+                if o["get"][0] in seen:
+                    continue
+                seen.add(o["get"][0]); cand.append(o); k_ += 1
+                if k_ == n_:
+                    break
         top = []
-        m0 = mc_total(mk); t0 = mc_total(tids)
         for o in cand:
             nm = [i for i in mk if i not in o["give"]] + o["get"]; nt = [i for i in tids if i not in o["get"]] + o["give"]
-            o["dm"] = round((mc_total(nm) - m0) / NW, 2); o["dt"] = round((mc_total(nt) - t0) / NW, 2)
-            if o["dm"] >= 1.0 and o["dt"] >= -1.5:
+            g_, gp_ = gain2(mk, nm); o["dm"] = round(g_, 2); o["dm_po"] = round(gp_, 2) if gp_ is not None else None
+            o["dt"] = round(gain2(tids, nt)[0], 2)
+            if (o["dm"] >= 1.0 or (o["dm_po"] or 0) >= 1.0) and o["dt"] >= -1.5:
                 top.append(o)
         top.sort(key=lambda x: -x["dm"])
-        sugg[t["id"]] = top[:4]
+        keep = top[:4] + [o for o in sorted(top[4:], key=lambda x: -(x["dm_po"] or 0))[:2]]
+        sugg[t["id"]] = keep
     # free agents: what each would add to your lineup (best ball counts byes, injuries and boom weeks)
     # who to drop: least useful to the lineup AND not worth much in trade (never suggest cutting a valuable dynasty asset)
     cheap = [p_ for p_ in ids_by[me] if (P[p_].get("val") or 0) < 1800]
     cut = sorted(cheap or ids_by[me], key=lambda p_: (P[p_].get("imp", 0) + (P[p_].get("val") or 0) / 2000, P[p_].get("val") or 0))[:3]
     roster_cap = int(settings.get("roster_size") or 0) or len([s_ for s_ in (league.get("roster_positions") or []) if s_ not in ("IR", "TAXI")]) or 28
-    def net_add(pid):
-        """Points a week gained by adding him, after cutting your least useful player if the roster is full."""
+    def net_add2(pid):
+        """(points a week gained over the rest of the season, over the playoff weeks) by adding him,
+        after cutting your least useful player if the roster is full."""
         ids = ids_by[me]
+        after = ids + [pid]
         if len(ids) >= roster_cap and cut:
             c_ = next((x for x in cut if x != pid), None)
             if c_:
-                key = tuple(ids)
-                if key not in _mcb:
-                    _mcb[key] = mc_total(ids)
-                return (mc_total([i for i in ids if i != c_] + [pid]) - _mcb[key]) / NW
-        return mc_add(ids, pid)
+                after = [i for i in ids if i != c_] + [pid]
+        return gain2(ids, after)
+    def net_add(pid):
+        return net_add2(pid)[0]
     fa = []
     for pid in [p for p in P if P[p].get("fa")]:
-        add = net_add(pid)
-        if add >= 0.3:
-            fa.append(dict(id=pid, add=round(add, 2), val=P[pid].get("val") or 0))
-    fa.sort(key=lambda x: -x["add"]); fa = fa[:8]
+        add, addp = net_add2(pid)
+        if add >= 0.3 or (addp or 0) >= 0.3:
+            fa.append(dict(id=pid, add=round(add, 2), add_po=round(addp, 2) if addp is not None else None, val=P[pid].get("val") or 0))
+    fa = sorted(fa, key=lambda x: -x["add"])[:8] + [f_ for f_ in sorted(fa, key=lambda x: -(x["add_po"] or 0))[:8] if f_ not in sorted(fa, key=lambda x: -x["add"])[:8]]
     # title-odds check on the single best idea per team (same draws, so the change is the trade, not noise)
     best_ideas = sorted(((t_id, o) for t_id, L in sugg.items() for o in L[:1]), key=lambda x: -x[1]["dm"])[:int(CFG.get("idea_title_checks", 6))]
     for t_id, o in best_ideas:
@@ -1284,8 +1309,8 @@ def main():
         v = v_of(pid); r = (v - fair(pid)) / max(fair(pid), 800)
         if r > -0.25:
             continue
-        add = net_add(pid)
-        if add >= 1.0:
+        add, addp = net_add2(pid)
+        if add >= 1.0 or (addp or 0) >= 1.0:
             why = [f"produces {ppg(pid):.1f} pts/wk; that output usually costs ~{round(fair(pid)):,}, he's {v:,}"]
             same = sorted([ppg(x) for x in ids_by[me] if P[x]["p"] == d["p"]], reverse=True)
             need_n = {"QB": 2, "RB": 4, "WR": 5, "TE": 2}[d["p"]]  # starters + realistic flex use at that spot
@@ -1294,9 +1319,10 @@ def main():
                 why.append(f"you already have {better} {d['p']}s who score more, so he'd mostly fill in on byes and bad weeks")
             if d["age"] and d["age"] >= AGE_CLIFF[d["p"]]:
                 why.append(f"age {d['age']:.0f}: cheap because of age, so it's points now with little resale")
-            buy.append(dict(id=pid, v=v, fair=round(fair(pid)), ppg=round(ppg(pid), 1), add=round(add, 2), old=bool(d["age"] and d["age"] >= AGE_CLIFF[d["p"]]), why=why))
+            buy.append(dict(id=pid, v=v, fair=round(fair(pid)), ppg=round(ppg(pid), 1), add=round(add, 2), add_po=round(addp, 2) if addp is not None else None, old=bool(d["age"] and d["age"] >= AGE_CLIFF[d["p"]]), why=why))
     buy.sort(key=lambda x: -x["add"] / (x["v"] / 1000 + 0.5))
-    market = dict(sell=sell[:8], buy=buy[:12])
+    buy_po = sorted([b_ for b_ in buy if b_.get("add_po") is not None], key=lambda x: -x["add_po"] / (x["v"] / 1000 + 0.5))
+    market = dict(sell=sell[:8], buy=buy[:12] + [b_ for b_ in buy_po[:12] if b_ not in buy[:12]])
 
     # ---------- positional strength: counted points per week by position, ranked across the league
     depth = {}
