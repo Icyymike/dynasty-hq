@@ -1094,7 +1094,9 @@ def main():
         top.sort(key=lambda x: -x["dm"])
         sugg[t["id"]] = top[:4]
     # free agents: what each would add to your lineup (best ball counts byes, injuries and boom weeks)
-    cut = sorted(ids_by[me], key=lambda p_: (P[p_].get("imp", 0), P[p_].get("val") or 0))[:3]
+    # who to drop: least useful to the lineup AND not worth much in trade (never suggest cutting a valuable dynasty asset)
+    cheap = [p_ for p_ in ids_by[me] if (P[p_].get("val") or 0) < 1800]
+    cut = sorted(cheap or ids_by[me], key=lambda p_: (P[p_].get("imp", 0) + (P[p_].get("val") or 0) / 2000, P[p_].get("val") or 0))[:3]
     roster_cap = int(settings.get("roster_size") or 0) or len([s_ for s_ in (league.get("roster_positions") or []) if s_ not in ("IR", "TAXI")]) or 28
     def net_add(pid):
         """Points a week gained by adding him, after cutting your least useful player if the roster is full."""
