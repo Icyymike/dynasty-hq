@@ -1,0 +1,56 @@
+name: Refresh data
+on:
+  schedule:
+    - cron: "17 */4 * * *"      # every 4 hours
+    - cron: "*/30 17-23 * * 0"  # every 30 min during Sunday afternoon games (UTC)
+    - cron: "*/30 0-4 * * 1,2,5" # Sunday, Monday and Thursday night games (late evening US = early morning UTC)
+    - cron: "40 13 * * 2"       # Tuesday morning: weekly digest
+  workflow_dispatch:
+    inputs:
+      digest:
+        description: "Post the weekly digest now"
+        type: boolean
+        default: false
+permissions:
+  contents: write
+  issues: write
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/cache@v4
+        with:
+          path: cache
+          key: sleeper-cache-${{ github.run_id }}
+          restore-keys: sleeper-cache-
+      - name: Build data
+        run: python pipeline/build.py
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}   # optional: lets Claude write the recommendation
+      - name: Commit data
+        run: |
+          git config user.name "dynasty-hq-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/data.json docs/history.json docs/alerts.json docs/digest.md docs/values.json docs/trade_values.json
+          git diff --cached --quiet || git commit -m "Refresh data $(date -u +%Y-%m-%dT%H:%MZ)"
+          git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+          git push
+      # GitHub emails/pushes new issues to you (you watch your own repo by default)
+      - name: Alert on changes that affect my team
+        run: |
+          if [ -s out/new_alerts.md ]; then
+            gh issue create --title "Dynasty HQ alert · $(head -1 out/new_alerts.md | cut -c3-80)" --body-file out/new_alerts.md
+          fi
+      - name: Weekly digest
+        if: github.event.schedule == '40 13 * * 2' || inputs.digest
+        run: gh issue create --title "Weekly digest · $(date -u +%b\ %d)" --body-file docs/digest.md
