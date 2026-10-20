@@ -455,6 +455,12 @@ def main():
     fut = list(range(max(done + 1, 1), last_week + 1))
 
     players_db = get(f"{API}/players/nfl", cache_hours=20)
+    # two-way players (e.g. Travis Hunter is listed as DB but plays WR for fantasy): use the fantasy position Sleeper scores him at
+    for d_ in players_db.values():
+        if isinstance(d_, dict) and d_.get("position") not in POS:
+            fp_ = [x for x in (d_.get("fantasy_positions") or []) if x in POS]
+            if fp_:
+                d_["position"] = fp_[0]
     uname = {u["user_id"]: (u.get("metadata") or {}).get("team_name") or u.get("display_name") for u in users}
     teams = []
     for r in rosters:
