@@ -1,18 +1,18 @@
-# Gibb Me My Trophy · Week 6 briefing
+# Gibb Me My Trophy · Week 7 briefing
 
-**Week 5:** 212.4 vs The True Behemoth 212.1 (W/W, median 172.6)
-Top counted: Jahmyr Gibbs 35.2, Jaylen Warren 33.8, Jordan Love 29.3, Pat Freiermuth 24.0
+**Week 6:** 135.0 vs Commish in Epstein Files 135.4 (L/L, median 143.1)
+Top counted: C.J. Stroud 29.0, Bryce Young 23.8, D'Andre Swift 21.0, Roschon Johnson 13.5
 
-**Record:** 8-2, #4 of 12 · 947.2 PF
-**Odds:** playoffs 100% · bye 36% · title 19%
+**Record:** 8-4, #5 of 12 · 1082.2 PF
+**Odds:** playoffs 100% · bye 36% · title 17%
 
-**Playoff path:** most likely seed 3; title chance with a bye 30% vs without 13%
-**Best trade idea:** give Roschon Johnson, Jordan Love for James Cook: title chance 19% → 27%
-**Waivers:** Tyrone Tracy would add 1.8 pts/wk to your lineup.
-**Window:** Window open: contend. Projected rank 2026: 2, 2027: 3, 2028: 4.
+**Playoff path:** most likely seed 3; title chance with a bye 28% vs without 11%
+**Best trade idea:** give Roschon Johnson, Jordan Love for James Cook: title chance 17% → 21%
+**Waivers:** Tyrone Tracy would add 1.9 pts/wk to your lineup.
+**Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 6:** vs Commish in Epstein Files · projected 130.3 – 135.4 · win chance 6%
-On bye: Amon-Ra St. Brown, Malik Willis, Greg Dulcich, Jahmyr Gibbs, Chase Brown
+**Week 7:** vs Lava Me Tender · projected 180.6 – 140.4 · win chance 85%
+On bye: Tre' Harris, Antonio Williams, Josh Cameron, Treylon Burks, Quentin Johnston
 Injured: Tre' Harris (Out), Matt Hibner (Out), Michael Pittman (IR)
 
 ## Alerts this week
@@ -23,13 +23,13 @@ Injured: Tre' Harris (Out), Matt Hibner (Out), Michael Pittman (IR)
 
 ## League trades
 - **Straight Outta Hampton** get 2027 3rd (Straight Outta Hampton) (Value win) ⇄ **WavySerg** get Jerry Jeudy (Push)
-- **Straight Outta Hampton** get 2028 3rd (Gibb Me My Trophy) (Push) ⇄ **WavySerg** get Isaac TeSlaa (Push)
+- **Straight Outta Hampton** get 2028 3rd (Gibb Me My Trophy) (Push) ⇄ **WavySerg** get Isaac TeSlaa (Win)
 
 ## Market
-- Sell-high: Cam Skattebo: value 4,164 vs ~2,515 for 4.2 pts/wk of production
-- Sell-high: Jalen Nailor: value 1,827 vs ~1,358 for 3.2 pts/wk of production
-- Buy-low: Mike Evans (The True Behemoth): +7.3 counted pts/wk for you, value 3,677
-- Buy-low: Ollie Gordon (Lava Me Tender): +4.5 counted pts/wk for you, value 3,211
-- Buy-low: Kirk Cousins (Lava Me Tender): +3.9 counted pts/wk for you, value 2,782
+- Sell-high: Cam Skattebo: value 4,164 vs ~2,314 for 3.4 pts/wk of production
+- Sell-high: Jalen Nailor: value 1,827 vs ~1,303 for 3.1 pts/wk of production
+- Buy-low: Mike Evans (The True Behemoth): +6.5 counted pts/wk for you, value 3,677
+- Buy-low: Kirk Cousins (Lava Me Tender): +4.2 counted pts/wk for you, value 2,782
+- Buy-low: Ollie Gordon (Lava Me Tender): +4.7 counted pts/wk for you, value 3,211
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
