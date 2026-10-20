@@ -2121,7 +2121,13 @@ def main():
         b_ = [g for g in G_ if lo_ <= g[1] < lo_ + 0.2 or (lo_ == 0.8 and g[1] == 1.0)]
         if b_:
             bins.append([lo_, round(lo_ + 0.2, 1), len(b_), round(mean_([g[1] for g in b_]), 3), round(mean_([g[2] for g in b_]), 3)])
-    accuracy = dict(flags=flag_bt, games=len(G_), brier=round(mean_([(g[1] - g[2]) ** 2 for g in G_]), 3) if G_ else None,
+    # last completed week as it looked before kickoff (from the prediction log), for questions like "was this loss expected?"
+    last_pre = None
+    if done:
+        r_ = PRED["weeks"].get(f"{season}-{done}")
+        if r_:
+            last_pre = dict(wk=done, wp=r_["wp"].get(str(me)), proj={k_: v_ for k_, v_ in r_["proj"].items()})
+    accuracy = dict(flags=flag_bt, last_pre=last_pre, games=len(G_), brier=round(mean_([(g[1] - g[2]) ** 2 for g in G_]), 3) if G_ else None,
                     favorites=round(mean_([1 if (g[1] >= 0.5) == (g[2] == 1) else 0 for g in G_]), 3) if G_ else None, bins=bins,
                     pl_mae=round(mean_(graded["pl_err"]), 2) if graded["pl_err"] else None, pl_n=len(graded["pl_err"]),
                     team_mae=round(mean_(graded["team_err"]), 1) if graded["team_err"] else None,

@@ -1428,7 +1428,18 @@ ${ros.join('\n')}
 TEAMS:
 ${tm.join('\n')}
 
-MY PICKS: ${PICKS.filter(p=>p.own===ME).map(p=>`${p.label} v${p.v}`).join('; ')}`}
+MY PICKS: ${PICKS.filter(p=>p.own===ME).map(p=>`${p.label} v${p.v}`).join('; ')}
+${lastWeekCtx()}`}
+// last week's result, what was expected before kickoff, and how my odds moved: so Claude can answer "was that expected?"
+function lastWeekCtx(){const wk=D.meta.done;if(!wk)return '';const rows=(D.weeks||{})[wk]||(D.weeks||{})[String(wk)];if(!rows)return '';
+  const mine=rows.find(r=>r[0]===ME);if(!mine)return '';const opp=rows.find(r=>r[1]===mine[1]&&r[0]!==ME),sc=rows.map(r=>r[2]).sort((a,b)=>a-b),n=sc.length,med=n%2?sc[(n-1)/2]:(sc[n/2-1]+sc[n/2])/2;
+  const rank=[...sc].sort((a,b)=>b-a).indexOf(mine[2])+1,on=opp?TEAMS.find(t=>t.id===opp[0])?.name:'?';
+  const pre=(D.accuracy||{}).last_pre,lines=[`LAST WEEK (Week ${wk}): I scored ${mine[2]} vs ${on} ${opp?opp[2]:'?'} (${opp&&mine[2]>opp[2]?'WIN':'LOSS'} by ${opp?Math.abs(mine[2]-opp[2]).toFixed(2):'?'}). League median ${med.toFixed(2)} (${mine[2]>med?'WIN':'LOSS'} vs median). I ranked ${rank} of ${n} in points that week.`];
+  if(pre&&pre.wk===wk)lines.push(`Before kickoff the app gave me a ${Math.round((pre.wp||0)*100)}% chance to win that matchup; projected ${pre.proj[ME]} vs ${opp?pre.proj[opp[0]]:'?'}.`);
+  else lines.push('No saved pre-kickoff prediction for that week (logging started Week 7).');
+  const h=(HIST||[]).filter(x=>x.odds&&x.odds[ME]);if(h.length>=2){const a=h[h.length-2].odds[ME],b=h[h.length-1].odds[ME];lines.push(`My odds at the previous update (${h[h.length-2].d}) vs now: playoffs ${Math.round(a[0]*100)}% -> ${Math.round(b[0]*100)}%, title ${Math.round(a[1]*100)}% -> ${Math.round(b[1]*100)}%. Top-2 bye chance now ${pct(TEAMS.find(t=>t.id===ME).odds.bye)}.`)}
+  const wkN=FUT[0];if(wkN){const nx=(D.sched[wkN]||[]).find(p=>p[0]===ME),o2=nx&&(D.sched[wkN]||[]).find(p=>p[1]===nx[1]&&p[0]!==ME);const me2=TEAMS.find(t=>t.id===ME);if(o2)lines.push(`THIS WEEK (Week ${wkN}): vs ${TEAMS.find(t=>t.id===o2[0])?.name}, projected ${me2.proj} vs ${TEAMS.find(t=>t.id===o2[0])?.proj}, my win chance ${pct(me2.wp)}.`)}
+  return lines.join('\n')}
 function askText(){return `${context()}\n\nQUESTION: ${$('#askQ').value.trim()}`}
 async function copyText(t){try{await navigator.clipboard.writeText(t);return true}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(_){}ta.remove();return ok}}
 $('#askBtn').addEventListener('click',()=>{$('#askNote').textContent='';$('#askPreview').value=askText();$('#askDlg').showModal();$('#askQ').focus()});
