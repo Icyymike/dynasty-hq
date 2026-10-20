@@ -4,14 +4,14 @@
 Top counted: C.J. Stroud 29.0, Bryce Young 23.8, D'Andre Swift 21.0, Roschon Johnson 13.5
 
 **Record:** 8-4, #5 of 12 · 1082.2 PF
-**Odds:** playoffs 100% · bye 36% · title 17%
+**Odds:** playoffs 100% · bye 37% · title 18%
 
 **Playoff path:** most likely seed 3; title chance with a bye 29% vs without 11%
-**Best trade idea:** give Roschon Johnson, Jordan Love for James Cook: title chance 17% → 21%
+**Best trade idea:** give Roschon Johnson, Jordan Love for James Cook: title chance 18% → 21%
 **Waivers:** Tyrone Tracy would add 1.9 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 7:** vs Lava Me Tender · projected 180.9 – 140.7 · win chance 85%
+**Week 7:** vs Lava Me Tender · projected 181.2 – 140.6 · win chance 85%
 On bye: Tre' Harris, Antonio Williams, Josh Cameron, Treylon Burks, Quentin Johnston
 Injured: Tre' Harris (Out), Matt Hibner (Out), Michael Pittman (IR)
 
@@ -26,10 +26,10 @@ Injured: Tre' Harris (Out), Matt Hibner (Out), Michael Pittman (IR)
 - **Straight Outta Hampton** get 2028 3rd (Gibb Me My Trophy) (Push) ⇄ **WavySerg** get Isaac TeSlaa (Win)
 
 ## Market
-- Sell-high: Cam Skattebo: value 3,991 vs ~2,339 for 3.4 pts/wk of production
-- Sell-high: Jalen Nailor: value 1,697 vs ~1,283 for 3.1 pts/wk of production
-- Buy-low: Mike Evans (The True Behemoth): +6.5 counted pts/wk for you, value 3,677
-- Buy-low: Ollie Gordon (Lava Me Tender): +4.8 counted pts/wk for you, value 3,115
+- Sell-high: Cam Skattebo: value 3,991 vs ~2,360 for 3.5 pts/wk of production
+- Sell-high: Jalen Nailor: value 1,783 vs ~1,295 for 3.1 pts/wk of production
+- Buy-low: Mike Evans (The True Behemoth): +6.5 counted pts/wk for you, value 3,526
 - Buy-low: Kirk Cousins (Lava Me Tender): +4.2 counted pts/wk for you, value 2,782
+- Buy-low: Ollie Gordon (Lava Me Tender): +4.8 counted pts/wk for you, value 3,211
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
