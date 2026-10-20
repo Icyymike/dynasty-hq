@@ -26,10 +26,10 @@ Injured: Tre' Harris (Out), Matt Hibner (Out), Michael Pittman (IR)
 - **Straight Outta Hampton** get 2028 3rd (Gibb Me My Trophy) (Push) ⇄ **WavySerg** get Isaac TeSlaa (Win)
 
 ## Market
-- Sell-high: Cam Skattebo: value 4,164 vs ~2,314 for 3.4 pts/wk of production
-- Sell-high: Jalen Nailor: value 1,827 vs ~1,303 for 3.1 pts/wk of production
+- Sell-high: Cam Skattebo: value 3,991 vs ~2,340 for 3.4 pts/wk of production
+- Sell-high: Jalen Nailor: value 1,697 vs ~1,274 for 3.1 pts/wk of production
 - Buy-low: Mike Evans (The True Behemoth): +6.5 counted pts/wk for you, value 3,677
+- Buy-low: Ollie Gordon (Lava Me Tender): +4.7 counted pts/wk for you, value 3,115
 - Buy-low: Kirk Cousins (Lava Me Tender): +4.2 counted pts/wk for you, value 2,782
-- Buy-low: Ollie Gordon (Lava Me Tender): +4.7 counted pts/wk for you, value 3,211
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
