@@ -451,10 +451,10 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
     <div class="row" style="justify-content:space-between"><h3 id="askTitle">Ask Claude about your team</h3><button class="btn ghost" value="close">Close</button></div>
     <p class="small muted" style="margin:0">Your question is sent along with a summary of your roster, standings and picks, so Claude can answer with your league's numbers.</p>
     <textarea id="askQ" placeholder="e.g. Should I sell Courtland Sutton before the deadline?"></textarea>
-    <div class="row"><a class="btn" id="askGo" href="https://claude.ai/new" target="_blank" rel="noopener" style="text-decoration:none">Copy &amp; open Claude</a><button class="btn ghost" id="askCopy" type="button">Copy only</button></div>
+    <div class="row"><button class="btn" id="askCopy2" type="button">Copy question for Claude</button><a class="btn ghost" id="askGo" href="https://claude.ai/new" target="_blank" rel="noopener" style="text-decoration:none">Open Claude</a></div>
     <p class="small" id="askNote" aria-live="polite" style="margin:0"></p>
-    <p class="sub" style="margin:0">On a computer, Claude usually opens with your question already filled in. The Claude phone app (and some browsers) open a blank chat instead: just tap the message box and <b>Paste</b>. Your question and team summary are copied either way.</p>
-    <details class="more"><summary>See exactly what gets sent</summary><div><textarea id="askPreview" readonly style="min-height:140px;font-size:12px"></textarea></div></details>
+    <p class="sub" style="margin:0">This app can't talk to Claude by itself, so it hands Claude your question plus a summary of your team. Tap <b>Copy question for Claude</b> (you stay here), then open Claude whenever you're ready, start a new chat, and Paste.</p>
+    <details class="more"><summary>See exactly what gets copied</summary><div><textarea id="askPreview" readonly style="min-height:140px;font-size:12px"></textarea></div></details>
   </form>
 </dialog>
 
@@ -1432,14 +1432,13 @@ MY PICKS: ${PICKS.filter(p=>p.own===ME).map(p=>`${p.label} v${p.v}`).join('; ')}
 function askText(){return `${context()}\n\nQUESTION: ${$('#askQ').value.trim()}`}
 async function copyText(t){try{await navigator.clipboard.writeText(t);return true}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(_){}ta.remove();return ok}}
 $('#askBtn').addEventListener('click',()=>{$('#askNote').textContent='';$('#askPreview').value=askText();$('#askDlg').showModal();$('#askQ').focus()});
-$('#askCopy').addEventListener('click',async()=>{const ok=await copyText(askText());$('#askNote').textContent=ok?'Copied. Paste it into any Claude chat.':'Copy failed; select and copy manually.'});
-$('#askQ').addEventListener('input',()=>{const t=askText();$('#askGo').href=t.length<7000?'https://claude.ai/new?q='+encodeURIComponent(t):'https://claude.ai/new';$('#askPreview').value=t});
-$('#askGo').addEventListener('click',e=>{if(!$('#askQ').value.trim()){e.preventDefault();$('#askNote').textContent='Type a question first.';return}
-  const t=askText();
-  // copy synchronously while the tap still counts as a user action (async clipboard can fail once the new tab opens)
-  let ok=false;try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();ok=document.execCommand('copy');ta.remove()}catch(x){}
-  if(!ok&&navigator.clipboard)navigator.clipboard.writeText(t).then(()=>{},()=>{});
-  $('#askNote').innerHTML=`<b>Claude is opening in a new tab.</b> ${ok?'Your question and team summary are copied. If the message box is empty, tap it and Paste.':'If the message box is empty, use “See exactly what gets sent” below to copy it.'}`});
+$('#askQ').addEventListener('input',()=>{$('#askPreview').value=askText()});
+$('#askCopy2').addEventListener('click',()=>{if(!$('#askQ').value.trim()){$('#askNote').textContent='Type a question first.';return}
+  const t=askText();$('#askPreview').value=t;let ok=false;
+  try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,t.length);ok=document.execCommand('copy');ta.remove()}catch(x){}
+  if(ok){$('#askNote').innerHTML='<b>Copied.</b> Open Claude, start a new chat, and Paste.'}
+  else if(navigator.clipboard){navigator.clipboard.writeText(t).then(()=>{$('#askNote').innerHTML='<b>Copied.</b> Open Claude, start a new chat, and Paste.'},()=>{$('#askNote').textContent='Your phone blocked copying. Open “See exactly what gets copied”, press and hold the text, and copy it.';document.querySelector('#askPreview').closest('details').open=true})}
+  else{$('#askNote').textContent='Open “See exactly what gets copied” below and copy the text.';document.querySelector('#askPreview').closest('details').open=true}});
 
 // ---------- boot ----------
 const opt=f=>fetch(f,{cache:'no-cache'}).then(r=>r.ok?r.json():[]).catch(()=>[]);
