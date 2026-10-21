@@ -4,14 +4,14 @@
 Top counted: C.J. Stroud 29.0, Bryce Young 23.8, D'Andre Swift 21.0, Roschon Johnson 13.5
 
 **Record:** 8-4, #5 of 12 · 1082.2 PF
-**Odds:** playoffs 100% · bye 41% · title 20%
+**Odds:** playoffs 100% · bye 42% · title 20%
 
 **Playoff path:** most likely seed 3; title chance with a bye 31% vs without 12%
 **Best trade idea:** give Cam Skattebo, Malik Willis for Parker Washington: title chance 20% → 25%
 **Waivers:** Justice Hill would add 1.1 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 7:** vs Lava Me Tender · projected 184.9 – 142.2 · win chance 86%
+**Week 7:** vs Lava Me Tender · projected 185.1 – 141.2 · win chance 86%
 On bye: Tre' Harris, Antonio Williams, Josh Cameron, Treylon Burks, Quentin Johnston
 Injured: Tre' Harris (Out), Matt Hibner (Out), Michael Pittman (IR)
 
@@ -27,9 +27,9 @@ Injured: Tre' Harris (Out), Matt Hibner (Out), Michael Pittman (IR)
 - **Straight Outta Hampton** get 2028 3rd (Gibb Me My Trophy) (Push) ⇄ **WavySerg** get Isaac TeSlaa (Win)
 
 ## Market
-- Sell-high: Cam Skattebo: value 4,164 vs ~2,347 for 3.6 pts/wk of production
-- Sell-high: Jalen Nailor: value 1,813 vs ~1,281 for 3.1 pts/wk of production
-- Buy-low: Ollie Gordon (Lava Me Tender): +4.4 counted pts/wk for you, value 3,306
+- Sell-high: Cam Skattebo: value 4,164 vs ~2,335 for 3.6 pts/wk of production
+- Sell-high: Jalen Nailor: value 1,813 vs ~1,279 for 3.1 pts/wk of production
+- Buy-low: Ollie Gordon (Lava Me Tender): +4.5 counted pts/wk for you, value 3,306
 - Buy-low: Brenton Strange (Straight Outta Hampton): +5.0 counted pts/wk for you, value 3,994
 - Buy-low: Jacoby Brissett (jreese15): +3.4 counted pts/wk for you, value 2,591
 
