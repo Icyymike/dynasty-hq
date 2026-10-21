@@ -11,7 +11,7 @@ Top counted: C.J. Stroud 29.0, Bryce Young 23.8, D'Andre Swift 21.0, Roschon Joh
 **Waivers:** Justice Hill would add 1.1 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 7:** vs Lava Me Tender · projected 185.1 – 141.2 · win chance 86%
+**Week 7:** vs Lava Me Tender · projected 185.1 – 141.0 · win chance 86%
 On bye: Tre' Harris, Antonio Williams, Josh Cameron, Treylon Burks, Quentin Johnston
 Injured: Tre' Harris (Out), Matt Hibner (Out), Michael Pittman (IR)
 
@@ -29,7 +29,7 @@ Injured: Tre' Harris (Out), Matt Hibner (Out), Michael Pittman (IR)
 ## Market
 - Sell-high: Cam Skattebo: value 4,164 vs ~2,335 for 3.6 pts/wk of production
 - Sell-high: Jalen Nailor: value 1,813 vs ~1,279 for 3.1 pts/wk of production
-- Buy-low: Ollie Gordon (Lava Me Tender): +4.5 counted pts/wk for you, value 3,306
+- Buy-low: Ollie Gordon (Lava Me Tender): +4.4 counted pts/wk for you, value 3,306
 - Buy-low: Brenton Strange (Straight Outta Hampton): +5.0 counted pts/wk for you, value 3,994
 - Buy-low: Jacoby Brissett (jreese15): +3.4 counted pts/wk for you, value 2,591
 
