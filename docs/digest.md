@@ -11,7 +11,7 @@ Top counted: C.J. Stroud 29.0, Bryce Young 23.8, D'Andre Swift 21.0, Roschon Joh
 **Waivers:** Tyrone Tracy would add 1.9 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 7:** vs Lava Me Tender · projected 181.9 – 142.2 · win chance 85%
+**Week 7:** vs Lava Me Tender · projected 181.9 – 142.3 · win chance 85%
 On bye: Tre' Harris, Antonio Williams, Josh Cameron, Treylon Burks, Quentin Johnston
 Injured: Tre' Harris (Out), Matt Hibner (Out), Michael Pittman (IR)
 
@@ -26,7 +26,7 @@ Injured: Tre' Harris (Out), Matt Hibner (Out), Michael Pittman (IR)
 - **Straight Outta Hampton** get 2028 3rd (Gibb Me My Trophy) (Push) ⇄ **WavySerg** get Isaac TeSlaa (Win)
 
 ## Market
-- Sell-high: Cam Skattebo: value 3,991 vs ~2,394 for 3.6 pts/wk of production
+- Sell-high: Cam Skattebo: value 3,991 vs ~2,395 for 3.6 pts/wk of production
 - Sell-high: Jalen Nailor: value 1,783 vs ~1,290 for 3.1 pts/wk of production
 - Buy-low: Mike Evans (The True Behemoth): +6.5 counted pts/wk for you, value 3,526
 - Buy-low: Kirk Cousins (Lava Me Tender): +4.2 counted pts/wk for you, value 2,782
