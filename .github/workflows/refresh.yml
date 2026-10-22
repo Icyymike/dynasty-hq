@@ -5,6 +5,8 @@ on:
     - cron: "*/30 17-23 * * 0"  # every 30 min during Sunday afternoon games (UTC)
     - cron: "*/30 0-4 * * 1,2,5" # Sunday, Monday and Thursday night games (late evening US = early morning UTC)
     - cron: "40 13 * * 2"       # Tuesday morning: weekly digest
+    - cron: "40 15,16 * * 0"    # Sunday ~11:40am ET: inactives for the early games are out (two hours cover daylight saving)
+    - cron: "50 22,23 * * 1,4"  # Monday and Thursday ~6:50pm ET: inactives for the night game
   push:                          # refresh right away whenever the app's code or settings change
     branches: [main]
     paths: ["pipeline/**", "config.json", "docs/index.html", "docs/redraft/index.html", ".github/workflows/refresh.yml"]

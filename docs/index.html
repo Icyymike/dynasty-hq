@@ -1216,6 +1216,20 @@ function renderDraft(){
 }
 
 // ---------- how accurate is this app? ----------
+// plain-English summary of where projections come from and whether win chances are honest
+function sourcesHTML(S,C){let h='';const r2=v=>v==null?'—':(+v).toFixed(2);
+  if(S&&S.n){const ws=S.w_sleeper??1,b=S.beta||0,up=Math.round((Math.pow(28/22.5,b)-1)*100),dn=Math.round((1-Math.pow(17/22.5,b))*100);
+    const gain=S.sleeper&&S.combined?Math.round((S.sleeper-S.combined)/S.sleeper*1000)/10:0;
+    h+=`<h3>Where the projections come from</h3><p class="sub" style="margin:0">`+(S.used?`Each player's weekly projection is ${ws<1?`<b>${Math.round(ws*100)}% Sleeper + ${Math.round((1-ws)*100)}% ESPN</b>`:'<b>Sleeper</b>'}${b?`, then adjusted for the betting line: a team Vegas expects to score 28 points (instead of the usual 22.5) gets about <b>+${up}%</b>, one expected to score 17 about <b>−${dn}%</b>`:''}. `
+      :`ESPN's projections and betting lines were tested and didn't beat Sleeper alone this season, so the app uses Sleeper. `)+
+      `Tested on ${S.n.toLocaleString()} player-games already played: Sleeper alone missed by <b>${r2(S.sleeper)}</b> points a game on average${S.espn?`, ESPN alone by <b>${r2(S.espn)}</b>`:''}${S.used?`, the combination by <b>${r2(S.combined)}</b> (${gain}% closer)`:''}. Small differences are normal: single games are mostly luck, and no source gets far below this. The mix is re-tested every update and only changes if the numbers say so.${S.espn_players===0?' <b>ESPN\'s feed didn\'t respond this update.</b>':''}</p>`}
+  if(C&&C.n){const bins=(C.bins||[]).map(b=>`<tr><td>${Math.round(b[3]*100)}%</td><td class="r num">${b[2]}</td><td class="r num"><b>${Math.round(b[4]*100)}%</b></td></tr>`).join('');
+    const m=C.m||1,msg=Math.abs(m-1)<0.01?'They line up well, so no adjustment is applied.':m<1?`Overall, favorites have won a bit more often than predicted, so win chances are now made slightly bolder (player spreads × ${m.toFixed(2)}).`:`Overall, favorites have won a bit less often than predicted, so win chances are now made slightly more cautious (player spreads × ${m.toFixed(2)}).`;
+    h+=`<h3>Are the win chances honest?</h3><p class="sub" style="margin:0">Every game so far was re-played with the projections as they stood before it. When the app's favorite had this chance, this is how often it actually won:</p>
+    <div class="tbl-wrap"><table style="font-size:12.5px;max-width:420px"><thead><tr><th>Favorite's chance</th><th class="r">Games</th><th class="r">Favorite won</th></tr></thead><tbody>${bins}</tbody></table></div>
+    <p class="sub" style="margin:0">${msg} With ${C.n} games the adjustment is held to ${Math.round((C.weight||0)*100)}% strength; it grows as more games are played (full strength around 80+), stays within limits, and is re-checked every update.</p>`}
+  return h}
+
 function renderAccuracy(){const AC=D.accuracy;const box=$('#accBox');if(!box)return;if(!AC){box.innerHTML='<p class="sub">Accuracy tracking starts with the next update.</p>';return}
   const F=AC.flags||{},rec=F.rec||{},pc=v=>Math.round(v*100)+'%',sg=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1);
   const NAMES={up:['Role growing','kept at least half of the bigger role over the next 3 games','points a game vs. before the jump'],down:['Role shrinking','stayed at least half as reduced over the next 3 games','points a game vs. before the drop'],hot:['Running hot','scored less over the next 3 games','points a game vs. the hot stretch'],cold:['Running cold','scored more over the next 3 games','points a game vs. the cold stretch']};
@@ -1225,7 +1239,7 @@ function renderAccuracy(){const AC=D.accuracy;const box=$('#accBox');if(!box)ret
   const od=(AC.odds||[]).filter(o=>o.t!=null);
   const oddsChart=od.length>=2?wkChart({title:'Your title and playoff chances over time',weeks:od.map(o=>o.d.slice(5).replace('-','/')),max:1,pct:true,fmt:v=>Math.round(v*100)+'%',series:[{name:'Playoffs',color:'var(--s1)',vals:od.map(o=>o.po),kind:'line'},{name:'Title',color:'var(--s2)',vals:od.map(o=>o.t),kind:'line'}]}):`<p class="sub">Your title-odds history starts today (${od[0]?.d||''}) and grows with every update.</p>`;
   const bt=AC.backtest||{};
-  box.innerHTML=`<p class="answer">Every flag and prediction here is checked against what actually happened, so you can see how much to trust it.</p>
+  box.innerHTML=`<p class="answer">Every flag and prediction here is checked against what actually happened, so you can see how much to trust it.</p>${sourcesHTML(AC.sources,AC.calib)}
    <h3>Research flags, tested on ${F.n?F.n.toLocaleString():0} past player stretches (last season + this one)</h3>
    <p class="sub" style="margin:0">For each stretch, the flag is computed from games up to that point, then compared with the next 3 games. The highlighted setting is the one the Research tab now uses. For reference, any random player's next 3 games beat his last 3 about ${F.base_up!=null?pc(F.base_up):'half'} of the time.</p>
    <div class="tbl-wrap"><table class="sortable-tbl" style="font-size:12.5px"><thead><tr><th>Flag</th><th>Setting</th><th class="r">Times it fired</th><th class="r" title="${esc(Object.values(NAMES).map(n=>n[0]+': '+n[1]).join(' · '))}">Came true</th><th class="r">Points after</th></tr></thead><tbody>${flagRows||'<tr><td class="sub">Not enough history yet.</td></tr>'}</tbody></table></div>

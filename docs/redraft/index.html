@@ -252,6 +252,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const pct=x=>x==null?'—':x>=0.995?'>99%':x<0.005&&x>0?'<1%':Math.round(x*100)+'%';
 const f1=x=>(x>=0?'+':'−')+Math.abs(x).toFixed(1);
 const fx=x=>x==null?'—':(+x).toFixed(1);
+const upd=()=>{const d=new Date(Date.parse(D.meta.generated.replace('Z',':00Z')));return d.toLocaleString([], {weekday:'short',hour:'numeric',minute:'2-digit'})};
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 let D,PL,ME,FUT,NW,SLOTS,TEAMS,TN;
 const ELIG={QB:['QB'],RB:['RB'],WR:['WR'],TE:['TE'],K:['K'],DEF:['DEF'],FLEX:['RB','WR','TE'],WRRB_FLEX:['RB','WR'],REC_FLEX:['WR','TE'],SUPER_FLEX:['QB','RB','WR','TE']};
@@ -353,7 +354,7 @@ function weekTab(){const m=D.meta,ss=D.startsit,wk=m.cur,o=D.odds[ME]||{},me=TEA
     ${best.map((p,i)=>rowOf(p,SLOTS[i],changed.has(p)?'chg':'')).join('')}
     <tr class="sep"><td colspan="5" style="background:var(--bg);color:var(--muted);font-size:12px;font-weight:600;text-align:center;padding:4px">Bench</td></tr>
     ${benchIds.map(p=>rowOf(p,'BN')).join('')}</tbody></table></div>
-    <p class="sub">Green rows are changes from what you have set in Sleeper. The bar shows the likely range (10th to 90th percentile) with the middle marked: a wide bar is a boom-or-bust player. Matchup words compare this week's defense with what it usually allows to that position.</p></div>`;
+    <p class="sub">Injury news last checked ${upd()} (the app also updates when inactives are announced, about 90 minutes before kickoff). Green rows are changes from what you have set in Sleeper. The bar shows the likely range (10th to 90th percentile) with the middle marked: a wide bar is a boom-or-bust player. Matchup words compare this week's defense with what it usually allows to that position.</p></div>`;
   if(ss.alts&&ss.alts.length){h+=`<div class="card"><h2>Close calls</h2><p class="sub">Bench players within 3 projected points of a starter. Win chances come from 600 simulated games against your opponent's lineup, so they count each player's ups and downs, not just the average.</p><div class="list">
     ${ss.alts.map(a=>{const d=(a.wp_b??0)-(a.wp_a??0),ln=s=>PL[s].n.split(' ').slice(-1)[0];return `<div class="li"><div class="main"><div>${nm(a.start)} <span class="muted">or</span> ${nm(a.alt)} <span class="sub">(${SLOTNAME[a.slot]||a.slot})</span></div><div class="why">${fx(expK(a.start,0))} vs ${fx(expK(a.alt,0))} projected · ranges ${(ss.rng[a.start]||[]).filter((_,i)=>i!==1).join('–')} vs ${(ss.rng[a.alt]||[]).filter((_,i)=>i!==1).join('–')}</div></div>
     <div class="right"><span class="num">${pct(a.wp_a)} vs ${pct(a.wp_b)}</span><span class="word ${d>=0.02?'w-good':d>-0.02?'w-plain':'w-info'}">${d>=0.02?'Lean '+esc(ln(a.alt)):d>-0.02?'Toss-up':'Keep '+esc(ln(a.start))}</span></div></div>`}).join('')}</div></div>`}
@@ -476,11 +477,12 @@ function wkChart(o){const W=window.innerWidth<520?Math.max(280,window.innerWidth
   return `<div><div style="font-weight:600;font-size:13.5px">${esc(o.title)}</div>${o.sub?`<div class="sub">${o.sub}</div>`:''}${lg}<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${esc(o.title)}" style="display:block;max-width:${W}px">${g}</svg></div>`}
 function openPlayer(s){const p=PL[s],x=(D.research||[]).find(r=>r.id===s);if(!p&&!x)return;const b=p||x;const q=x?(RSM||{})[s]||rsm(x):null;
   let h=`<div class="row" style="justify-content:space-between"><h2>${posTag(b.p)} ${esc(b.n)}</h2>${injTag(b)}</div><p class="sub">${esc(b.t)} · ${p?ownerTxt(p):(x.r?esc(tname(x.r)):'Free agent')}${p&&p.bye?' · bye week '+p.bye:''}${p&&p.fc?' · market value '+p.fc.toLocaleString():''}</p>`;
-  if(p){const nx=FUT.slice(0,4).map((w,k)=>`<tr><td class="num">${w}</td><td>${p.opp[k]?esc(p.opp[k]):'bye'} ${mfWord(p.mf[k])}</td><td class="r num">${fx(p.pr[k])}</td></tr>`).join('');
+  if(p){const nx=FUT.slice(0,4).map((w,k)=>`<tr><td class="num">${w}</td><td>${p.opp[k]?esc(p.opp[k]):'bye'} ${mfWord(p.mf[k])}</td><td class="r num">${fx(p.pr[k])}</td><td class="r num hide-sm sub">${p.sl0&&p.sl0[k]?fx(p.sl0[k]):'—'}</td><td class="r num hide-sm sub">${p.es&&p.es[k]?fx(p.es[k]):'—'}</td><td class="r num hide-sm sub">${p.it&&p.it[k]!=null?fx(p.it[k]):'—'}</td></tr>`).join('');
     const w=(D.waivers||[]).find(v=>v.id===s);
     h+=`<div class="tiles"><div class="tile"><span class="t-label">Projected per game</span><span class="t-big">${fx(rosPg(s))}</span><span class="t-note">rest of season</span></div>${q?`<div class="tile"><span class="t-label">Last 3 games</span><span class="t-big">${fx(q.l3)}</span><span class="t-note">season ${fx(q.fp)}</span></div>`:''}${q&&q.sL!=null?`<div class="tile"><span class="t-label">Snap share</span><span class="t-big">${Math.round(q.sL*100)}%</span><span class="t-note">last 3 games</span></div>`:''}${w?`<div class="tile"><span class="t-label">If you add him</span><span class="t-big pos-v">${f1(w.g)}</span><span class="t-note">points a week for you</span></div>`:''}</div>
     ${q&&q.flags.length?`<p>${flagHTML(q.flags)} <span class="sub">${q.flags.map(f=>FLAGW[f][2]).join(' ')}</span></p>`:''}
-    <table><thead><tr><th>Week</th><th>Opponent</th><th class="r">Projected</th></tr></thead><tbody>${nx}</tbody></table>`}
+    <table><thead><tr><th>Week</th><th>Opponent</th><th class="r">Projected</th><th class="r hide-sm" title="Sleeper's projection in your scoring">Sleeper</th><th class="r hide-sm" title="ESPN's projection in your scoring">ESPN</th><th class="r hide-sm" title="Points the betting line expects his team to score">Team total</th></tr></thead><tbody>${nx}</tbody></table>
+    <p class="sub">Projected is what the app uses: Sleeper and ESPN combined, adjusted for the betting line and the player's recent usage (see League → How much to trust the numbers).</p>`}
   if(x){const G=x.w,weeks=G.map((_,i)=>i+1);
     if(b.p==='K'||b.p==='DEF')h+=wkChart({title:'Points each week',weeks,series:[{name:'Points',color:'var(--s1)',vals:G.map(r=>r?r[0]:null),kind:'bar'}]});
     else{h+=wkChart({title:'Points vs. what his role was worth',sub:'Bars are points; the tick is expected points from his usage. Bars well above the tick: running hot.',weeks,series:[{name:'Points',color:'var(--s1)',vals:G.map(r=>r?r[0]:null),kind:'bar'},{name:'Expected',color:'var(--s2)',vals:G.map(r=>r?r[7]:null),kind:'tick'}]});
@@ -490,6 +492,20 @@ function openPlayer(s){const p=PL[s],x=(D.research||[]).find(r=>r.id===s);if(!p&
   $('#dlgBody').innerHTML=h;$('#dlg').showModal()}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-pid]');if(b){e.preventDefault();openPlayer(b.dataset.pid)}});
 $('#dlgClose').onclick=()=>$('#dlg').close();$('#dlg').addEventListener('click',e=>{if(e.target.id==='dlg')$('#dlg').close()});
+
+// plain-English summary of where projections come from and whether win chances are honest
+function sourcesHTML(S,C){let h='';const r2=v=>v==null?'—':(+v).toFixed(2);
+  if(S&&S.n){const ws=S.w_sleeper??1,b=S.beta||0,up=Math.round((Math.pow(28/22.5,b)-1)*100),dn=Math.round((1-Math.pow(17/22.5,b))*100);
+    const gain=S.sleeper&&S.combined?Math.round((S.sleeper-S.combined)/S.sleeper*1000)/10:0;
+    h+=`<h3>Where the projections come from</h3><p class="sub" style="margin:0">`+(S.used?`Each player's weekly projection is ${ws<1?`<b>${Math.round(ws*100)}% Sleeper + ${Math.round((1-ws)*100)}% ESPN</b>`:'<b>Sleeper</b>'}${b?`, then adjusted for the betting line: a team Vegas expects to score 28 points (instead of the usual 22.5) gets about <b>+${up}%</b>, one expected to score 17 about <b>−${dn}%</b>`:''}. `
+      :`ESPN's projections and betting lines were tested and didn't beat Sleeper alone this season, so the app uses Sleeper. `)+
+      `Tested on ${S.n.toLocaleString()} player-games already played: Sleeper alone missed by <b>${r2(S.sleeper)}</b> points a game on average${S.espn?`, ESPN alone by <b>${r2(S.espn)}</b>`:''}${S.used?`, the combination by <b>${r2(S.combined)}</b> (${gain}% closer)`:''}. Small differences are normal: single games are mostly luck, and no source gets far below this. The mix is re-tested every update and only changes if the numbers say so.${S.espn_players===0?' <b>ESPN\'s feed didn\'t respond this update.</b>':''}</p>`}
+  if(C&&C.n){const bins=(C.bins||[]).map(b=>`<tr><td>${Math.round(b[3]*100)}%</td><td class="r num">${b[2]}</td><td class="r num"><b>${Math.round(b[4]*100)}%</b></td></tr>`).join('');
+    const m=C.m||1,msg=Math.abs(m-1)<0.01?'They line up well, so no adjustment is applied.':m<1?`Overall, favorites have won a bit more often than predicted, so win chances are now made slightly bolder (player spreads × ${m.toFixed(2)}).`:`Overall, favorites have won a bit less often than predicted, so win chances are now made slightly more cautious (player spreads × ${m.toFixed(2)}).`;
+    h+=`<h3>Are the win chances honest?</h3><p class="sub" style="margin:0">Every game so far was re-played with the projections as they stood before it. When the app's favorite had this chance, this is how often it actually won:</p>
+    <div class="tbl-wrap"><table style="font-size:12.5px;max-width:420px"><thead><tr><th>Favorite's chance</th><th class="r">Games</th><th class="r">Favorite won</th></tr></thead><tbody>${bins}</tbody></table></div>
+    <p class="sub" style="margin:0">${msg} With ${C.n} games the adjustment is held to ${Math.round((C.weight||0)*100)}% strength; it grows as more games are played (full strength around 80+), stays within limits, and is re-checked every update.</p>`}
+  return h}
 
 // ---------- LEAGUE
 function leagueTab(){const m=D.meta;let h='';const T=TEAMS.slice().sort((a,b)=>b.w-a.w||b.pf-a.pf);
@@ -504,8 +520,11 @@ function leagueTab(){const m=D.meta;let h='';const T=TEAMS.slice().sort((a,b)=>b
     <div class="tbl-wrap"><table><thead><tr><th>Week</th><th>Opponent</th><th class="r">Score</th><th class="r">Projected</th><th class="r" title="Pre-game win chance, using Sleeper projections for both lineups as started">Win chance</th><th>Result</th></tr></thead><tbody>${mine.map(x=>`<tr><td class="num">${x.wk}</td><td>${esc(tname(x.o))}</td><td class="r num">${x.s.toFixed(1)}–${x.os.toFixed(1)}</td><td class="r num">${x.p.toFixed(1)}–${x.op.toFixed(1)}</td><td class="r num">${pct(x.wp)}</td><td>${x.s>x.os?(x.wp<0.4?'<span class="word w-good">Upset win</span>':'<span class="word w-good">Win</span>'):(x.wp>0.6?'<span class="word w-bad">Upset loss</span>':'<span class="word w-plain">Loss</span>')}</td></tr>`).join('')}</tbody></table></div></div>`}
   // accuracy
   const B=D.back||[];if(B.length){const fav=B.filter(b=>Math.abs(b.wp-0.5)>0.02),hit=fav.filter(b=>(b.wp>0.5)===(b.sa>b.sb)).length,mae=mean(B.flatMap(b=>[Math.abs(b.pa-b.sa),Math.abs(b.pb-b.sb)]));
-    const bt=m.backtest||{};h+=`<div class="card"><h2>How much to trust the projections</h2><p class="answer">So far this season the projected favorite won <b>${hit} of ${fav.length}</b> games (${pct(hit/Math.max(1,fav.length))}). Team scores missed the projection by <b>${mae.toFixed(1)} points</b> on average. Football is noisy: a 60% favorite loses 4 times in 10.</p>
-    <p class="sub">Player projections here blend Sleeper's (${Math.round((bt.w||0.85)*100)}%) with this app's own model built from usage, tuned on ${bt.n||0} player-games this season (average miss ${bt.blend??'—'} points vs ${bt.sleeper??'—'} for Sleeper alone). From now on, each week's win chances are logged before kickoff and graded here.${(D.accuracy.graded||[]).length?` Logged so far: ${D.accuracy.graded.length} games.`:''}</p></div>`}
+    const bt=m.backtest||{};h+=`<div class="card"><h2>How much to trust the numbers</h2><p class="answer">So far this season the projected favorite won <b>${hit} of ${fav.length}</b> games (${pct(hit/Math.max(1,fav.length))}). Team scores missed the projection by <b>${mae.toFixed(1)} points</b> on average. Football is noisy: a 60% favorite loses 4 times in 10.</p>
+    ${sourcesHTML(m.sources,m.calib)}
+    <h3>The app's own model</h3><p class="sub" style="margin:0">On top of that, ${Math.round((1-(bt.w??1))*100)}% of each projection comes from this app's model of each player's recent usage (snaps, targets, carries), because testing on ${(bt.n||0).toLocaleString()} player-games found the mix misses slightly less (${bt.blend??'—'} vs ${bt.sleeper??'—'}).</p>
+    <h3>Injury news</h3><p class="sub" style="margin:0">Last checked ${upd()}. Besides the regular updates, the app refreshes when teams announce inactives, about 90 minutes before kickoff (Sunday mornings, and before Monday and Thursday night games), so a player ruled out drops out of your lineup advice. GitHub can start these runs 5–20 minutes late, so check Sleeper yourself for anyone questionable right before lock.</p>
+    <p class="sub" style="margin:0">From now on, each week's win chances are saved before kickoff and graded here as games finish.${(D.accuracy.graded||[]).length?` Graded so far: ${D.accuracy.graded.length} games.`:''}</p></div>`}
   $('#t-league').innerHTML=h;reSort('stTbl')}
 
 // sortable tables

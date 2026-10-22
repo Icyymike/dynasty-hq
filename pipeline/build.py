@@ -26,7 +26,7 @@ def _fixture_name(url):
     return re.sub(r"[^A-Za-z0-9]+", "_", url.split("://", 1)[1])[:180] + ".json"
 
 
-def get(url, cache_hours=None, required=True):
+def get(url, cache_hours=None, required=True, headers=None):
     """GET JSON. Optional on-disk cache (hours). In fixture mode reads saved responses."""
     if FIX:
         p = os.path.join(FIX, _fixture_name(url))
@@ -41,7 +41,7 @@ def get(url, cache_hours=None, required=True):
     last = None
     for attempt in range(4):
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": "dynasty-hq/1.0"})
+            req = urllib.request.Request(url, headers={"User-Agent": "dynasty-hq/1.0", **(headers or {})})
             with urllib.request.urlopen(req, timeout=60) as r:
                 data = json.loads(r.read().decode())
             if cp:
@@ -454,7 +454,7 @@ def main():
     done = max(0, min(cur - 1, last_week))
     fut = list(range(max(done + 1, 1), last_week + 1))
 
-    players_db = get(f"{API}/players/nfl", cache_hours=20)
+    players_db = get(f"{API}/players/nfl", cache_hours=0.3)  # injury status lives here: keep it fresh (the second app in the same run reuses it)
     # two-way players (e.g. Travis Hunter is listed as DB but plays WR for fantasy): use the fantasy position Sleeper scores him at
     for d_ in players_db.values():
         if isinstance(d_, dict) and d_.get("position") not in POS:
@@ -510,7 +510,7 @@ def main():
     # ---------- Sleeper projections (rescored), past weeks for backtest + future weeks
     proj = {}
     for wk in range(1, last_week + 1):
-        data = get(f"{API}/projections/nfl/regular/{season}/{wk}", cache_hours=(24 * 365 if wk <= done else 3), required=False) or {}
+        data = get(f"{API}/projections/nfl/regular/{season}/{wk}", cache_hours=(24 * 365 if wk <= done else 0.3 if wk == done + 1 else 3), required=False) or {}
         for pid, s in data.items():
             if not isinstance(s, dict):
                 continue
@@ -520,6 +520,29 @@ def main():
             v = score(s, pos)
             if v > 0:
                 proj.setdefault(pid, {})[wk] = v
+
+    # ---------- more inputs: ESPN's projections and betting lines, kept only if they make this season's misses smaller
+    import sources as SRC
+    proj_sl = {p_: dict(v) for p_, v in proj.items()}
+    es_proj, it_lines, n_es = {}, {}, 0
+    try:
+        es_proj, n_es = SRC.espn_weekly(season, players_db, score, lambda u, headers=None: get(u, cache_hours=3, required=False, headers=headers))
+    except Exception as e:  # noqa
+        print(f"WARN ESPN projections unavailable: {e}")
+    try:
+        it_lines = SRC.vegas_lines(season, done, last_week, lambda u, cache_hours=None: get(u, cache_hours=cache_hours, required=False))
+    except Exception as e:  # noqa
+        print(f"WARN betting lines unavailable: {e}")
+    team_of = lambda p_: (players_db.get(p_) or {}).get("team")
+    t_rows = [(pts[p_][f"{season}-{w}"], v, es_proj.get(p_, {}).get(w), it_lines.get((team_of(p_), w)))
+              for p_, d_ in proj_sl.items() for w, v in d_.items() if w <= done and v >= 3 and f"{season}-{w}" in pts.get(p_, {})]
+    src_par, src_rep = SRC.tune(t_rows)
+    src_rep.update(espn_players=n_es, lines=len(it_lines))
+    if src_rep.get("used"):
+        for p_, d_ in proj.items():
+            for w in d_:
+                d_[w] = round(SRC.combine(proj_sl[p_][w], es_proj.get(p_, {}).get(w), it_lines.get((team_of(p_), w)), src_par), 2)
+    print(f"sources: {src_rep}")
 
     # ---------- dynasty values (FantasyCalc API, auto) + optional KTC snapshot (manual file)
     fc_vals, fc_picks, fc_pick_raw, fc_meta = {}, {}, {}, {}
@@ -597,6 +620,7 @@ def main():
 
     # ---------- matchups (past scores, future pairings, weekly rosters)
     weeks, sched, my_weekly, live, live_pp = {}, {}, {}, {}, {}
+    all_weekly = {}
     checks = dict(lineups=0, lineup_bad=[], scored=0, score_bad=[])
     po_actual = {}
     for wk in range(1, last_week + 1):
@@ -632,6 +656,8 @@ def main():
                         checks["scored"] += 1
                         if abs(ours - v_) > 0.11:
                             checks["score_bad"].append([wk, str(k_), ours, v_])
+            for x in m:
+                all_weekly.setdefault(wk, {})[x["roster_id"]] = [str(p) for p in (x.get("players") or [])]
             mine = next((x for x in m if x["roster_id"] == me), None)
             if mine:
                 my_weekly[wk] = [str(p) for p in (mine.get("players") or [])]
@@ -812,6 +838,32 @@ def main():
         q = BWD if abs(o - s) / max(s, 3) > 0.5 else BW
         return q * s + (1 - q) * o
 
+    # ---------- calibration: re-play every game so far (best ball, projections as they were that week) with each player's
+    # spread scaled up or down, and keep the "noise dial" whose win chances best match what happened (pulled toward 1 until
+    # there are enough games to trust it).
+    CVP = {"QB": 0.42, "RB": 0.55, "WR": 0.62, "TE": 0.65}
+    def backfill(mult, sims=200):
+        out_ = []
+        for wk in range(1, done + 1):
+            rows = weeks.get(wk) or []
+            draws = {}
+            for rid, mid, _ in rows:
+                items = [(pinfo(p)["p"], proj.get(p, {}).get(wk, 0), CVP.get(pinfo(p)["p"], 0.6) * mult, p, pinfo(p)["t"]) for p in all_weekly.get(wk, {}).get(rid, [])]
+                items = [x for x in items if x[0] in POS and x[1] > 0]
+                draws[rid] = [best_lineup((ps, sim_points(m_, cv_, sid, tm, s_, 900 + wk, 0.03)) for ps, m_, cv_, sid, tm in items) for s_ in range(sims)]
+            for rid, mid, sc_ in rows:
+                o = next((r for r in rows if r[1] == mid and r[0] != rid), None)
+                if not o or rid > o[0] or rid not in draws or o[0] not in draws:
+                    continue
+                out_.append(((sum(1 for a, b in zip(draws[rid], draws[o[0]]) if a > b) + 0.5) / (sims + 1), 1 if sc_ > o[2] else 0))
+        return out_
+    try:
+        cal = SRC.calibrate(backfill) if done else dict(m=1.0, n=0)
+    except Exception as e:  # noqa
+        print(f"WARN calibration skipped: {e}"); cal = dict(m=1.0, n=0)
+    CAL_M = cal["m"]
+    print(f"calibration: {cal}")
+
     # ---------- per-player record
     P = {}
     for pid in sorted(uni):
@@ -838,7 +890,7 @@ def main():
                       ktc=ktc["players"].get(pid, 0), fc=fc_vals.get(pid, 0), val=unified(pid),
                       a=[pts.get(pid, {}).get(f"{season}-{w}") for w in range(1, done + 1)],
                       a25=round(st.mean(v for _, v in prev25), 1) if prev25 else None,
-                      sl=sl, ou=ou, pr=pr, sd=round(our_sd(pid, max(o, 1)), 2),
+                      sl=sl, ou=ou, pr=pr, sd=round(our_sd(pid, max(o, 1)) * CAL_M, 2),
                       u=[use.get(pid, {}).get(f"{season}-{w}") for w in range(1, done + 1)])
         dbp = players_db.get(pid) or {}
         if info["inj"]:
@@ -2131,7 +2183,7 @@ def main():
                     favorites=round(mean_([1 if (g[1] >= 0.5) == (g[2] == 1) else 0 for g in G_]), 3) if G_ else None, bins=bins,
                     pl_mae=round(mean_(graded["pl_err"]), 2) if graded["pl_err"] else None, pl_n=len(graded["pl_err"]),
                     team_mae=round(mean_(graded["team_err"]), 1) if graded["team_err"] else None,
-                    weeks_logged=sorted(PRED["weeks"].keys()), backtest=backtest,
+                    weeks_logged=sorted(PRED["weeks"].keys()), backtest=backtest, sources=src_rep, calib=cal,
                     odds=[dict(d=o_["d"], wk=o_["wk"], po=o_["t"].get(str(me), [None, None])[0], t=o_["t"].get(str(me), [None, None])[1]) for o_ in PRED["odds"]])
 
     data = dict(meta=dict(league=league.get("name"), season=season, done=done, fut=fut, reg_end=reg_end, me=me, median=median_on,
