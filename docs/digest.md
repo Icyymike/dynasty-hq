@@ -4,14 +4,14 @@
 Top counted: C.J. Stroud 29.0, Bryce Young 23.8, D'Andre Swift 21.0, Roschon Johnson 13.5
 
 **Record:** 8-4, #5 of 12 · 1082.2 PF
-**Odds:** playoffs 99% · bye 40% · title 20%
+**Odds:** playoffs 100% · bye 40% · title 23%
 
-**Playoff path:** most likely seed 3; title chance with a bye 27% vs without 16%
-**Best trade idea:** give Malik Willis for Kirk Cousins: title chance 20% → 24%
-**Waivers:** Justice Hill would add 0.9 pts/wk to your lineup.
-**Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
+**Playoff path:** most likely seed 3; title chance with a bye 32% vs without 17%
+**Best trade idea:** give Malik Willis for Kirk Cousins: title chance 23% → 28%
+**Waivers:** Justice Hill would add 0.4 pts/wk to your lineup.
+**Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
 
-**Week 7:** vs Lava Me Tender · projected 185.6 – 140.4 · win chance 86%
+**Week 7:** vs Lava Me Tender · projected 185.6 – 140.6 · win chance 86%
 On bye: Tre' Harris, Antonio Williams, Josh Cameron, Treylon Burks, Quentin Johnston
 Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 
@@ -31,9 +31,10 @@ Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 - **Straight Outta Hampton** get 2028 3rd (Gibb Me My Trophy) (Push) ⇄ **WavySerg** get Isaac TeSlaa (Push)
 
 ## Market
-- Sell-high: Jalen Nailor: value 1,813 vs ~1,366 for 3.1 pts/wk of production
-- Buy-low: Mike Evans (The True Behemoth): +6.6 counted pts/wk for you, value 3,588
-- Buy-low: Brenton Strange (Straight Outta Hampton): +4.9 counted pts/wk for you, value 3,435
-- Buy-low: Ollie Gordon II (Lava Me Tender): +4.8 counted pts/wk for you, value 3,387
+- Sell-high: Michael Pittman Jr.: value 2,366 vs ~1,726 for 4.9 pts/wk of production
+- Sell-high: Jalen Nailor: value 1,813 vs ~1,295 for 3.1 pts/wk of production
+- Buy-low: Mike Evans (The True Behemoth): +5.8 counted pts/wk for you, value 3,588
+- Buy-low: Brenton Strange (Straight Outta Hampton): +4.2 counted pts/wk for you, value 3,435
+- Buy-low: Ollie Gordon II (Lava Me Tender): +3.9 counted pts/wk for you, value 3,387
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
