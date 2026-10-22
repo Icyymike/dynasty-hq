@@ -7,7 +7,7 @@ on:
     - cron: "40 13 * * 2"       # Tuesday morning: weekly digest
   push:                          # refresh right away whenever the app's code or settings change
     branches: [main]
-    paths: ["pipeline/**", "config.json", "docs/index.html", ".github/workflows/refresh.yml"]
+    paths: ["pipeline/**", "config.json", "docs/index.html", "docs/redraft/index.html", ".github/workflows/refresh.yml"]
   workflow_dispatch:
     inputs:
       digest:
@@ -40,11 +40,14 @@ jobs:
         run: python pipeline/build.py
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}   # optional: lets Claude write the recommendation
+      - name: Build redraft league data
+        continue-on-error: true   # a redraft hiccup never blocks the dynasty refresh
+        run: python pipeline/build_redraft.py
       - name: Commit data
         run: |
           git config user.name "dynasty-hq-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add docs/data.json docs/history.json docs/alerts.json docs/digest.md docs/values.json docs/trade_values.json docs/predictions.json
+          git add docs/data.json docs/history.json docs/alerts.json docs/digest.md docs/values.json docs/trade_values.json docs/predictions.json docs/redraft
           git diff --cached --quiet || git commit -m "Refresh data $(date -u +%Y-%m-%dT%H:%MZ)"
           git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
           git push

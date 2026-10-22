@@ -229,6 +229,7 @@ tr.sep td{background:var(--bg);color:var(--muted);font-size:12px;font-weight:600
 .tx-side{display:flex;flex-direction:column;gap:3px;font-size:14px;min-width:0}
 textarea{font:inherit;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px;width:100%;min-height:60px;resize:vertical}
 textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.switch{display:inline-flex;border:1px solid rgba(255,255,255,.25);border-radius:4px;overflow:hidden}.switch a{font-family:var(--f-display);font-weight:600;font-size:14px;letter-spacing:.05em;text-transform:uppercase;color:#cfe0ea;text-decoration:none;padding:3px 10px}.switch a[aria-current="page"]{background:#5cb8ea;color:#0a1117}
 .btn-hdr{font-family:var(--f-display);font-size:15px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;background:#5cb8ea;color:#0a1117;border:0;border-radius:3px;padding:3px 10px;cursor:pointer}
 dialog{border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);padding:16px;width:min(640px,calc(100vw - 32px));max-height:calc(100vh - 48px)}
 dialog::backdrop{background:rgba(5,10,15,.55)}
@@ -275,7 +276,7 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
   <div class="board-in">
     <div class="brand">
       <h1 id="title">Dynasty <span>HQ</span></h1>
-      <div class="row" style="gap:8px"><div class="chips" id="chips"></div><button class="btn-hdr" id="askBtn" type="button">Ask Claude</button></div>
+      <div class="row" style="gap:8px"><div class="chips" id="chips"></div><button class="btn-hdr" id="askBtn" type="button">Ask Claude</button><nav class="switch" aria-label="Switch league"><a href="./" aria-current="page">Dynasty</a><a href="redraft/">Redraft</a></nav></div>
     </div>
     <nav class="tabs" role="tablist" aria-label="Sections">
       <button role="tab" aria-selected="true" data-tab="home">What to do</button>
