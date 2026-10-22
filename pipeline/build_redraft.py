@@ -480,13 +480,17 @@ def main():
     VAL = {}
     for pid, d in P.items():
         rows = []
+        a_ = sidnum(pid)
         for s_ in range(SIMS):
             row = []
+            ab = B.absences(a_, s_, fut)
             for k, wk in enumerate(fut):
                 if k == 0 and d.get("lk"):
                     lk = d["lk"]
                     row.append(lk[0] + (sim(d["pr"][0] * lk[1], d["cv"], pid, d["t"], s_, wk, 0) if lk[1] > 0 else 0.0)); continue
-                pm = B.P_MISS_STATUS.get(d["inj"], B.P_MISS) if k == 0 else B.P_MISS
+                if ab[k]:
+                    row.append(0.0); continue
+                pm = B.P_MISS_STATUS.get(d["inj"], B.P_MISS) if k == 0 else 0
                 row.append(sim(d["pr"][k], d["cv"], pid, d["t"], s_, wk, pm))
             rows.append(row)
         VAL[pid] = rows

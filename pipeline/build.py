@@ -167,6 +167,31 @@ P_MISS_STATUS = {"Questionable": 0.25}
 W_IND, W_TEAM = math.sqrt(1 - RHO_T), math.sqrt(RHO_T)
 
 
+# Absences after this week: measured on last season's fantasy starters. A new absence (injury, benching) starts in about
+# 5.5% of healthy weeks, and it usually lasts: 81% of the time a player who missed a week also missed the next.
+# Durations below are last season's, in weeks (the last bucket means "rest of the season").
+ABS_START = 0.055
+ABS_DUR = [(1, .31), (2, .20), (3, .10), (4, .06), (5, .04), (6, .07), (7, .06), (8, .04), (10, .04), (17, .08)]
+
+
+def absences(a, s, weeks):
+    """Which future weeks (index 1+) this player misses in simulation s. Week 0 uses his current injury status instead."""
+    out = [False] * len(weeks)
+    until = 0
+    for k in range(1, len(weeks)):
+        if k <= until:
+            out[k] = True; continue
+        w = weeks[k]
+        if h3(a, s * 37 + 9, w * 41 + 17) < ABS_START:
+            u, acc, d = h3(a, s * 53 + 3, w * 59 + 7), 0.0, ABS_DUR[-1][0]
+            for dur, pr in ABS_DUR:
+                acc += pr
+                if u < acc:
+                    d = dur; break
+            until = k + d - 1; out[k] = True
+    return out
+
+
 def sim_points(m, cv, sid, team, s, w, p_miss):
     """One simulated score: right-skewed (lognormal, mean m), partly shared with teammates, with a chance of missing the game."""
     if m <= 0:
@@ -1046,12 +1071,16 @@ def main():
     for pid in sim_ids:
         d = P[pid]; cv = cv_of(d); d["cv"] = round(cv, 3)
         rows = []
+        a_ = int(pid) if str(pid).isdigit() else 7
         for s_ in range(SIMS):
             row = []
+            ab = absences(a_, s_, fut)
             for k, wk in enumerate(fut):
                 if k == 0 and d.get("lk"):
                     row.append(wk0(d, s_, cv, pid)); continue
-                pm = P_MISS_STATUS.get(d["inj"], P_MISS) if k == 0 else P_MISS
+                if ab[k]:
+                    row.append(0.0); continue
+                pm = P_MISS_STATUS.get(d["inj"], P_MISS) if k == 0 else 0
                 row.append(sim_points(d["pr"][k], cv, pid, d["t"], s_, wk, pm))
             rows.append(row)
         VAL[pid] = rows

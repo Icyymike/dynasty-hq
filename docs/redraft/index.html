@@ -271,10 +271,14 @@ const sidNum=s=>/^\d+$/.test(s)?parseInt(s,10):500000+teamNum(s);
 const RHO=0.15,P_MISS=0.05,WI=Math.sqrt(1-RHO),WT=Math.sqrt(RHO),P_MISS_STATUS={Questionable:0.25};
 const TZ=new Map();function teamZ(t,s,w){const k=t+'|'+s+'|'+w;let v=TZ.get(k);if(v===undefined){v=zn(teamNum(t),s,w);TZ.set(k,v)}return v}
 function simPts(m,cv,sid,team,s,w,pm){if(m<=0)return 0;const a=sidNum(sid);if(hash(a,s*37+9,w*41+17)<pm)return 0;const sig=Math.sqrt(Math.log(1+cv*cv));return m*Math.exp(sig*(WI*zn(a,s,w)+WT*teamZ(team,s,w))-sig*sig/2)}
+const ABS_START=0.055,ABS_DUR=[[1,.31],[2,.20],[3,.10],[4,.06],[5,.04],[6,.07],[7,.06],[8,.04],[10,.04],[17,.08]];
+// multi-week absences (same as the pipeline): a new absence starts in ~5.5% of healthy weeks and lasts as long as last season's did
+function absences(a,s){const out=new Uint8Array(NW);let until=0;for(let k=1;k<NW;k++){if(k<=until){out[k]=1;continue}const w=FUT[k];
+  if(hash(a,s*37+9,w*41+17)<ABS_START){const u=hash(a,s*53+3,w*59+7);let acc=0,d=ABS_DUR[ABS_DUR.length-1][0];for(const [dur,pr] of ABS_DUR){acc+=pr;if(u<acc){d=dur;break}}until=k+d-1;out[k]=1}}return out}
 const VC=new Map();
 function draws(sid){let a=VC.get(sid);if(a)return a;const p=PL[sid],S=D.meta.sims;a=new Float64Array(S*NW);
-  if(p)for(let s=0;s<S;s++)for(let k=0;k<NW;k++){if(k===0&&p.lk){a[s*NW]=p.lk[0]+(p.lk[1]>0?simPts(p.pr[0]*p.lk[1],p.cv,sid,p.t,s,FUT[0],0):0);continue}
-    a[s*NW+k]=simPts(p.pr[k],p.cv,sid,p.t,s,FUT[k],k===0?(P_MISS_STATUS[p.inj]??P_MISS):P_MISS)}
+  if(p)for(let s=0;s<S;s++){const ab=absences(sidNum(sid),s);for(let k=0;k<NW;k++){if(k===0&&p.lk){a[s*NW]=p.lk[0]+(p.lk[1]>0?simPts(p.pr[0]*p.lk[1],p.cv,sid,p.t,s,FUT[0],0):0);continue}
+    a[s*NW+k]=ab[k]?0:simPts(p.pr[k],p.cv,sid,p.t,s,FUT[k],k===0?(P_MISS_STATUS[p.inj]??P_MISS):0)}}
   VC.set(sid,a);return a}
 const expK=(s,k)=>{const p=PL[s];if(!p)return 0;return k===0&&p.lk?p.lk[0]+p.pr[0]*p.lk[1]:(p.pr[k]||0)};
 function choose(ids,k,locked){locked=locked||{};const used=new Set(Object.values(locked));const out=SLOTS.map((_,i)=>locked[i]??null);
@@ -510,6 +514,12 @@ function sourcesHTML(S,C){let h='';const r2=v=>v==null?'—':(+v).toFixed(2);
     h+=`<h3>Are the win chances honest?</h3><p class="sub" style="margin:0">Every game so far was re-played with the projections as they stood before it. The favorite won <b>${C.fav_won} of ${C.fav_n}</b>. By how sure the app was:</p>
     <div class="tbl-wrap"><table style="font-size:12.5px;max-width:420px"><thead><tr><th>Favorite's chance</th><th class="r">Games</th><th class="r">Favorite won</th></tr></thead><tbody>${bins}</tbody></table></div>
     <p class="sub" style="margin:0">With this few games each row can easily be off by 10–20 points by luck alone, so close is as good as it gets. ${dial} Re-checked every update.</p>`}
+  h+=`<h3>How injuries are simulated</h3><p class="sub" style="margin:0">Playoff and title odds play out every remaining week, so they need a realistic picture of injuries. Last season's fantasy starters were measured: a new absence (injury or benching) starts in about 5.5% of healthy weeks, and once a player misses a week he usually misses the next one too. The season replay now works the same way, with some absences lasting a week and some the rest of the season. Checked against last season (the share of starters who missed this many of the final 12 games):</p>
+    <div class="tbl-wrap"><table style="font-size:12.5px;max-width:520px"><thead><tr><th></th><th class="r">0</th><th class="r">1–2</th><th class="r">3–4</th><th class="r">5+</th></tr></thead><tbody>
+    <tr><td>What actually happened</td><td class="r num">52%</td><td class="r num">22%</td><td class="r num">7%</td><td class="r num"><b>18%</b></td></tr>
+    <tr class="hl"><td>The app now</td><td class="r num">51%</td><td class="r num">24%</td><td class="r num">10%</td><td class="r num"><b>15%</b></td></tr>
+    <tr><td class="sub">The app before (one-week misses only)</td><td class="r num sub">54%</td><td class="r num sub">44%</td><td class="r num sub">2%</td><td class="r num sub">0%</td></tr></tbody></table></div>
+    <p class="sub" style="margin:0">Known injuries (out, IR) come from Sleeper's injury report. The odds still assume no trades or pickups, so in October treat a playoff chance as roughly ±10 points; it narrows as weeks are played.</p>`;
   return h}
 
 // ---------- LEAGUE
