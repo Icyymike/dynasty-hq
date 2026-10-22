@@ -117,25 +117,92 @@ def combine(sl, es, it, par):
     return base * ((it / par["ref"]) ** par["beta"] if it and par["beta"] else 1.0)
 
 
+def walk_forward(R, OM, q_grid=None, first_test=3, sources=True):
+    """Honest test: for each week from `first_test` on, choose every setting using ONLY earlier weeks, then score that
+    week's projections. R: rows dict(wk, a, sl, es, it, ev) (ev = counts toward the score: projected 3+ points);
+    OM: {model setting: [the app's own model prediction for each row]}. Returns average misses on unseen weeks."""
+    q_grid = q_grid or [i / 20 for i in range(21)]
+    weeks = sorted({r["wk"] for r in R})
+    tests = [w for w in weeks if w >= first_test and any(r["wk"] < w for r in R)]
+    err = dict(sleeper=[], espn=[], consensus=[], final=[], espn_n=0)
+    per_week = []
+    for w in tests:
+        tr = [i for i, r in enumerate(R) if r["wk"] < w]
+        te = [i for i, r in enumerate(R) if r["wk"] == w and r["ev"]]
+        if not te:
+            continue
+        sp, srep = tune([(R[i]["a"], R[i]["sl"], R[i]["es"], R[i]["it"]) for i in tr if R[i]["ev"]]) if sources else (None, {})
+        if not srep.get("used"):
+            sp = dict(q=1.0, beta=0.0, ref=22.5)
+        cons = {i: combine(R[i]["sl"], R[i]["es"], R[i]["it"], sp) for i in tr + te}
+        par = min(OM, key=lambda k: st.mean(abs(R[i]["a"] - OM[k][i]) for i in tr))
+        q = min(q_grid, key=lambda q_: st.mean(abs(R[i]["a"] - (q_ * cons[i] + (1 - q_) * OM[par][i])) for i in tr))
+        e_sl = [abs(R[i]["a"] - R[i]["sl"]) for i in te]
+        e_f = [abs(R[i]["a"] - (q * cons[i] + (1 - q) * OM[par][i])) for i in te]
+        err["sleeper"] += e_sl; err["consensus"] += [abs(R[i]["a"] - cons[i]) for i in te]; err["final"] += e_f
+        err["espn"] += [abs(R[i]["a"] - R[i]["es"]) for i in te if R[i]["es"]]
+        per_week.append([w, len(te), round(st.mean(e_sl), 2), round(st.mean(e_f), 2)])
+    if not err["final"]:
+        return dict(n=0)
+    m = lambda k: round(st.mean(err[k]), 3) if err[k] else None
+    return dict(n=len(err["final"]), weeks=[x[0] for x in per_week], sleeper=m("sleeper"), espn=m("espn"), consensus=m("consensus"),
+                final=m("final"), per_week=per_week)
+
+
+def choose(R, OM):
+    """Run the honest test for four ways of projecting and keep the simplest one within 0.005 points of the best:
+    Sleeper alone, Sleeper + the app's usage model, Sleeper + ESPN + betting lines, and all three."""
+    a = walk_forward(R, OM, sources=False)
+    b = walk_forward(R, OM, sources=True)
+    if not a.get("n"):
+        return dict(pick="sleeper", n=0, cands={}), a, b
+    cands = [("sleeper", a["sleeper"]), ("sleeper+model", a["final"]), ("sources", b["consensus"]), ("sources+model", b["final"])]
+    best = min(v for _, v in cands)
+    pick = next(k for k, v in cands if v <= best + 0.005)
+    return dict(pick=pick, n=a["n"], weeks=a["weeks"], cands=dict(cands), espn=b.get("espn"), per_week=a["per_week"]), a, b
+
+
 def calibrate(games_at):
-    """games_at(m) -> [(win chance, 1 if won else 0)] re-simulated with every player's spread scaled by m.
+    """games_at(m) -> [(week, win chance, 1 if won else 0)] re-simulated with every player's spread scaled by m.
     Finds the m whose win chances best match what happened, then pulls it most of the way back to 1 until there are
-    enough games to trust it (k=80 games), and limits it to 0.8-1.25."""
+    enough games to trust it (k=80 games), and limits it to 0.8-1.25. Also tests the dial honestly: for each week,
+    the dial is set from earlier weeks only and scored on that week."""
     grid = [0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.35, 1.5]
-    res = {}
-    for m in grid:
-        g = games_at(m)
-        if not g:
-            return dict(m=1.0, n=0)
-        res[m] = (st.mean(-(o * math.log(max(p, 1e-4)) + (1 - o) * math.log(max(1 - p, 1e-4))) for p, o in g), g)
-    m_hat = min(grid, key=lambda m: res[m][0])
-    n = len(res[1.0][1])
-    w = n / (n + 80)
-    m = round(min(1.25, max(0.8, 1 + (m_hat - 1) * w)), 3)
-    g1 = res[1.0][1]
+    G = {m: games_at(m) for m in grid}
+    if not G[1.0]:
+        return dict(m=1.0, n=0)
+    ll = lambda p, o: -(o * math.log(max(p, 1e-4)) + (1 - o) * math.log(max(1 - p, 1e-4)))
+    def fit(idx):
+        mh = min(grid, key=lambda m: st.mean(ll(G[m][i][1], G[m][i][2]) for i in idx))
+        w = len(idx) / (len(idx) + 80)
+        return mh, w, min(1.25, max(0.8, 1 + (mh - 1) * w))
+    def p_at(i, m):  # win chance at any dial setting: straight line between the two nearest simulated settings
+        lo = max(x for x in grid if x <= m); hi = min(x for x in grid if x >= m)
+        if hi == lo:
+            return G[lo][i][1]
+        t = (m - lo) / (hi - lo)
+        return (1 - t) * G[lo][i][1] + t * G[hi][i][1]
+    all_i = list(range(len(G[1.0])))
+    m_hat, w, m = fit(all_i)
+    # honest test of the dial
+    wks = sorted({g[0] for g in G[1.0]})
+    oos_plain, oos_dial = [], []
+    for wk in wks[2:]:
+        tr = [i for i in all_i if G[1.0][i][0] < wk]; te = [i for i in all_i if G[1.0][i][0] == wk]
+        _, _, m_ = fit(tr)
+        oos_plain += [ll(G[1.0][i][1], G[1.0][i][2]) for i in te]
+        oos_dial += [ll(p_at(i, m_), G[1.0][i][2]) for i in te]
+    g1 = [(p, o) for _, p, o in G[1.0]]
     bins = []
     for lo, hi in ((0.5, 0.6), (0.6, 0.75), (0.75, 1.01)):
         b = [(max(p, 1 - p), o if p >= 0.5 else 1 - o) for p, o in g1 if lo <= max(p, 1 - p) < hi]
         if b:
             bins.append([lo, hi, len(b), round(st.mean(x for x, _ in b), 3), round(st.mean(y for _, y in b), 3)])
-    return dict(m=m, m_hat=m_hat, n=n, weight=round(w, 2), logloss=round(res[1.0][0], 4), logloss_hat=round(res[m_hat][0], 4), bins=bins)
+    fav = [o if p >= 0.5 else 1 - o for p, o in g1 if abs(p - 0.5) > 0.02]
+    # only use the dial if it actually helped on weeks it hadn't seen
+    applied = bool(oos_plain) and st.mean(oos_dial) < st.mean(oos_plain) - 0.002
+    if not applied:
+        m = 1.0
+    return dict(m=round(m, 3), applied=applied, m_fit=round(1 + (m_hat - 1) * w, 3), m_hat=m_hat, n=len(g1), weight=round(w, 2), logloss=round(st.mean(ll(p, o) for p, o in g1), 4),
+                bins=bins, fav_won=sum(fav), fav_n=len(fav),
+                oos_n=len(oos_plain), oos_plain=round(st.mean(oos_plain), 4) if oos_plain else None, oos_dial=round(st.mean(oos_dial), 4) if oos_dial else None)

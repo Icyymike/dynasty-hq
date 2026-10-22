@@ -1216,18 +1216,23 @@ function renderDraft(){
 }
 
 // ---------- how accurate is this app? ----------
-// plain-English summary of where projections come from and whether win chances are honest
+// plain-English summary of how projections are chosen (honest week-by-week test) and whether win chances are honest
 function sourcesHTML(S,C){let h='';const r2=v=>v==null?'—':(+v).toFixed(2);
-  if(S&&S.n){const ws=S.w_sleeper??1,b=S.beta||0,up=Math.round((Math.pow(28/22.5,b)-1)*100),dn=Math.round((1-Math.pow(17/22.5,b))*100);
-    const gain=S.sleeper&&S.combined?Math.round((S.sleeper-S.combined)/S.sleeper*1000)/10:0;
-    h+=`<h3>Where the projections come from</h3><p class="sub" style="margin:0">`+(S.used?`Each player's weekly projection is ${ws<1?`<b>${Math.round(ws*100)}% Sleeper + ${Math.round((1-ws)*100)}% ESPN</b>`:'<b>Sleeper</b>'}${b?`, then adjusted for the betting line: a team Vegas expects to score 28 points (instead of the usual 22.5) gets about <b>+${up}%</b>, one expected to score 17 about <b>−${dn}%</b>`:''}. `
-      :`ESPN's projections and betting lines were tested and didn't beat Sleeper alone this season, so the app uses Sleeper. `)+
-      `Tested on ${S.n.toLocaleString()} player-games already played: Sleeper alone missed by <b>${r2(S.sleeper)}</b> points a game on average${S.espn?`, ESPN alone by <b>${r2(S.espn)}</b>`:''}${S.used?`, the combination by <b>${r2(S.combined)}</b> (${gain}% closer)`:''}. Small differences are normal: single games are mostly luck, and no source gets far below this. The mix is re-tested every update and only changes if the numbers say so.${S.espn_players===0?' <b>ESPN\'s feed didn\'t respond this update.</b>':''}</p>`}
+  const O=S&&S.oos;
+  if(O&&O.n){const NAME={sleeper:'Sleeper alone','sleeper+model':"Sleeper + the app's usage model",sources:'Sleeper + ESPN + betting lines','sources+model':'All three'};
+    const wk=O.weeks||[],span=wk.length?`weeks ${wk[0]}–${wk[wk.length-1]}`:'past weeks';
+    const rows=Object.entries(O.cands||{}).map(([k,v])=>`<tr${k===O.pick?' class="hl"':''}><td>${NAME[k]||k}${k===O.pick?' <span class="word w-good">used</span>':''}</td><td class="r num">${r2(v)}</td></tr>`).join('')+(O.espn?`<tr><td class="sub">ESPN alone (for reference)</td><td class="r num sub">${r2(O.espn)}</td></tr>`:'');
+    const picked=O.pick==='sleeper'?"Right now that's <b>Sleeper alone</b>: ESPN, betting lines and the app's own usage model were all tried, and none beat it on weeks they hadn't seen. The differences are tiny, so it isn't worth the extra moving parts."
+      :`Right now that's <b>${NAME[O.pick]}</b>, because it beat Sleeper alone on weeks it hadn't seen.`;
+    h+=`<h3>Where the projections come from</h3><p class="sub" style="margin:0">Four ways of projecting were put through an honest test. For each of ${span}, every setting was chosen using only the weeks before it, then scored on that week, the way it would have worked live (${O.n.toLocaleString()} player-games, players projected for 3+ points). Lower is better: it's the average miss in fantasy points per player per game.</p>
+    <div class="tbl-wrap"><table style="font-size:12.5px;max-width:460px"><thead><tr><th>Method</th><th class="r">Average miss</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="sub" style="margin:0">The app uses the simplest method that's within 0.005 points of the best. ${picked} This is re-run on every update, so if an extra starts winning as more weeks are played, the app switches to it automatically.${S.espn_players===0?' <b>ESPN\'s feed didn\'t respond this update.</b>':''}</p>`}
   if(C&&C.n){const bins=(C.bins||[]).map(b=>`<tr><td>${Math.round(b[3]*100)}%</td><td class="r num">${b[2]}</td><td class="r num"><b>${Math.round(b[4]*100)}%</b></td></tr>`).join('');
-    const m=C.m||1,msg=Math.abs(m-1)<0.01?'They line up well, so no adjustment is applied.':m<1?`Overall, favorites have won a bit more often than predicted, so win chances are now made slightly bolder (player spreads × ${m.toFixed(2)}).`:`Overall, favorites have won a bit less often than predicted, so win chances are now made slightly more cautious (player spreads × ${m.toFixed(2)}).`;
-    h+=`<h3>Are the win chances honest?</h3><p class="sub" style="margin:0">Every game so far was re-played with the projections as they stood before it. When the app's favorite had this chance, this is how often it actually won:</p>
+    const dial=C.applied?`An adjustment that makes win chances ${C.m<1?'slightly bolder':'slightly more cautious'} (player spreads × ${C.m.toFixed(2)}) passed the same honest test, so it's applied.`
+      :C.oos_n?`An adjustment to make them bolder or more cautious was tested the honest way (set from earlier weeks, scored on ${C.oos_n} later games) and didn't help, so none is applied.`:'There aren\'t enough weeks yet to test an adjustment, so none is applied.';
+    h+=`<h3>Are the win chances honest?</h3><p class="sub" style="margin:0">Every game so far was re-played with the projections as they stood before it. The favorite won <b>${C.fav_won} of ${C.fav_n}</b>. By how sure the app was:</p>
     <div class="tbl-wrap"><table style="font-size:12.5px;max-width:420px"><thead><tr><th>Favorite's chance</th><th class="r">Games</th><th class="r">Favorite won</th></tr></thead><tbody>${bins}</tbody></table></div>
-    <p class="sub" style="margin:0">${msg} With ${C.n} games the adjustment is held to ${Math.round((C.weight||0)*100)}% strength; it grows as more games are played (full strength around 80+), stays within limits, and is re-checked every update.</p>`}
+    <p class="sub" style="margin:0">With this few games each row can easily be off by 10–20 points by luck alone, so close is as good as it gets. ${dial} Re-checked every update.</p>`}
   return h}
 
 function renderAccuracy(){const AC=D.accuracy;const box=$('#accBox');if(!box)return;if(!AC){box.innerHTML='<p class="sub">Accuracy tracking starts with the next update.</p>';return}

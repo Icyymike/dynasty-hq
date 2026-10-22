@@ -536,13 +536,8 @@ def main():
     team_of = lambda p_: (players_db.get(p_) or {}).get("team")
     t_rows = [(pts[p_][f"{season}-{w}"], v, es_proj.get(p_, {}).get(w), it_lines.get((team_of(p_), w)))
               for p_, d_ in proj_sl.items() for w, v in d_.items() if w <= done and v >= 3 and f"{season}-{w}" in pts.get(p_, {})]
-    src_par, src_rep = SRC.tune(t_rows)
+    src_par, src_rep = SRC.tune(t_rows)   # applied later, only if the honest week-by-week test agrees
     src_rep.update(espn_players=n_es, lines=len(it_lines))
-    if src_rep.get("used"):
-        for p_, d_ in proj.items():
-            for w in d_:
-                d_[w] = round(SRC.combine(proj_sl[p_][w], es_proj.get(p_, {}).get(w), it_lines.get((team_of(p_), w)), src_par), 2)
-    print(f"sources: {src_rep}")
 
     # ---------- dynasty values (FantasyCalc API, auto) + optional KTC snapshot (manual file)
     fc_vals, fc_picks, fc_pick_raw, fc_meta = {}, {}, {}, {}
@@ -811,15 +806,24 @@ def main():
     # backtest weeks 2..done to tune params + blend weight
     rows_by_par = {}
     grid = list(itertools.product([1, 2, 3, 4, 6], [0.2, 0.35, 0.5], [0.1, 0.25, 0.4], [0.2, 0.4, 0.6]))
-    bt_pts = [(pid, w, pts[pid][f"{season}-{w}"], proj[pid][w]) for pid in proj for w in range(2, done + 1)
-              if f"{season}-{w}" in pts.get(pid, {}) and w in proj[pid]]
+    bt_pts = [(pid, w, pts[pid][f"{season}-{w}"], proj_sl[pid][w]) for pid in proj_sl for w in range(2, done + 1)
+              if f"{season}-{w}" in pts.get(pid, {}) and w in proj_sl[pid]]
     best_par, best_mae = (2, 0.2, 0.1, 0.6), None
+    wf = dict(pick="sleeper", n=0)
     if len(bt_pts) >= 100:
-        for par in grid:
-            m = _mean(abs(a - our_mean(pid, w, par)) for pid, w, a, _ in bt_pts)
-            if best_mae is None or m < best_mae:
-                best_mae, best_par = m, par
-        rows = [(a, s, our_mean(pid, w, best_par)) for pid, w, a, s in bt_pts]
+        OM = {par: [our_mean(pid, w, par) for pid, w, _, _ in bt_pts] for par in grid}
+        # honest test first: every setting chosen from earlier weeks only, scored on the next week
+        R_ = [dict(wk=w, a=a, sl=s, es=es_proj.get(pid, {}).get(w), it=it_lines.get((team_of(pid), w)), ev=s >= 3) for pid, w, a, s in bt_pts]
+        wf, _, _ = SRC.choose(R_, OM)
+        if wf["pick"] in ("sources", "sources+model") and src_rep.get("used"):
+            for p_, d_ in proj.items():
+                for w in d_:
+                    d_[w] = round(SRC.combine(proj_sl[p_][w], es_proj.get(p_, {}).get(w), it_lines.get((team_of(p_), w)), src_par), 2)
+        else:
+            src_rep["used"] = False
+        bt_pts = [(pid, w, a, proj[pid][w]) for pid, w, a, _ in bt_pts]
+        best_par = min(OM, key=lambda k: st.mean(abs(r[2] - o) for r, o in zip(bt_pts, OM[k])))
+        rows = [(r[2], r[3], o) for r, o in zip(bt_pts, OM[best_par])]
         mae = lambda f: st.mean(abs(a - f(s, o)) for a, s, o in rows)
         bw_err = min((mae(lambda s, o, q=q: q * s + (1 - q) * o), q) for q in [i / 20 for i in range(21)])
         # when a player's recent games disagree a lot with Sleeper (role change, new starter, injury return),
@@ -831,8 +835,13 @@ def main():
         backtest = dict(n=len(rows), sleeper=round(mae(lambda s, o: s), 2), ours=round(mae(lambda s, o: o), 2), blend=round(bw_err[0], 2), w=bw_err[1],
                         w_div=w_div, n_div=len(div_rows),
                         blend2=round(mae(lambda s, o: (w_div if abs(o - s) / max(s, 3) > 0.5 else bw_err[1]) * s + (1 - (w_div if abs(o - s) / max(s, 3) > 0.5 else bw_err[1])) * o), 2))
+        if wf["pick"] not in ("sleeper+model", "sources+model"):   # the usage model didn't help on unseen weeks
+            backtest.update(w=1.0, w_div=1.0)
+        backtest["model_used"] = wf["pick"] in ("sleeper+model", "sources+model")
     else:
         backtest = dict(n=len(bt_pts), sleeper=None, ours=None, blend=None, w=0.85, w_div=0.85, n_div=0)
+    src_rep["oos"] = wf
+    print(f"sources: {src_rep}")
     BW = backtest["w"]; BWD = backtest["w_div"]
     def blend(s, o):
         q = BWD if abs(o - s) / max(s, 3) > 0.5 else BW
@@ -855,7 +864,7 @@ def main():
                 o = next((r for r in rows if r[1] == mid and r[0] != rid), None)
                 if not o or rid > o[0] or rid not in draws or o[0] not in draws:
                     continue
-                out_.append(((sum(1 for a, b in zip(draws[rid], draws[o[0]]) if a > b) + 0.5) / (sims + 1), 1 if sc_ > o[2] else 0))
+                out_.append((wk, (sum(1 for a, b in zip(draws[rid], draws[o[0]]) if a > b) + 0.5) / (sims + 1), 1 if sc_ > o[2] else 0))
         return out_
     try:
         cal = SRC.calibrate(backfill) if done else dict(m=1.0, n=0)

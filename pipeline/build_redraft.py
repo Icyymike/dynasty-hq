@@ -211,14 +211,8 @@ def main():
     t_rows = [(pts[p_][f"{season}-{w}"], v, es_proj.get(p_, {}).get(w), it_lines.get((team_of(p_), w)))
               for p_, d_ in proj_sl.items() if (players_db.get(p_) or {}).get("position") in SKILL
               for w, v in d_.items() if w <= done and v >= 3 and f"{season}-{w}" in pts.get(p_, {})]
-    src_par, src_rep = SRC.tune(t_rows)
+    src_par, src_rep = SRC.tune(t_rows)   # applied below, only if the honest week-by-week test agrees
     src_rep.update(espn_players=n_es, lines=len(it_lines))
-    if src_rep.get("used"):
-        for p_, d_ in proj.items():
-            if (players_db.get(p_) or {}).get("position") in SKILL:
-                for w in d_:
-                    d_[w] = round(SRC.combine(proj_sl[p_][w], es_proj.get(p_, {}).get(w), it_lines.get((team_of(p_), w)), src_par), 2)
-    print(f"sources: {src_rep}")
 
     # ---------- redraft trade market (FantasyCalc, 12-team 1QB full PPR, rest of season)
     fc_vals, fc_trend = {}, {}
@@ -339,22 +333,37 @@ def main():
         return pw * prior + (1 - pw) * data
 
     grid = list(itertools.product([1, 2, 3, 4, 6], [0.2, 0.35, 0.5], [0.1, 0.25, 0.4], [0.2, 0.4, 0.6]))
-    bt_pts = [(pid, w, pts[pid][f"{season}-{w}"], proj[pid][w]) for pid in proj for w in range(2, done + 1)
-              if f"{season}-{w}" in pts.get(pid, {}) and w in proj[pid] and pinfo(pid)["p"] in SKILL]
+    bt_pts = [(pid, w, pts[pid][f"{season}-{w}"], proj_sl[pid][w]) for pid in proj_sl for w in range(2, done + 1)
+              if f"{season}-{w}" in pts.get(pid, {}) and w in proj_sl[pid] and pinfo(pid)["p"] in SKILL]
     best_par = (2, 0.2, 0.1, 0.6)
+    wf = dict(n=0)
     if len(bt_pts) >= 100:
-        best_mae = None
-        for par in grid:
-            m_ = B._mean(abs(a - our_mean(pid, w, par)) for pid, w, a, _ in bt_pts)
-            if best_mae is None or m_ < best_mae:
-                best_mae, best_par = m_, par
-        rows = [(a, s, our_mean(pid, w, best_par)) for pid, w, a, s in bt_pts]
+        OM = {par: [our_mean(pid, w, par) for pid, w, _, _ in bt_pts] for par in grid}
+        # honest test first: every setting chosen from earlier weeks only, scored on the next week
+        R_ = [dict(wk=w, a=a, sl=s, es=es_proj.get(pid, {}).get(w), it=it_lines.get((team_of(pid), w)), ev=s >= 3) for pid, w, a, s in bt_pts]
+        wf, _, _ = SRC.choose(R_, OM)
+        use_src = wf["pick"] in ("sources", "sources+model") and bool(src_rep.get("used"))
+        if use_src:
+            for p_, d_ in proj.items():
+                if (players_db.get(p_) or {}).get("position") in SKILL:
+                    for w in d_:
+                        d_[w] = round(SRC.combine(proj_sl[p_][w], es_proj.get(p_, {}).get(w), it_lines.get((team_of(p_), w)), src_par), 2)
+        else:
+            src_par = dict(q=1.0, beta=0.0, ref=22.5)
+        src_rep["used"] = use_src
+        cons = [proj[pid][w] for pid, w, _, _ in bt_pts]
+        best_par = min(OM, key=lambda k: st.mean(abs(r[2] - o) for r, o in zip(bt_pts, OM[k])))
+        rows = [(r[2], c, o) for r, c, o in zip(bt_pts, cons, OM[best_par])]
         mae = lambda f: st.mean(abs(a - f(s, o)) for a, s, o in rows)
         bw = min((mae(lambda s, o, q=q: q * s + (1 - q) * o), q) for q in [i / 20 for i in range(21)])
-        backtest = dict(n=len(rows), sleeper=round(mae(lambda s, o: s), 2), ours=round(mae(lambda s, o: o), 2), blend=round(bw[0], 2), w=bw[1])
+        use_model = wf["pick"] in ("sleeper+model", "sources+model")
+        backtest = dict(n=len(rows), sleeper=round(mae(lambda s, o: s), 2), ours=round(mae(lambda s, o: o), 2), blend=round(bw[0], 2),
+                        w=bw[1] if use_model else 1.0, model_used=use_model)
     else:
         backtest = dict(n=len(bt_pts), sleeper=None, ours=None, blend=None, w=0.85)
+    src_rep["oos"] = wf
     BW = backtest["w"]
+    print(f"sources: {src_rep}")
     print(f"projection backtest: {backtest}")
 
     # ---------- matchups: how generous each defense is to each position (opponent-adjusted, shrunk)
@@ -406,7 +415,7 @@ def main():
                 out_.append(dict(wk=wk, a=rid, b=o[0], wp=round(wp_, 3), pa=round(sum(m for _, m, _, _ in means[rid]), 1), pb=round(sum(m for _, m, _, _ in means[o[0]]), 1),
                                  sa=sc_, sb=o[2]))
         return out_
-    cal = SRC.calibrate(lambda m_: [(g_["wp"], 1 if g_["sa"] > g_["sb"] else 0) for g_ in backfill(m_, 200)]) if done else dict(m=1.0, n=0)
+    cal = SRC.calibrate(lambda m_: [(g_["wk"], g_["wp"], 1 if g_["sa"] > g_["sb"] else 0) for g_ in backfill(m_, 200)]) if done else dict(m=1.0, n=0)
     CAL_M = cal["m"]
     back = backfill(CAL_M)
     print(f"calibration: {cal}")
