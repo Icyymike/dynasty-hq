@@ -4,14 +4,14 @@
 Top counted: C.J. Stroud 29.0, Bryce Young 23.8, D'Andre Swift 21.0, Roschon Johnson 13.5
 
 **Record:** 8-4, #5 of 12 · 1082.2 PF
-**Odds:** playoffs 100% · bye 39% · title 18%
+**Odds:** playoffs 100% · bye 38% · title 19%
 
-**Playoff path:** most likely seed 3; title chance with a bye 26% vs without 13%
-**Best trade idea:** give Chase Brown for Isaiah Likely: title chance 18% → 23%
-**Waivers:** Justice Hill would add 0.3 pts/wk to your lineup.
+**Playoff path:** most likely seed 3; title chance with a bye 31% vs without 12%
+**Best trade idea:** give Cam Skattebo, Malik Willis for Parker Washington: title chance 19% → 24%
+**Waivers:** Justice Hill would add 0.9 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 7:** vs Lava Me Tender · projected 185.7 – 138.5 · win chance 89%
+**Week 7:** vs Lava Me Tender · projected 185.6 – 140.4 · win chance 86%
 On bye: Tre' Harris, Antonio Williams, Josh Cameron, Treylon Burks, Quentin Johnston
 Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 
@@ -28,12 +28,12 @@ Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 ## League trades
 - **The True Behemoth** get Darren Waller (Push) ⇄ **Commish in Epstein Files** get 2028 3rd (The True Behemoth) (Push)
 - **Straight Outta Hampton** get 2027 3rd (Straight Outta Hampton) (Push) ⇄ **WavySerg** get Jerry Jeudy (Push)
-- **Straight Outta Hampton** get 2028 3rd (Gibb Me My Trophy) (Push) ⇄ **WavySerg** get Isaac TeSlaa (Win)
+- **Straight Outta Hampton** get 2028 3rd (Gibb Me My Trophy) (Push) ⇄ **WavySerg** get Isaac TeSlaa (Push)
 
 ## Market
-- Sell-high: Cam Skattebo: value 3,848 vs ~2,861 for 5.5 pts/wk of production
-- Buy-low: Mike Evans (The True Behemoth): +4.8 counted pts/wk for you, value 3,588
-- Buy-low: Ollie Gordon II (Lava Me Tender): +3.4 counted pts/wk for you, value 3,387
-- Buy-low: J.K. Dobbins (Commish in Epstein Files): +1.7 counted pts/wk for you, value 2,899
+- Sell-high: Jalen Nailor: value 1,813 vs ~1,366 for 3.1 pts/wk of production
+- Buy-low: Mike Evans (The True Behemoth): +6.7 counted pts/wk for you, value 3,588
+- Buy-low: Ollie Gordon II (Lava Me Tender): +4.8 counted pts/wk for you, value 3,387
+- Buy-low: Brenton Strange (Straight Outta Hampton): +4.8 counted pts/wk for you, value 3,435
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
