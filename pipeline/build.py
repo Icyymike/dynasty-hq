@@ -941,7 +941,7 @@ def main():
     # spread scaled up or down, and keep the "noise dial" whose win chances best match what happened (pulled toward 1 until
     # there are enough games to trust it).
     CVP = {"QB": 0.42, "RB": 0.55, "WR": 0.62, "TE": 0.65}
-    def backfill(mult, sims=200):
+    def backfill(mult, sims=200, detail=None):
         out_ = []
         for wk in range(1, done + 1):
             rows = weeks.get(wk) or []
@@ -951,6 +951,20 @@ def main():
                 items = [x for x in items if x[0] in POS and x[1] > 0]
                 draws[rid] = [(sum(sim_points(m_, cv_, sid, tm, s_, 900 + wk, 0.03) for ps, m_, cv_, sid, tm in items) if MANAGED
                                else best_lineup((ps, sim_points(m_, cv_, sid, tm, s_, 900 + wk, 0.03)) for ps, m_, cv_, sid, tm in items)) for s_ in range(sims)]
+            if detail is not None:   # how every team did vs. what was expected before the week (for "your season so far")
+                med_ = st.median([r[2] for r in rows]) if rows else 0
+                for rid, mid, sc_ in rows:
+                    if rid not in draws:
+                        continue
+                    o = next((r for r in rows if r[1] == mid and r[0] != rid), None)
+                    xs = sorted(draws[rid])
+                    rec_ = dict(wk=wk, rid=rid, sc=round(sc_, 1), exp=round(sum(xs) / len(xs), 1), lo=round(xs[int(0.1 * len(xs))], 1), hi=round(xs[int(0.9 * len(xs))], 1))
+                    if o and o[0] in draws:
+                        rec_.update(opp=o[0], osc=round(o[2], 1), oexp=round(sum(draws[o[0]]) / len(draws[o[0]]), 1),
+                                    wp=round((sum(1 for a, b in zip(draws[rid], draws[o[0]]) if a > b) + 0.5) / (len(xs) + 1), 3))
+                    if median_on:
+                        rec_["med"] = 1 if sc_ > med_ else 0
+                    detail.append(rec_)
             for rid, mid, sc_ in rows:
                 o = next((r for r in rows if r[1] == mid and r[0] != rid), None)
                 if not o or rid > o[0] or rid not in draws or o[0] not in draws:
@@ -963,6 +977,14 @@ def main():
         print(f"WARN calibration skipped: {e}"); cal = dict(m=1.0, n=0)
     CAL_M = cal["m"]
     print(f"calibration: {cal}")
+    past_all = []
+    try:
+        if done:
+            backfill(CAL_M, 300, detail=past_all)
+    except Exception as e:  # noqa
+        print(f"WARN past weeks skipped: {e}")
+    past_me = [r for r in past_all if r["rid"] == me]
+    past_bias = round(st.mean(r["sc"] - r["exp"] for r in past_all), 1) if past_all else None
 
     # ---------- per-player record
     P = {}
@@ -2293,7 +2315,7 @@ def main():
                     favorites=round(mean_([1 if (g[1] >= 0.5) == (g[2] == 1) else 0 for g in G_]), 3) if G_ else None, bins=bins,
                     pl_mae=round(mean_(graded["pl_err"]), 2) if graded["pl_err"] else None, pl_n=len(graded["pl_err"]),
                     team_mae=round(mean_(graded["team_err"]), 1) if graded["team_err"] else None,
-                    weeks_logged=sorted(PRED["weeks"].keys()), backtest=backtest, sources=src_rep, calib=cal,
+                    weeks_logged=sorted(PRED["weeks"].keys()), backtest=backtest, sources=src_rep, calib=cal, past_me=past_me, past_bias=past_bias,
                     odds=[dict(d=o_["d"], wk=o_["wk"], po=o_["t"].get(str(me), [None, None])[0], t=o_["t"].get(str(me), [None, None])[1]) for o_ in PRED["odds"]])
 
     data = dict(meta=dict(league=league.get("name"), season=season, done=done, fut=fut, reg_end=reg_end, me=me, median=median_on,

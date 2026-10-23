@@ -465,6 +465,9 @@ def main():
                  sl0=[round(proj_sl.get(pid, {}).get(w, 0), 1) for w in fut[:4]], cv=round(cv, 3), bye=team_byes.get(tm), fc=fc_vals.get(pid, 0), fct=fc_trend.get(pid, 0),
                  opp=[opp_tw.get((tm, w), "") for w in fut[:4]],
                  mf=[(DEFF.get(opp_tw.get((tm, w)), {}) or {}).get(info["p"]) for w in fut[:4]])
+        dbp = players_db.get(pid) or {}
+        if info["inj"]:
+            d["injd"] = {k_: dbp.get(k_) for k_ in ("injury_body_part", "injury_notes", "practice_participation", "injury_start_date") if dbp.get(k_)}
         if pid in on_ir:
             d["ir"] = 1
         if pid not in rostered:

@@ -276,7 +276,7 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
   <div class="board-in">
     <div class="brand">
       <h1 id="title">Dynasty <span>HQ</span></h1>
-      <div class="row" style="gap:8px"><div class="chips" id="chips"></div><button class="btn-hdr" id="askBtn" type="button">Ask Claude</button><nav class="switch" aria-label="Switch league" id="lgSwitch"></nav><script>(function(){var L=[["512 BB",""],["Ring","ring/"],["Redraft","redraft/"]],p=location.pathname,m=p.match(/^(.*?\/)(ring|redraft)\/(index\.html)?$/),root=m?m[1]:p.replace(/index\.html$/,''),cur=m?m[2]+'/':'';
+      <div class="row" style="gap:8px"><div class="chips" id="chips"></div><button class="btn-hdr" id="askBtn" type="button">Ask Claude</button><nav class="switch" aria-label="Switch league" id="lgSwitch"></nav><script>(function(){var L=[["Home","hub/"],["512 BB",""],["Ring","ring/"],["Redraft","redraft/"]],p=location.pathname,m=p.match(/^(.*?\/)(ring|redraft|hub)\/(index\.html)?$/),root=m?m[1]:p.replace(/index\.html$/,''),cur=m?m[2]+'/':'';
 document.getElementById('lgSwitch').innerHTML=L.map(function(x){return '<a href="'+root+x[1]+'"'+(x[1]===cur?' aria-current="page"':'')+'>'+x[0]+'</a>'}).join('')})()</script></div>
     </div>
     <nav class="tabs" role="tablist" aria-label="Sections">
@@ -338,6 +338,7 @@ document.getElementById('lgSwitch').innerHTML=L.map(function(x){return '<a href=
     <p class="answer" id="weeksAnswer"></p>
     <div class="tbl-wrap" id="weeksChart"></div>
     <div id="weeksList" class="list"></div>
+    <div id="pastWeeks"></div>
   </div>
   <div class="card">
     <h2>Who actually helps my team?</h2>
@@ -795,6 +796,19 @@ function renderHome(){
 }
 
 // ---------- MY TEAM ----------
+// weeks already played: what you scored vs. what was expected before the week (projections as they stood then)
+function renderPast(){const el=$('#pastWeeks');if(!el)return;const AC=D.accuracy||{},R=(AC.past_me||[]).slice().sort((a,b)=>a.wk-b.wk);if(!R.length){el.innerHTML='';return}
+  const nm=r=>{const t=TEAMS.find(x=>x.id===r);return t?t.name:'Team '+r},sg=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1);
+  const beat=R.filter(r=>r.sc>r.exp).length,avg=R.reduce((a,r)=>a+r.sc-r.exp,0)/R.length,bias=AC.past_bias;
+  const chart=wkChart({title:'Your score vs. what was expected',sub:'Bars: what you scored. Tick: expected before the week. The table shows the likely range.',weeks:R.map(r=>r.wk),series:[{name:'Scored',color:'var(--s1)',vals:R.map(r=>r.sc),kind:'bar'},{name:'Expected',color:'var(--s2)',vals:R.map(r=>r.exp),kind:'tick'}]});
+  const res=r=>{if(r.osc==null)return '';const won=r.sc>r.osc;return won?(r.wp<0.4?'<span class="word w-good">Upset win</span>':'<span class="word w-good">Win</span>'):(r.wp>0.6?'<span class="word w-bad">Upset loss</span>':'<span class="word w-plain">Loss</span>')};
+  const vs=r=>{const d=r.sc-r.exp;return r.sc>r.hi?`<span class="pos-v">well above (${sg(d)})</span>`:r.sc<r.lo?`<span class="neg-v">well below (${sg(d)})</span>`:`<span class="muted">${sg(d)}</span>`};
+  el.innerHTML=`<h3 style="margin-top:14px">Weeks already played</h3>
+   <p class="answer">You beat your expected score in <b>${beat} of ${R.length}</b> weeks (${sg(avg)} points a week on average).${bias!=null&&Math.abs(bias)>=5?` Across the whole league, teams have scored ${sg(bias)} a week vs. expected${BB()?', mostly because best ball rewards deep rosters more than the projections capture':''}, so judge your weeks against that.`:''}</p>
+   ${chart}
+   <div class="tbl-wrap"><table class="sortable-tbl" style="font-size:12.5px"><thead><tr><th>Wk</th><th>Opponent</th><th class="r">You scored</th><th class="r">Expected</th><th>Vs. expected</th><th class="r">Them</th><th class="r" title="Your win chance before the week">Win chance</th><th>Result</th>${D.meta.median?'<th title="Beat the league median that week">Median</th>':''}</tr></thead><tbody>
+   ${R.map(r=>`<tr><td class="num">${r.wk}</td><td>${r.opp?esc(nm(r.opp)):'—'}</td><td class="r num"><b>${r.sc.toFixed(1)}</b></td><td class="r num">${r.exp.toFixed(1)} <span class="sub">(${r.lo.toFixed(0)}–${r.hi.toFixed(0)})</span></td><td>${vs(r)}</td><td class="r num">${r.osc!=null?r.osc.toFixed(1)+' <span class="sub">vs '+r.oexp.toFixed(0)+' exp.</span>':'—'}</td><td class="r num">${r.wp!=null?pct(r.wp):'—'}</td><td>${res(r)}</td>${D.meta.median?`<td>${r.med==null?'':r.med?'<span class="word w-good">Won</span>':'<span class="word w-plain">Lost</span>'}</td>`:''}</tr>`).join('')}</tbody></table></div>
+   <p class="sub">Expected = the average of 300 replays of that week using the projections and lineup as they stood before it; the range in brackets is where you'd land 8 times in 10. "Well above/below" means outside that range.</p>`}
 function holes(ids,k){const c={QB:0,RB:0,WR:0,TE:0};for(const s of ids){if(proj(s,k,'pr')>=6)c[PL[s].p]++}const out=[];
   if(c.QB<1)out.push('no QB available');else if(c.QB<2)out.push('only 1 QB, so your superflex spot goes to a lower-scoring player');
   if(c.TE<1)out.push('no TE available');if(c.RB<2)out.push(`only ${c.RB} RB available`);if(c.WR<3)out.push(`only ${c.WR} WRs available`);return out}
@@ -814,6 +828,7 @@ function renderTeam(){
   if(!OFF)$('#weeksAnswer').innerHTML=low.length?`Your score dips in <b>Week${low.length>1?'s':''} ${low.join(' and ')}</b>, mostly because of byes. Those are the weeks a backup at the right position helps.`:'No week stands out as a problem. Your depth covers your byes.';
   const w=640,hh=170,bw=w/NW,mx=Math.max(...Wk)*1.08,mn=Math.min(...Wk.filter(x=>x>0))*0.8;
   if(!OFF)$('#weeksChart').innerHTML=`<svg viewBox="0 0 ${w} ${hh}" width="100%" style="max-width:${w}px" role="img" aria-label="Projected score each week">${Wk.map((v,i)=>{const bh=Math.max(2,(v-mn)/(mx-mn)*(hh-40));const po=FUT[i]>D.meta.reg_end,lw=low.includes(FUT[i]);return `<rect x="${i*bw+4}" y="${hh-22-bh}" width="${bw-8}" height="${bh}" rx="2" fill="var(${lw?'--warn':po?'--silver':'--accent'})"><title>Week ${FUT[i]}: ${v.toFixed(0)} projected</title></rect><text x="${i*bw+bw/2}" y="${hh-25-bh}" text-anchor="middle">${v.toFixed(0)}</text><text x="${i*bw+bw/2}" y="${hh-6}" text-anchor="middle">${po?'P':'W'}${FUT[i]}</text>`}).join('')}</svg><p class="sub">Projected score for each week. <span style="color:var(--warn);font-weight:600">Orange</span> = a below-normal week. Grey "P" weeks are the playoffs.</p>`;
+  renderPast();
   $('#weeksList').innerHTML=FUT.map((wk,i)=>{const b=ids.filter(s=>PL[s].bye===wk).map(s=>PL[s].n),h=holes(ids,i);if(!b.length&&!h.length)return'';return `<div class="li"><div class="main"><b>Week ${wk}${wk>D.meta.reg_end?' (playoffs)':''}</b>${b.length?`<span class="why">On bye: ${esc(b.join(', '))}</span>`:''}${h.map(x=>`<span class="hole">Problem: ${esc(x)}</span>`).join('')}</div><div class="right"><span class="num">${Wk[i].toFixed(0)} pts</span></div></div>`}).join('');
   // roster groups
   const rows=ids.map(s=>({s,p:PL[s],b:B[s]||{ros:0},c:C[s]||[0,0]})).sort((a,b)=>b.b.ros-a.b.ros||value(b.s)-value(a.s));
