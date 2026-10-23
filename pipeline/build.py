@@ -15,7 +15,7 @@ CFG = json.load(open(os.path.join(ROOT, "config.json")))
 DYN = os.environ.get("DYN") or ""
 if DYN:
     CFG = {**CFG, **CFG["leagues"][DYN]}
-DOCS = os.path.join(DOCS, DYN) if DYN else os.path.join(ROOT, "docs")
+DOCS = os.path.join(ROOT, "docs", DYN) if DYN else os.path.join(ROOT, "docs")
 CACHE = os.path.join(ROOT, "cache")
 OUT = os.path.join(DOCS, "data.json")
 FIX = os.environ.get("FIXTURE_DIR")
