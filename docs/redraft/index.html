@@ -228,7 +228,8 @@ tr.bad td{background:var(--bad-soft)}
 <header class="board"><div class="board-in">
   <div class="brand"><h1>Redraft <span>HQ</span></h1>
     <div class="row" style="gap:8px"><div class="chips" id="chips"></div>
-    <nav class="switch" aria-label="Switch league"><a href="../">Dynasty</a><a href="./" aria-current="page">Redraft</a></nav></div></div>
+    <nav class="switch" aria-label="Switch league" id="lgSwitch"></nav><script>(function(){var L=[["512 BB",""],["Ring","ring/"],["Redraft","redraft/"]],p=location.pathname,m=p.match(/^(.*?\/)(ring|redraft)\/(index\.html)?$/),root=m?m[1]:p.replace(/index\.html$/,''),cur=m?m[2]+'/':'';
+document.getElementById('lgSwitch').innerHTML=L.map(function(x){return '<a href="'+root+x[1]+'"'+(x[1]===cur?' aria-current="page"':'')+'>'+x[0]+'</a>'}).join('')})()</script></div></div>
   <nav class="tabs" role="tablist" id="tabs">
     <button role="tab" data-tab="week" aria-selected="true">This week</button>
     <button role="tab" data-tab="waivers" aria-selected="false">Waivers</button>

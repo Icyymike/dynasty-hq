@@ -276,7 +276,8 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
   <div class="board-in">
     <div class="brand">
       <h1 id="title">Dynasty <span>HQ</span></h1>
-      <div class="row" style="gap:8px"><div class="chips" id="chips"></div><button class="btn-hdr" id="askBtn" type="button">Ask Claude</button><nav class="switch" aria-label="Switch league"><a href="./" aria-current="page">Dynasty</a><a href="redraft/">Redraft</a></nav></div>
+      <div class="row" style="gap:8px"><div class="chips" id="chips"></div><button class="btn-hdr" id="askBtn" type="button">Ask Claude</button><nav class="switch" aria-label="Switch league" id="lgSwitch"></nav><script>(function(){var L=[["512 BB",""],["Ring","ring/"],["Redraft","redraft/"]],p=location.pathname,m=p.match(/^(.*?\/)(ring|redraft)\/(index\.html)?$/),root=m?m[1]:p.replace(/index\.html$/,''),cur=m?m[2]+'/':'';
+document.getElementById('lgSwitch').innerHTML=L.map(function(x){return '<a href="'+root+x[1]+'"'+(x[1]===cur?' aria-current="page"':'')+'>'+x[0]+'</a>'}).join('')})()</script></div>
     </div>
     <nav class="tabs" role="tablist" aria-label="Sections">
       <button role="tab" aria-selected="true" data-tab="home">What to do</button>
@@ -340,7 +341,7 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
   </div>
   <div class="card">
     <h2>Who actually helps my team?</h2>
-    <p class="sub">In best ball only your top scorers count each week. The big number is how many points a week your score would drop without that player, counting the weeks he fills in for byes and injuries and his big games. Tap a name for his game log.</p>
+    <p class="sub">${BB()?'In best ball only your top scorers count each week.':'You set your lineup each week; the app assumes you start your highest-projected players.'} The big number is how many points a week your score would drop without that player, counting the weeks he fills in for byes and injuries and his big games. Tap a name for his game log.</p>
     <div id="rosterGroups"></div>
   </div>
 </section>
@@ -466,6 +467,7 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
 <script>
 (()=>{
 let D,PL,FUT,NW,TEAMS,PICKS,A,ME,LEDGER=[],HIST=[],ALERTS=[],OFF=false;
+const BB=()=>!(D&&D.meta&&D.meta.lu&&D.meta.lu.managed),NBYE=()=>bracketShape((D&&D.meta&&D.meta.n_playoff)||6).bye;
 const st={partner:null,give:new Set(),get:new Set(),src:'pr'};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -475,9 +477,21 @@ const pct=x=>x>=0.995?'>99%':x<0.005&&x>0?'<1%':Math.round(x*100)+'%';
 const POS=['QB','RB','WR','TE'];
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 
-function best(vals){const by={QB:[],RB:[],WR:[],TE:[]};for(const [p,v] of vals) if(by[p]) by[p].push(v);for(const k in by) by[k].sort((a,b)=>b-a);
-  let t=(by.QB[0]||0)+(by.RB[0]||0)+(by.RB[1]||0)+(by.WR[0]||0)+(by.WR[1]||0)+(by.WR[2]||0)+(by.TE[0]||0);
-  const rest=by.RB.slice(2).concat(by.WR.slice(3),by.TE.slice(1)).sort((a,b)=>b-a);t+=(rest[0]||0)+(rest[1]||0)+(rest[2]||0);return t+Math.max(by.QB[1]||0,rest[3]||0)}
+// lineup shape comes from the league (starters per position, flex, superflex); same rules as the pipeline
+const LUC=()=>(D&&D.meta&&D.meta.lu)||{n:{QB:1,RB:2,WR:3,TE:1},flex:3,sf:1,managed:false};
+function best(vals){const L=LUC(),by={QB:[],RB:[],WR:[],TE:[]};for(const [p,v] of vals) if(by[p]) by[p].push(v);for(const k in by) by[k].sort((a,b)=>b-a);
+  let t=0;for(const p in by)for(let i=0;i<L.n[p]&&i<by[p].length;i++)t+=by[p][i];
+  const rest=by.RB.slice(L.n.RB).concat(by.WR.slice(L.n.WR),by.TE.slice(L.n.TE)).sort((a,b)=>b-a);for(let i=0;i<L.flex&&i<rest.length;i++)t+=rest[i];
+  if(L.sf){const sf=by.QB.slice(L.n.QB).concat(rest.slice(L.flex)).sort((a,b)=>b-a);for(let i=0;i<L.sf&&i<sf.length;i++)t+=sf[i]}return t}
+// managed lineups: the starters a manager sets before the games (best by projection), same pick as the pipeline
+function bestIds(items){const L=LUC(),by={QB:[],RB:[],WR:[],TE:[]};for(const it of items)if(by[it[0]])by[it[0]].push(it);for(const k in by)by[k].sort((a,b)=>b[1]-a[1]);
+  const used=[];for(const p of ['QB','RB','WR','TE'])used.push(...by[p].slice(0,L.n[p]));
+  const rest=by.RB.slice(L.n.RB).concat(by.WR.slice(L.n.WR),by.TE.slice(L.n.TE)).sort((a,b)=>b[1]-a[1]);used.push(...rest.slice(0,L.flex));
+  if(L.sf)used.push(...by.QB.slice(L.n.QB).concat(rest.slice(L.flex)).sort((a,b)=>b[1]-a[1]).slice(0,L.sf));return used.map(x=>x[2])}
+// fixed playoff bracket like Sleeper (no reseeding); byes for the top seeds when the field isn't 4/8/16 teams
+function bracketRun(seeds,win){let B=1;while(B<seeds.length)B*=2;let order=[1,2];while(order.length<B){const n2=2*order.length+1;order=order.flatMap(s=>[s,n2-s])}
+  let slots=order.map(i=>i<=seeds.length?seeds[i-1]:null),rnd=0;while(slots.length>1){const nx=[];for(let i=0;i<slots.length;i+=2){const a=slots[i],b=slots[i+1];nx.push(a==null?b:b==null?a:win(a,b,rnd))}slots=nx;rnd++}return slots[0]}
+const bracketShape=n=>{let B=1;while(B<n)B*=2;return {bye:B-n,rounds:Math.max(1,Math.round(Math.log2(B)))}};
 const value=s=>PL[s]?(PL[s].val||PL[s].ktc||PL[s].fc||0):0;
 function proj(sid,k,src){const p=PL[sid];if(!p||p.slot)return 0;let v=(p[src]||p.pr)[k];if(v==null)v=p.ou[k];return v||0}
 function roster(r){return Object.keys(PL).filter(s=>PL[s].r===r&&!PL[s].gone)}
@@ -498,7 +512,10 @@ const VC={};
 function draws(sid,src){const S=D.meta.sims;VC[src]=VC[src]||new Map();let a=VC[src].get(sid);if(a)return a;const p=PL[sid];a=new Float64Array(S*NW);if(p){const cv=cvOf(p);
   for(let s=0;s<S;s++){const ab=absences(+sid||7,s);for(let k=0;k<NW;k++){if(k===0&&p.lk){a[s*NW]=p.lk[0]+(p.lk[1]>0?simPts(p.pr[0]*p.lk[1],cv,sid,p.t,s,FUT[0],0):0);continue}if(ab[k]){a[s*NW+k]=0;continue}const pm=k===0?(P_MISS_STATUS[p.inj]??P_MISS):0;a[s*NW+k]=simPts(proj(sid,k,src),cv,sid,p.t,s,FUT[k],pm)}}}
   VC[src].set(sid,a);return a}
-function lineupAt(ids,s,k,src){const v=[];for(const sid of ids){const p=PL[sid];if(!p||p.slot)continue;const x=draws(sid,src)[s*NW+k];if(x>0)v.push([p.p,x])}return best(v)}
+const STC=new Map();
+function lineupAt(ids,s,k,src){if(LUC().managed){const key=src+'|'+k+'|'+ids.join(',');let st=STC.get(key);if(!st){st=bestIds(ids.filter(x=>PL[x]&&!PL[x].slot).map(x=>[PL[x].p,proj(x,k,src),x]));STC.set(key,st)}
+  let t=0;for(const x of st)t+=draws(x,src)[s*NW+k];return t}
+  const v=[];for(const sid of ids){const p=PL[sid];if(!p||p.slot)continue;const x=draws(sid,src)[s*NW+k];if(x>0)v.push([p.p,x])}return best(v)}
 function simWeeks(ids,src,sims){const out=new Array(NW).fill(0);sims=Math.min(sims,D.meta.sims);for(let s=0;s<sims;s++)for(let k=0;k<NW;k++)out[k]+=lineupAt(ids,s,k,src);return out.map(x=>x/sims)}
 function detWeeks(ids,src){const out=[];for(let k=0;k<NW;k++)out.push(best(ids.map(s=>[PL[s].p,proj(s,k,src)])));return out}
 function posTag(p){return `<span class="pos ${p}" style="display:inline-block;width:26px">${p}</span>`}
@@ -523,12 +540,10 @@ function seasonOdds(rosterOf,adjW,adjPF,src,sims){
     for(const k of kReg){const wk=FUT[k],pairs=D.sched[wk]||[];const vals={};T.forEach(r=>vals[r]=sc(r,k));const all=T.map(r=>vals[r]).sort((a,b)=>a-b),n=all.length,med=n%2?all[(n-1)/2]:(all[n/2-1]+all[n/2])/2;
       for(const [r,m] of pairs){if(!(r in vals))continue;const o=pairs.find(p=>p[1]===m&&p[0]!==r);const v=vals[r];if(o&&v>vals[o[0]])W[r]++;if(D.meta.median&&v>med)W[r]++;PF[r]+=v}}
     const seeds=T.slice().sort((a,b)=>W[b]-W[a]||PF[b]-PF[a]).slice(0,nP);
-    seeds.forEach((r,i)=>{out[r].po++;if(i<2)out[r].bye++});
+    const BS=bracketShape(nP);seeds.forEach((r,i)=>{out[r].po++;if(i<BS.bye)out[r].bye++});
     // playoff round i: the real score if that week has been played, otherwise simulated
     const POA=D.po_actual||{},psc=(r,i)=>{const wk=D.meta.reg_end+1+i;if(POA[wk])return POA[wk][r]||0;const k=FUT.indexOf(wk);return k>=0?sc(r,k):0};
-    if(seeds.length>=6&&kPo.length+Object.keys(POA).length>=3){const g=(x,y,i)=>psc(x,i)>=psc(y,i)?x:y;
-      const a=g(seeds[2],seeds[5],0),b=g(seeds[3],seeds[4],0);/* fixed bracket like Sleeper: 1 seed vs 4/5 winner, 2 seed vs 3/6 winner */
-      const f1=g(seeds[0],b,1),f2=g(seeds[1],a,1),ch=g(f1,f2,2);out[ch].title++;if(ch===ME)tv[s]=1}}
+    if(seeds.length>=2&&kPo.length+Object.keys(POA).length>=BS.rounds){const ch=bracketRun(seeds,(x,y,i)=>psc(x,i)>=psc(y,i)?x:y);out[ch].title++;if(ch===ME)tv[s]=1}}
   for(const r in out)for(const k in out[r])out[r][k]/=sims;out.tv=tv;return out}
 // how sure: standard error of the difference between two runs on the same draws
 function diffSE(a,b){const n=a.length;let m=0;for(let i=0;i<n;i++)m+=b[i]-a[i];m/=n;let v=0;for(let i=0;i<n;i++){const d=b[i]-a[i]-m;v+=d*d}return Math.sqrt(v/(n-1)/n)}
@@ -697,7 +712,7 @@ function renderAdvice(){
     ${a.moves&&a.moves.length?`<div style="display:flex;flex-direction:column;gap:8px"><h3>What to do</h3>${a.moves.map(moveHTML).join('')}</div>`:`<div><h3>What to do</h3><p class="lead">Nothing this week. Your roster is set up well for what matters: the playoffs.</p></div>`}
     <div><h3>Why</h3><ul>${(a.reasons||[]).map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
     ${a.watch&&a.watch.length?`<div><h3>Keep an eye on</h3><ul>${a.watch.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>`:''}
-    ${OFF?'':`<div class="stripe"><span><b>${me.w}-${me.l}</b>record</span><span><b>${pct(n.playoffs??me.odds.playoffs)}</b>make playoffs</span><span><b>${pct(n.bye??me.odds.bye)}</b>first-round bye</span><span><b>${pct(n.title??me.odds.title)}${n.title_after!=null?` → ${pct(n.title_after)}`:''}</b>win the title${n.title_after!=null?' (with the trade)':''}</span></div>`}
+    ${OFF?'':`<div class="stripe"><span><b>${me.w}-${me.l}</b>record</span><span><b>${pct(n.playoffs??me.odds.playoffs)}</b>make playoffs</span>${NBYE()?`<span><b>${pct(n.bye??me.odds.bye)}</b>first-round bye</span>`:''}<span><b>${pct(n.title??me.odds.title)}${n.title_after!=null?` → ${pct(n.title_after)}`:''}</b>win the title${n.title_after!=null?' (with the trade)':''}</span></div>`}
     <p class="sub">Updated ${esc(new Date(D.meta.generated).toLocaleString())} and re-checked every 4 hours, and every 30 minutes while games are on (Sunday, Monday and Thursday nights).${a.changed_from?` Changed today from “${esc(a.changed_from)}”.`:''} ${a.source==='claude'?'Written by Claude from this app\'s simulations and data.':'Built from this app\'s simulations and data.'} Details are on the other tabs.</p>`;
 }
 
@@ -711,10 +726,10 @@ function renderHome(){
   const pw=poWord(me.odds.playoffs),tw=titleWord(me.odds.title);
   const h=HIST.filter(x=>x.odds&&x.odds[ME]);const trend=h.length>=2?h[h.length-1].odds[ME][0]-h[0].odds[ME][0]:null;
   $('#seasonCard').innerHTML=`<h2>How's my season going?</h2>
-    <p class="answer">You're <b>${me.w}-${me.l}</b>, ${ORD(rank)} of ${TEAMS.length}.${me.h2h?` That's ${me.h2h[0]}-${me.h2h[1]} in your weekly matchups plus ${me.med[0]}-${me.med[1]} against the league median (each week you also win if you outscore half the league).`:''}</p>
+    <p class="answer">You're <b>${me.w}-${me.l}</b>, ${ORD(rank)} of ${TEAMS.length}.${me.h2h&&D.meta.median?` That's ${me.h2h[0]}-${me.h2h[1]} in your weekly matchups plus ${me.med[0]}-${me.med[1]} against the league median (each week you also win if you outscore half the league).`:''}</p>
     <div class="tiles">
       ${OFF?'':`<div class="tile"><span class="t-label">Make the playoffs</span><span class="t-big">${pct(me.odds.playoffs)}</span>${W(pw)}<span class="t-note">Top ${nP} get in</span></div>
-      <div class="tile"><span class="t-label">Get a first-round bye</span><span class="t-big">${pct(me.odds.bye)}</span><span class="t-note">Top 2 skip Week ${D.meta.reg_end+1}</span></div>
+      ${NBYE()?`<div class="tile"><span class="t-label">Get a first-round bye</span><span class="t-big">${pct(me.odds.bye)}</span><span class="t-note">Top ${NBYE()} skip Week ${D.meta.reg_end+1}</span></div>`:''}
       <div class="tile"><span class="t-label">Win the title</span><span class="t-big">${pct(me.odds.title)}</span>${W(tw)}<span class="t-note">± ${Math.round((me.title_se||0.02)*200)} points</span></div>`}
     </div>
     ${OFF?'':`<p class="sub">We replayed the rest of the season ${D.meta.sims} times with every team's projected lineup. ${pct(me.odds.playoffs)} means you made the playoffs in ${chance(me.odds.playoffs)}.${trend!=null&&Math.abs(trend)>=0.01?` Your playoff chances are ${trend>0?'up':'down'} ${Math.abs(Math.round(trend*100))} points since ${esc(h[0].d)}.`:''}</p>`}`;
@@ -724,14 +739,14 @@ function renderHome(){
     $('#weekCard').innerHTML=`<h2>Who wins this week?${me.live!=null?'<span class="live">LIVE</span>':''}</h2>
       <div class="vsrow"><div><div class="nm">You</div><div class="sc num">${me.live!=null?me.live.toFixed(1):me.proj}</div></div><div class="muted" style="padding-bottom:8px">vs</div><div style="text-align:right"><div class="nm">${esc(o.name)}</div><div class="sc num">${o.live!=null?o.live.toFixed(1):o.proj}</div></div></div>
       <div class="wpbar" role="img" aria-label="Your win chance ${pct(me.wp)}"><i style="width:${Math.round(me.wp*100)}%"></i></div>
-      <p class="answer">${W(ww)} You win this one in ${chance(me.wp)}. ${me.live!=null?'Big numbers are points so far from each team\'s best possible lineup, which is how best ball scores (Sleeper\'s matchup screen can show only the set starters until the week ends). The win chance counts finished games as final.':`Big numbers are projected scores; you'll usually land between ${me.rng?me.rng[0].toFixed(0):'?'} and ${me.rng?me.rng[1].toFixed(0):'?'}.`}</p>
-      ${out.length||inj.length?`<p class="sub">${out.length?`<b>Not playing (bye):</b> ${esc(out.join(', '))}. `:''}${inj.length?`<b>Hurt:</b> ${esc(inj.join(', '))}.`:''} Best ball fills your lineup with your best available players.</p>`:''}`}
+      <p class="answer">${W(ww)} You win this one in ${chance(me.wp)}. ${me.live!=null?(BB()?'Big numbers are points so far from each team\'s best possible lineup, which is how best ball scores (Sleeper\'s matchup screen can show only the set starters until the week ends). The win chance counts finished games as final.':'Big numbers are points so far from each team\'s starters, same as Sleeper. The win chance counts finished games as final.'):`Big numbers are projected scores; you'll usually land between ${me.rng?me.rng[0].toFixed(0):'?'} and ${me.rng?me.rng[1].toFixed(0):'?'}.`}</p>
+      ${out.length||inj.length?`<p class="sub">${out.length?`<b>Not playing (bye):</b> ${esc(out.join(', '))}. `:''}${inj.length?`<b>Hurt:</b> ${esc(inj.join(', '))}.`:''} ${BB()?'Best ball fills your lineup with your best available players.':'Set your lineup around them in Sleeper.'}</p>`:''}`}
   else $('#weekCard').innerHTML=`<h2>Who wins this week?</h2><p class="answer">No matchup this week.</p>`;
   // playoff path
   if(!OFF&&me.seed){const sd=me.seed,nP2=D.meta.n_playoff||6,top=sd.slice(0,nP2),miss=1-top.reduce((a,b)=>a+b,0);const likely=top.map((p,i)=>[i+1,p]).sort((a,b)=>b[1]-a[1])[0];
     const opp=Object.entries(me.opp1||{}).slice(0,3).map(([r,p])=>`${esc(teamName(+r))} (${Math.round(p*100)}%)`);
     $('#pathCard').innerHTML=`<h2>What's my playoff path?</h2><p class="answer">Most likely you finish as the <b>${ORD(likely[0])} seed</b> (${Math.round(likely[1]*100)}%).${me.title_bye!=null&&me.title_nobye!=null?` Getting a top-2 seed matters: you win the title <b>${pct(me.title_bye)}</b> of the time with a first-round bye and <b>${pct(me.title_nobye)}</b> without one.`:''}</p>
-      <div class="list">${top.map((p,i)=>`<div class="bar2"><span class="small" style="flex:0 0 74px">${ORD(i+1)} seed${i<2?' <span class="muted">(bye)</span>':''}</span><span class="track" style="max-width:none"><i style="width:${p*100}%"></i></span><span class="num small" style="min-width:40px;text-align:right">${pct(p)}</span></div>`).join('')}${miss>0.005?`<div class="bar2"><span class="small" style="flex:0 0 74px">Miss</span><span class="track" style="max-width:none"><i style="width:${miss*100}%;background:var(--bad)"></i></span><span class="num small" style="min-width:40px;text-align:right">${pct(miss)}</span></div>`:''}</div>
+      <div class="list">${top.map((p,i)=>`<div class="bar2"><span class="small" style="flex:0 0 74px">${ORD(i+1)} seed${i<NBYE()?' <span class="muted">(bye)</span>':''}</span><span class="track" style="max-width:none"><i style="width:${p*100}%"></i></span><span class="num small" style="min-width:40px;text-align:right">${pct(p)}</span></div>`).join('')}${miss>0.005?`<div class="bar2"><span class="small" style="flex:0 0 74px">Miss</span><span class="track" style="max-width:none"><i style="width:${miss*100}%;background:var(--bad)"></i></span><span class="num small" style="min-width:40px;text-align:right">${pct(miss)}</span></div>`:''}</div>
       ${opp.length?`<p class="sub">Your most likely first playoff opponents: ${opp.join(', ')}.</p>`:''}`}else $('#pathCard').hidden=true;
   // stand pat vs trade
   const gE=o=>o.E1!=null?o.E1-o.E0:o.title1-o.title0,okI=o=>o.title1-o.title0>=0.01&&(o.E1==null||o.E1>=o.E0);
@@ -759,7 +774,7 @@ function renderHome(){
   // standings
   const GP=Math.max(1,D.meta.done||1),apw=t=>t.pf/GP,apR=[...TEAMS].sort((a,b)=>b.pf-a.pf).map(t=>t.id);
   const row=(t,i)=>{const w=poWord(t.odds.playoffs);return `<tr class="${t.id===ME?'hl':''}"><td class="num">${i+1}</td><td><b>${esc(t.name)}</b></td><td class="r num">${t.w}-${t.l}</td><td class="r num">${apw(t).toFixed(1)} <span class="muted small">(${ORD(apR.indexOf(t.id)+1)})</span></td><td><div class="bar2"><span class="track"><i style="width:${t.odds.playoffs*100}%"></i></span><span class="num small" style="min-width:34px">${pct(t.odds.playoffs)}</span>${W(w)}</div></td></tr>`};
-  let rows='';order.forEach((t,i)=>{rows+=row(t,i);if(i===1)rows+=`<tr class="sep"><td colspan="5">▲ Top 2 get a first-round bye</td></tr>`;if(i===nP-1)rows+=`<tr class="sep"><td colspan="5">▲ Top ${nP} make the playoffs</td></tr>`});
+  let rows='';order.forEach((t,i)=>{rows+=row(t,i);if(NBYE()&&i===NBYE()-1)rows+=`<tr class="sep"><td colspan="5">▲ Top ${NBYE()} get a first-round bye</td></tr>`;if(i===nP-1)rows+=`<tr class="sep"><td colspan="5">▲ Top ${nP} make the playoffs</td></tr>`});
   $('#standTbl').innerHTML=`<thead><tr><th>#</th><th>Team</th><th class="r">Record</th><th class="r" title="Actual points per week so far: total points scored divided by weeks played, with league rank">Pts/week so far</th><th>Playoff chance</th></tr></thead><tbody>${rows}</tbody>`;
   const line=order[nP-1],remW=FUT.filter(w=>w<=D.meta.reg_end);
   // schedule left: each opponent's projected lineup score IN THE WEEK you play them (so their byes and injuries that week count),
@@ -1119,7 +1134,7 @@ function runTrade(){
    <details class="more"><summary>How is this graded?</summary><div>${legendTitleHTML()}</div></details>
    <details class="more"><summary>Show more detail</summary><div>
     <div class="kv"><span>${pn}'s score</span><span>${f1(tAll)} points a week for them</span>
-     <span>Your playoff chance</span><span>${arrow(me0.po,me1.po)}</span><span>Your bye chance</span><span>${arrow(me0.bye,me1.bye)}</span><span>Your title chance</span><span>${arrow(me0.title,me1.title)}</span>
+     <span>Your playoff chance</span><span>${arrow(me0.po,me1.po)}</span>${NBYE()?`<span>Your bye chance</span><span>${arrow(me0.bye,me1.bye)}</span>`:''}<span>Your title chance</span><span>${arrow(me0.title,me1.title)}</span>
      <span>${pn}'s title chance</span><span>${arrow(O0[st.partner].title,O1[st.partner].title)}</span>
      <span>If you'd made it in Week 1</span><span>${f1(past.dPts)} points so far, record ${meT.w}-${meT.l} → ${meT.w+past.dW}-${meT.l-past.dW}</span></div>
     <div class="sub">Change in score each week. Green/red: you. Grey: them. P = playoff week.</div>
@@ -1449,7 +1464,7 @@ function context(){
   const ros=roster(ME).sort((a,b)=>(B[b]?.ros||0)-(B[a]?.ros||0)).map(s=>{const p=PL[s];return `${p.n} ${p.p} ${p.t} age${p.age?Math.floor(p.age):'?'} value${value(s)} proj${avg(s)}ppg adds${(B[s]?.ros||0).toFixed(1)}/wk${p.inj?' '+p.inj:''}${p.bye?' bye'+p.bye:''}`});
   const tm=[...TEAMS].sort((a,b)=>b.w-a.w||b.pf-a.pf).map(t=>`${t.name}${t.id===ME?' (ME)':''} ${t.w}-${t.l} PF${t.pf} playoffs${pct(t.odds.playoffs)} title${pct(t.odds.title)} needs ${POS.map(p=>p+(A.needs[t.id][p]).toFixed(1)).join('/')} FAAB$${t.faab}`);
   const R=D.meta.rules||{};
-  return `League: ${D.meta.league}. ${R.teams}-team superflex dynasty, best ball (lineup auto-set each week: QB, 2RB, 3WR, TE, 3 FLEX, SUPERFLEX; 28-man rosters, no IR/taxi). Scoring: ${D.meta.scoring}. Weekly median game counts as a 2nd result. Top ${R.playoff_teams} make playoffs Weeks ${R.playoff_start}-${R.playoff_start+2}, no reseeding. Trade deadline after Week ${R.trade_deadline}. $${R.faab} FAAB. Completed weeks: ${D.meta.done}.
+  return `League: ${D.meta.league}. ${R.teams}-team ${LUC().sf?'superflex ':''}dynasty, ${BB()?'best ball (lineup auto-set each week':'managed lineups (each manager sets starters weekly'}: ${D.meta.slots}${R.roster_size?`; ${R.roster_size}-man rosters`:''}${R.taxi_slots?`, ${R.taxi_slots} taxi`:''}${R.ir_slots?`, ${R.ir_slots} IR`:''}). Scoring: ${D.meta.scoring}.${R.median?' Weekly median game counts as a 2nd result.':''} Top ${R.playoff_teams} make playoffs Weeks ${R.playoff_start}-${R.playoff_start+2}, no reseeding. Trade deadline after Week ${R.trade_deadline}. $${R.faab} FAAB. Completed weeks: ${D.meta.done}.
 "adds" = points/week my lineup loses without him. Values on the KTC superflex TE-premium scale.
 
 MY ROSTER (${me.name}):
