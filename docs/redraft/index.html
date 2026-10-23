@@ -333,9 +333,9 @@ function weekTab(){const m=D.meta,ss=D.startsit,wk=m.cur,o=D.odds[ME]||{},me=TEA
   let h='';
   if(!ss){$('#t-week').innerHTML=`<div class="card"><h2>Season complete</h2><p class="answer">No games left to plan for.</p></div>`;return}
   const opp=ss.opp,wpB=ss.wp_best??o.wp,live=m.started&&D.live[ME]!=null;
-  const vs=`<div class="vsrow"><div><div class="nm">${esc(me.name)} (you)</div><div class="sc">${live?fx(D.live[ME]):fx(ss.proj_best)}</div><div class="sub">${live?'live · projected '+fx(D.wk_mean[ME][0]):'projected'} · likely ${D.rng[ME]?D.rng[ME].join('–'):''}</div></div>
+  const vs=`<div class="vsrow"><div><div class="nm">${esc(me.name)} (you)</div><div class="sc">${live?fx(D.wk_mean[ME][0]):fx(ss.proj_best)}</div><div class="sub">${live?'projected final · <b>'+fx(D.live[ME])+'</b> scored so far':'projected · likely '+(D.rng[ME]?D.rng[ME].join('–'):'')}</div></div>
     <div class="vsx" style="font-family:var(--f-display);color:var(--muted);font-size:18px;padding-bottom:6px">vs</div>
-    <div style="text-align:right"><div class="nm">${esc(tname(opp))}</div><div class="sc">${live?fx(D.live[opp]):fx(ss.opp_proj)}</div><div class="sub">${live?'live · projected '+fx(D.wk_mean[opp][0]):'projected'} · likely ${D.rng[opp]?D.rng[opp].join('–'):''}</div></div></div>`;
+    <div style="text-align:right"><div class="nm">${esc(tname(opp))}</div><div class="sc">${live?fx(D.wk_mean[opp][0]):fx(ss.opp_proj)}</div><div class="sub">${live?'projected final · <b>'+fx(D.live[opp])+'</b> scored so far':'projected · likely '+(D.rng[opp]?D.rng[opp].join('–'):'')}</div></div></div>`;
   const word=wpB>=0.65?['w-good','Favored']:wpB>=0.5?['w-info','Slight edge']:wpB>=0.35?['w-mid','Underdog']:['w-bad','Big underdog'];
   h+=`<div class="card"><div class="row" style="justify-content:space-between"><h2>Week ${wk}: ${pct(wpB)} to win</h2><span class="word ${word[0]}">${word[1]}</span></div>${vs}
     <div class="wpbar"><i style="width:${Math.round(wpB*100)}%"></i></div>
@@ -369,7 +369,7 @@ function weekTab(){const m=D.meta,ss=D.startsit,wk=m.cur,o=D.odds[ME]||{},me=TEA
   const pr=D.sched[FUT[0]]||[],seen=new Set(),cards=[];
   pr.forEach(([r,mid])=>{if(seen.has(mid))return;seen.add(mid);const o2=pr.find(x=>x[1]===mid&&x[0]!==r);if(!o2)return;const a=r,b=o2[0],wa=D.odds[a].wp,wb=D.odds[b].wp;
     cards.push(`<div class="mu${a===ME||b===ME?' mine':''}"><div class="mu-r"><span>${esc(tname(a))}</span><span class="num">${m.started?fx(D.live[a])+' · ':''}${fx(D.wk_mean[a][0])} · ${pct(wa)}</span></div><div class="mu-r"><span>${esc(tname(b))}</span><span class="num">${m.started?fx(D.live[b])+' · ':''}${fx(D.wk_mean[b][0])} · ${pct(wb)}</span></div><div class="wpbar thin"><i style="width:${Math.round(wa/(wa+wb||1)*100)}%"></i></div></div>`)});
-  h+=`<div class="card"><h2>Every game this week</h2><p class="sub">Projected score and win chance.${m.started?' Live score first.':''}</p><div class="matchups">${cards.join('')}</div></div>`;
+  h+=`<div class="card"><h2>Every game this week</h2><p class="sub">${m.started?'Points scored so far · projected final · win chance.':'Projected score and win chance.'}</p><div class="matchups">${cards.join('')}</div></div>`;
   h+=`<div class="card"><h2>Ask Claude about your week</h2><p class="sub">Copies a summary of your matchup, lineup, odds and options. Paste it into Claude with your question.</p><div class="row"><button class="btn" id="askCopy">Copy summary</button><span class="sub" id="askMsg"></span></div><details class="more"><summary>Preview</summary><div><textarea id="askTxt" rows="10" readonly></textarea></div></details></div>`;
   $('#t-week').innerHTML=h;$('#askTxt').value=context();
   $('#askCopy').onclick=async()=>{const t=context();try{await navigator.clipboard.writeText(t);$('#askMsg').textContent='Copied. Paste it into Claude and add your question.'}catch(e){$('#askTxt').closest('details').open=true;$('#askTxt').select();$('#askMsg').textContent='Select all in the box below and copy.'}}}
