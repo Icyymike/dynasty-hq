@@ -11,7 +11,7 @@ Top counted: C.J. Stroud 29.0, Bryce Young 23.8, D'Andre Swift 21.0, Roschon Joh
 **Waivers:** Justice Hill would add 0.4 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
 
-**Week 7:** vs Lava Me Tender · projected 185.6 – 140.6 · win chance 86%
+**Week 7:** vs Lava Me Tender · projected 186.0 – 140.5 · win chance 87%
 On bye: Tre' Harris, Antonio Williams, Josh Cameron, Treylon Burks, Quentin Johnston
 Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 
@@ -27,8 +27,6 @@ Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 
 ## League trades
 - **The True Behemoth** get Darren Waller (Push) ⇄ **Commish in Epstein Files** get 2028 3rd (The True Behemoth) (Push)
-- **Straight Outta Hampton** get 2027 3rd (Straight Outta Hampton) (Push) ⇄ **WavySerg** get Jerry Jeudy (Push)
-- **Straight Outta Hampton** get 2028 3rd (Gibb Me My Trophy) (Push) ⇄ **WavySerg** get Isaac TeSlaa (Push)
 
 ## Market
 - Sell-high: Michael Pittman Jr.: value 2,366 vs ~1,726 for 4.9 pts/wk of production
