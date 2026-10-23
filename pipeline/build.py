@@ -11,9 +11,15 @@ import json, os, re, sys, time, math, random, statistics as st, urllib.request, 
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CFG = json.load(open(os.path.join(ROOT, "config.json")))
+# DYN=<key> builds one of the other dynasty leagues in config.json "leagues" into docs/<key>/ (no key: the main league in docs/)
+DYN = os.environ.get("DYN") or ""
+if DYN:
+    CFG = {**CFG, **CFG["leagues"][DYN]}
+DOCS = os.path.join(DOCS, DYN) if DYN else os.path.join(ROOT, "docs")
 CACHE = os.path.join(ROOT, "cache")
-OUT = os.path.join(ROOT, "docs", "data.json")
+OUT = os.path.join(DOCS, "data.json")
 FIX = os.environ.get("FIXTURE_DIR")
+REC = os.environ.get("RECORD_DIR")   # save every response here (to build test fixtures)
 os.makedirs(CACHE, exist_ok=True)
 
 API = "https://api.sleeper.app/v1"
@@ -37,7 +43,10 @@ def get(url, cache_hours=None, required=True, headers=None):
         return None
     cp = os.path.join(CACHE, _fixture_name(url)) if cache_hours else None
     if cp and os.path.exists(cp) and time.time() - os.path.getmtime(cp) < cache_hours * 3600:
-        return json.load(open(cp))
+        d_ = json.load(open(cp))
+        if REC:
+            os.makedirs(REC, exist_ok=True); json.dump(d_, open(os.path.join(REC, _fixture_name(url)), "w"))
+        return d_
     last = None
     for attempt in range(4):
         try:
@@ -46,6 +55,8 @@ def get(url, cache_hours=None, required=True, headers=None):
                 data = json.loads(r.read().decode())
             if cp:
                 json.dump(data, open(cp, "w"))
+            if REC:
+                os.makedirs(REC, exist_ok=True); json.dump(data, open(os.path.join(REC, _fixture_name(url)), "w"))
             return data
         except Exception as e:  # noqa
             last = e
@@ -80,18 +91,34 @@ class Scorer:
         return round(t, 2)
 
 
+# Lineup shape, set from the league's roster positions in main(): starters per position, flex (RB/WR/TE) and superflex spots.
+LU_N = {"QB": 1, "RB": 2, "WR": 3, "TE": 1}
+LU_FLEX, LU_SF = 3, 1
+MANAGED = False   # True when managers set lineups (not best ball): starters are chosen before the games, by projection
+
+
+def set_lineup_shape(positions):
+    global LU_FLEX, LU_SF
+    for k in LU_N:
+        LU_N[k] = sum(1 for x in positions if x == k)
+    LU_FLEX = sum(1 for x in positions if x in ("FLEX", "WRRB_FLEX", "REC_FLEX"))
+    LU_SF = sum(1 for x in positions if x == "SUPER_FLEX")
+
+
 def best_lineup(vals):
-    """vals: iterable of (pos, pts). Exact for QB,2RB,3WR,TE,3FLEX,SUPERFLEX (greedy is optimal: nested eligibility)."""
+    """vals: iterable of (pos, pts). Best possible lineup (greedy is exact: flex and superflex eligibility nest)."""
     by = {"QB": [], "RB": [], "WR": [], "TE": []}
     for p, v in vals:
         if p in by:
             by[p].append(v)
     for l in by.values():
         l.sort(reverse=True)
-    t = sum(by["QB"][:1]) + sum(by["RB"][:2]) + sum(by["WR"][:3]) + sum(by["TE"][:1])
-    rest = sorted(by["RB"][2:] + by["WR"][3:] + by["TE"][1:], reverse=True)
-    t += sum(rest[:3])
-    return t + max((by["QB"][1:2] or [0]) + (rest[3:4] or [0]))
+    t = sum(sum(by[p][:LU_N[p]]) for p in by)
+    rest = sorted(by["RB"][LU_N["RB"]:] + by["WR"][LU_N["WR"]:] + by["TE"][LU_N["TE"]:], reverse=True)
+    t += sum(rest[:LU_FLEX])
+    if LU_SF:
+        t += sum(sorted(by["QB"][LU_N["QB"]:] + rest[LU_FLEX:], reverse=True)[:LU_SF])
+    return t
 
 
 def lineup_split(items):
@@ -102,13 +129,11 @@ def lineup_split(items):
             by[p].append((v, i, p))
     for l in by.values():
         l.sort(key=lambda x: -x[0])
-    used = by["QB"][:1] + by["RB"][:2] + by["WR"][:3] + by["TE"][:1]
-    rest = sorted(by["RB"][2:] + by["WR"][3:] + by["TE"][1:], key=lambda x: -x[0])
-    used += rest[:3]
-    q2, r4 = (by["QB"][1:2] or [None])[0], (rest[3:4] or [None])[0]
-    sf = max([x for x in (q2, r4) if x], key=lambda x: x[0], default=None)
-    if sf:
-        used.append(sf)
+    used = [x for p in by for x in by[p][:LU_N[p]]]
+    rest = sorted(by["RB"][LU_N["RB"]:] + by["WR"][LU_N["WR"]:] + by["TE"][LU_N["TE"]:], key=lambda x: -x[0])
+    used += rest[:LU_FLEX]
+    if LU_SF:
+        used += sorted(by["QB"][LU_N["QB"]:] + rest[LU_FLEX:], key=lambda x: -x[0])[:LU_SF]
     split = {p: 0.0 for p in by}
     for v, i, p in used:
         split[p] += v
@@ -464,6 +489,12 @@ def main():
     rosters = get(f"{API}/league/{lid}/rosters")
     traded = get(f"{API}/league/{lid}/traded_picks", required=False) or []
     settings = league.get("settings", {})
+    global MANAGED
+    set_lineup_shape(league.get("roster_positions") or [])
+    MANAGED = not settings.get("best_ball")
+    sc_ = league.get("scoring_settings") or {}
+    FC_URL = (f"https://api.fantasycalc.com/values/current?isDynasty=true&numQbs={2 if LU_SF else 1}"
+              f"&numTeams={int(league.get('total_rosters') or 12)}&ppr={sc_.get('rec', 1) or 0:g}")
     playoff_start = int(settings.get("playoff_week_start", 15))
     reg_end = playoff_start - 1
     last_week = int(CFG.get("last_week", 17))
@@ -566,7 +597,7 @@ def main():
 
     # ---------- dynasty values (FantasyCalc API, auto) + optional KTC snapshot (manual file)
     fc_vals, fc_picks, fc_pick_raw, fc_meta = {}, {}, {}, {}
-    fc = get(FC, cache_hours=12, required=False) or []
+    fc = get(FC_URL, cache_hours=12, required=False) or []
     for e in fc:
         pl = e.get("player") or {}
         sid = pl.get("sleeperId")
@@ -654,8 +685,8 @@ def main():
                 for x in m:
                     for k_, v_ in (x.get("players_points") or {}).items():
                         live_pp[str(k_)] = v_
-                live = {x["roster_id"]: round(best_lineup(((players_db.get(str(k_)) or {}).get("position"), v_)
-                                                          for k_, v_ in (x.get("players_points") or {}).items()), 2) for x in m}
+                live = {x["roster_id"]: (round(x.get("points") or 0, 2) if MANAGED else round(best_lineup(((players_db.get(str(k_)) or {}).get("position"), v_)
+                                                          for k_, v_ in (x.get("players_points") or {}).items()), 2)) for x in m}
                 if not any(live.values()):
                     live = {}
             continue
@@ -666,7 +697,8 @@ def main():
                 pp = x.get("players_points") or {}
                 if not pp:
                     continue
-                calc = best_lineup(((players_db.get(str(k_)) or {}).get("position"), v_) for k_, v_ in pp.items())
+                calc = (sum(pp.get(str(k_), 0) for k_ in (x.get("starters") or []) if k_ and k_ != "0") if MANAGED
+                        else best_lineup(((players_db.get(str(k_)) or {}).get("position"), v_) for k_, v_ in pp.items()))
                 checks["lineups"] += 1
                 if abs(calc - (x.get("points") or 0)) > 0.6:
                     checks["lineup_bad"].append([wk, x["roster_id"], round(calc, 1), x.get("points")])
@@ -677,7 +709,7 @@ def main():
                         if abs(ours - v_) > 0.11:
                             checks["score_bad"].append([wk, str(k_), ours, v_])
             for x in m:
-                all_weekly.setdefault(wk, {})[x["roster_id"]] = [str(p) for p in (x.get("players") or [])]
+                all_weekly.setdefault(wk, {})[x["roster_id"]] = [str(p) for p in ((x.get("starters") if MANAGED else x.get("players")) or []) if p and str(p) != "0"]
             mine = next((x for x in m if x["roster_id"] == me), None)
             if mine:
                 my_weekly[wk] = [str(p) for p in (mine.get("players") or [])]
@@ -689,8 +721,8 @@ def main():
                 for x in m:
                     for k_, v_ in (x.get("players_points") or {}).items():
                         live_pp[str(k_)] = v_
-                live = {x["roster_id"]: round(best_lineup(((players_db.get(str(k_)) or {}).get("position"), v_)
-                                                          for k_, v_ in (x.get("players_points") or {}).items()), 2) for x in m}
+                live = {x["roster_id"]: (round(x.get("points") or 0, 2) if MANAGED else round(best_lineup(((players_db.get(str(k_)) or {}).get("position"), v_)
+                                                          for k_, v_ in (x.get("players_points") or {}).items()), 2)) for x in m}
                 if not any(live.values()):
                     live = {}
 
@@ -884,7 +916,8 @@ def main():
             for rid, mid, _ in rows:
                 items = [(pinfo(p)["p"], proj.get(p, {}).get(wk, 0), CVP.get(pinfo(p)["p"], 0.6) * mult, p, pinfo(p)["t"]) for p in all_weekly.get(wk, {}).get(rid, [])]
                 items = [x for x in items if x[0] in POS and x[1] > 0]
-                draws[rid] = [best_lineup((ps, sim_points(m_, cv_, sid, tm, s_, 900 + wk, 0.03)) for ps, m_, cv_, sid, tm in items) for s_ in range(sims)]
+                draws[rid] = [(sum(sim_points(m_, cv_, sid, tm, s_, 900 + wk, 0.03) for ps, m_, cv_, sid, tm in items) if MANAGED
+                               else best_lineup((ps, sim_points(m_, cv_, sid, tm, s_, 900 + wk, 0.03)) for ps, m_, cv_, sid, tm in items)) for s_ in range(sims)]
             for rid, mid, sc_ in rows:
                 o = next((r for r in rows if r[1] == mid and r[0] != rid), None)
                 if not o or rid > o[0] or rid not in draws or o[0] not in draws:
@@ -1084,7 +1117,16 @@ def main():
                 row.append(sim_points(d["pr"][k], cv, pid, d["t"], s_, wk, pm))
             rows.append(row)
         VAL[pid] = rows
+    _ST = {}
+    def starters(ids, k):
+        """Managed lineups: who a manager starts in week k, chosen before the games by projection."""
+        key = (tuple(ids), k)
+        if key not in _ST:
+            _ST[key] = lineup_split([(P[p]["p"], P[p]["pr"][k], p) for p in ids if p in VAL])[2]
+        return _ST[key]
     def lineup(ids, s_, k):
+        if MANAGED:
+            return sum(VAL[p][s_][k] for p in starters(ids, k))
         return best_lineup((P[p]["p"], VAL[p][s_][k]) for p in ids if p in VAL)
 
     # ---------- standings so far
@@ -1192,9 +1234,12 @@ def main():
         ids = ids_by[t["id"]]; acc = {p: 0.0 for p in ids}; acc_po = {p: 0.0 for p in ids}
         for s_ in range(IMP_S):
             for k in range(len(fut)):
-                full, _, used = lineup_split([(P[p]["p"], VAL[p][s_][k], p) for p in ids if p in VAL])
+                if MANAGED:
+                    full, used = lineup(ids, s_, k), starters(ids, k)
+                else:
+                    full, _, used = lineup_split([(P[p]["p"], VAL[p][s_][k], p) for p in ids if p in VAL])
                 for c in used:
-                    d_ = full - best_lineup((P[p]["p"], VAL[p][s_][k]) for p in ids if p in VAL and p != c)
+                    d_ = full - (lineup([p for p in ids if p != c], s_, k) if MANAGED else best_lineup((P[p]["p"], VAL[p][s_][k]) for p in ids if p in VAL and p != c))
                     acc[c] += d_
                     if k in po_k:
                         acc_po[c] += d_
@@ -1421,7 +1466,7 @@ def main():
         return [lab, v_, st_]
     ledger_now = []
     try:
-        for r_ in json.load(open(os.path.join(ROOT, "docs", "ledger.json"))):
+        for r_ in json.load(open(os.path.join(DOCS, "ledger.json"))):
             if isinstance(r_, dict):
                 ledger_now.append(dict(got=[ledger_item(x[0]) for x in r_.get("got", [])], gave=[ledger_item(x[0]) for x in r_.get("gave", [])]))
             else:
@@ -1766,14 +1811,14 @@ def main():
             prev = json.load(open(OUT))
         except Exception:  # noqa
             prev = None
-    hist_path = os.path.join(ROOT, "docs", "history.json")
+    hist_path = os.path.join(DOCS, "history.json")
     hist = json.load(open(hist_path)) if os.path.exists(hist_path) else []
     snap = dict(d=now.strftime("%Y-%m-%d"), wk=this_week, done=done, odds={str(t["id"]): [odds[t["id"]]["playoffs"], odds[t["id"]]["title"]] for t in teams},
                 val=round(sum(v_of(p) for p in ids_by[me])), w=rec[me][0], l=rec[me][1])
     hist = [h for h in hist if h["d"] != snap["d"]] + [snap]
     hist = hist[-180:]
     # per-player value history (one point a day, ~60 days) -> 30-day value trend
-    vh_path = os.path.join(ROOT, "docs", "values.json")
+    vh_path = os.path.join(DOCS, "values.json")
     vh = json.load(open(vh_path)) if os.path.exists(vh_path) else {}
     vh[snap["d"]] = {pid: d["val"] for pid, d in P.items() if not d.get("gone") and d.get("val")}
     for dk in sorted(vh)[:-60]:
@@ -1788,7 +1833,7 @@ def main():
             if old_v and d.get("val"):
                 d["vt"] = [old_v, days]
     # trade values at the moment each trade first shows up (so trades can be judged on what was known then, not just hindsight)
-    tv_path = os.path.join(ROOT, "docs", "trade_values.json")
+    tv_path = os.path.join(DOCS, "trade_values.json")
     tvals = json.load(open(tv_path)) if os.path.exists(tv_path) else {}
     for f in feed:
         if f["id"] not in tvals:
@@ -1799,7 +1844,7 @@ def main():
             if v0:
                 sd["vin0"], sd["vout0"], sd["seen"] = v0[0], v0[1], tv["seen"]
 
-    al_path = os.path.join(ROOT, "docs", "alerts.json")
+    al_path = os.path.join(DOCS, "alerts.json")
     alerts = json.load(open(al_path)) if os.path.exists(al_path) else []
     new = []
     def add_alert(kind, mine_, txt):
@@ -1845,7 +1890,7 @@ def main():
     alerts = (alerts + new)[-100:]
     os.makedirs(os.path.join(ROOT, "out"), exist_ok=True)
     push = [a for a in new if a["me"]]
-    open(os.path.join(ROOT, "out", "new_alerts.md"), "w").write(
+    open(os.path.join(ROOT, "out", f"new_alerts{('_' + DYN) if DYN else ''}.md"), "w").write(
         ("\n".join(f"- {a['txt']}" for a in push) + (f"\n\n[Open Dynasty HQ]({CFG['site_url']})" if CFG.get("site_url") else "") + "\n") if push else "")
 
     # ---------- weekly digest (markdown; the workflow posts it as a GitHub issue on Tuesdays)
@@ -1919,7 +1964,7 @@ def main():
     if CFG.get("site_url"):
         md.append(f"[Open Dynasty HQ]({CFG['site_url']})")
     digest = "\n".join(md)
-    open(os.path.join(ROOT, "docs", "digest.md"), "w").write(digest)
+    open(os.path.join(DOCS, "digest.md"), "w").write(digest)
 
     # ---------- three-season outlook: aging, young players' upside, and the rookies each team's picks bring
     yrs = [season, season + 1, season + 2]
@@ -2038,7 +2083,7 @@ def main():
 
     w_ = window
     digest = digest.replace("__WINDOW__", f"**Window:** {w_['label']}. Projected rank " + ", ".join(f"{y}: {r}" for y, r in zip(w_["years"], w_["ranks"])) + ".")
-    open(os.path.join(ROOT, "docs", "digest.md"), "w").write(digest)
+    open(os.path.join(DOCS, "digest.md"), "w").write(digest)
     # ---------- the recommendation: what to do with the team this week, and why
     advice = build_advice(dict(P=P, me=me, mt=next(x for x in tm_out if x["id"] == me), teams=tm_out, names=names, S0=S0, title_se=title_se,
                                sugg=sugg, fa=fa, cut=cut, market=market, actions=actions, depth=depth, ids_by=ids_by, fut=fut, reg_end=reg_end,
@@ -2167,7 +2212,7 @@ def main():
     print(f"flag backtest: {flag_bt.get('n')} player-windows, recommended {flag_bt.get('rec')}")
 
     # ---------- accuracy 2: log this week's predictions before kickoff, grade past weeks as they finish
-    pred_path = os.path.join(ROOT, "docs", "predictions.json")
+    pred_path = os.path.join(DOCS, "predictions.json")
     try:
         PRED = json.load(open(pred_path))
     except Exception:  # noqa
@@ -2237,7 +2282,7 @@ def main():
                                      roster_size=sum(1 for x in league.get("roster_positions", [])), draft_rounds=int(settings.get("draft_rounds", 4) or 4),
                                      median=median_on, pick_trading=bool(settings.get("pick_trading", 1))),
                           ktc_date=ktc.get("date"), values=val_src, backtest=backtest, checks=checks, byes=bye_src, fa_checked=len(fa_pool), faab=int(settings.get("waiver_budget", 0) or 0), sims=SIMS, ledger_through=CFG.get("ledger_through"),
-                          scoring=CFG.get("scoring_label", ""), slots=" · ".join(p for p in league.get("roster_positions", []) if p != "BN")),
+                          scoring=CFG.get("scoring_label", ""), lu=dict(n=LU_N, flex=LU_FLEX, sf=LU_SF, managed=MANAGED), key=DYN, slots=" · ".join(p for p in league.get("roster_positions", []) if p != "BN")),
                 teams=tm_out, players=P, weeks=weeks, po_actual={str(k): {str(r): v for r, v in d.items()} for k, d in po_actual.items()}, sched=sched, m26={str(k): v for k, v in my_weekly.items()}, picks=picks,
                 advice=advice, outlook=outlook, feed=feed, ledger_now=ledger_now, research=research, defense=DEF, accuracy=accuracy, past_picks=dict(used=used_picks, traded=traded_picks), profiles={str(k): v for k, v in profiles.items()}, rookies=rookies, digest=digest,
                 analysis=dict(board=board, sugg={str(k): v for k, v in sugg.items()}, needs={str(k): v for k, v in needs.items()},

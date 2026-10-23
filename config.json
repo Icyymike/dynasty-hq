@@ -17,5 +17,15 @@
     "owner_id": "1126218374960209920",
     "sims": 600,
     "_note": "Redraft league (Fuller League). owner_id = kcoleman806."
+  },
+  "leagues": {
+    "ring": {
+      "league_id": "1317366617591529472",
+      "owner_id": "1209233944063516672",
+      "name": "Dgenaration FleX ~ Ring League",
+      "scoring_label": "Full PPR \u00b7 TE +1.0/rec \u00b7 6-pt pass TD",
+      "site_url": "https://icyymike.github.io/dynasty-hq/ring/",
+      "_note": "Managed lineups (not best ball). Built into docs/ring/ with DYN=ring."
+    }
   }
 }
