@@ -10,7 +10,7 @@ Top counted: C.J. Stroud 36.4, Isaiah Likely 30.9, Jayden Daniels 29.1, DeVonta 
 **Best trade idea:** give Troy Franklin, C.J. Stroud for Kenneth Walker III: title chance 14% → 18%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 4.
 
-**Week 7:** vs SCLSU Mud Dogs · projected 189.6 – 107.6 · win chance 98%
+**Week 7:** vs SCLSU Mud Dogs · projected 189.0 – 107.4 · win chance 98%
 On bye: Jayden Daniels, Josh Cameron, Marcus Mariota
 Injured: Pat Bryant (IR), Marcus Mariota (Out), Romeo Doubs (IR)
 
