@@ -1139,12 +1139,20 @@ def main():
                 for side in ("home", "away"):
                     if gm.get(side):
                         game_state[gm[side]] = gm.get("status") or ""
+    clock = {}
+    if fut and live_pp:
+        try:
+            clock = SRC.game_clock(season, fut[0], lambda u, cache_hours=None: get(u, cache_hours=cache_hours, required=False))
+        except Exception as e:  # noqa
+            print(f"WARN game clock unavailable: {e}")
     n_lock = 0
     for pid, d in P.items():
-        st_ = game_state.get(d.get("t"))
-        if pid in live_pp and st_ in ("complete", "in_progress"):
-            # complete: the real score; in progress: real score so far plus about half the projection still to come
-            d["lk"] = [round(live_pp[pid], 2), 0 if st_ == "complete" else 0.5]
+        st_ = game_state.get(d.get("t")); left = clock.get(d.get("t"))
+        if pid in live_pp and (st_ in ("complete", "in_progress") or (left is not None and left < 1)):
+            # finished: the real score. In progress: real score so far plus the share of the game still to play
+            # (from the quarter and clock; half the game if the clock isn't available)
+            frac = 0 if (st_ == "complete" or left == 0) else (left if left is not None and left < 1 else 0.5)
+            d["lk"] = [round(live_pp[pid], 2), round(frac, 3)]
             n_lock += 1
     if live_pp:
         print(f"live week {fut[0] if fut else '?'}: {n_lock} players locked to real scores ({len(game_state)} teams with status)")

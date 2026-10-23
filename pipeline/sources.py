@@ -206,3 +206,27 @@ def calibrate(games_at):
     return dict(m=round(m, 3), applied=applied, m_fit=round(1 + (m_hat - 1) * w, 3), m_hat=m_hat, n=len(g1), weight=round(w, 2), logloss=round(st.mean(ll(p, o) for p, o in g1), 4),
                 bins=bins, fav_won=sum(fav), fav_n=len(fav),
                 oos_n=len(oos_plain), oos_plain=round(st.mean(oos_plain), 4) if oos_plain else None, oos_dial=round(st.mean(oos_dial), 4) if oos_dial else None)
+
+
+def game_clock(season, wk, get_json):
+    """{team: share of its current game still to play} from ESPN's live scoreboard: 1.0 before kickoff, 0.0 when final.
+    In-progress games use the quarter and clock (overtime counts as nearly done). Empty if the feed is unavailable."""
+    out = {}
+    sb = get_json(SCOREBOARD.format(yr=season, wk=wk), cache_hours=None)
+    for e in (sb or {}).get("events") or []:
+        comp = (e.get("competitions") or [{}])[0]
+        stt = comp.get("status") or e.get("status") or {}
+        typ = stt.get("type") or {}
+        state = typ.get("state")
+        if state == "post" or typ.get("completed"):
+            left = 0.0
+        elif state == "in":
+            per, clk = int(stt.get("period") or 1), float(stt.get("clock") or 0)
+            left = 0.03 if per > 4 else max(0.0, min(1.0, ((4 - per) * 900 + clk) / 3600))
+        else:
+            left = 1.0
+        for c in comp.get("competitors") or []:
+            ab = (c.get("team") or {}).get("abbreviation")
+            if ab:
+                out[ESPN_TEAM.get(ab, ab)] = round(left, 3)
+    return out

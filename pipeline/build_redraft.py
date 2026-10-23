@@ -126,7 +126,12 @@ def main():
             for side in ("home", "away"):
                 if gm.get(side):
                     game_state[gm[side]] = gm.get("status") or ""
-    week_started = any(v in ("in_progress", "complete") for v in game_state.values())
+    clock = {}
+    try:
+        clock = SRC.game_clock(season, cur, lambda u, cache_hours=None: get(u, cache_hours=cache_hours, required=False))
+    except Exception as e:  # noqa
+        print(f"WARN game clock unavailable: {e}")
+    week_started = any(v in ("in_progress", "complete") for v in game_state.values()) or any(v < 1 for v in clock.values())
     done = max(0, min(cur - 1, last_week))
     fut = list(range(max(done + 1, 1), last_week + 1))
     NW = len(fut) or 1
@@ -474,9 +479,11 @@ def main():
             d["fa"] = 1
             if pid in recent_drop:
                 d["wv"] = 1
-        st_ = game_state.get(tm)
-        if fut and st_ in ("complete", "in_progress"):
-            d["lk"] = [round(live_pp.get(pid, 0.0), 2), 0 if st_ == "complete" else 0.5]
+        st_ = game_state.get(tm); left = clock.get(tm)
+        if fut and (st_ in ("complete", "in_progress") or (left is not None and left < 1)):
+            # finished: the real score. In progress: real score so far plus the share of the game still to play
+            frac = 0 if (st_ == "complete" or left == 0) else (left if left is not None and left < 1 else 0.5)
+            d["lk"] = [round(live_pp.get(pid, 0.0), 2), round(frac, 3)]
         P[pid] = d
 
     # ---------- simulation draws (same hash as the page, so both show the same odds)
