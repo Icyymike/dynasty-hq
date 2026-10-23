@@ -4,14 +4,14 @@
 Top counted: C.J. Stroud 29.0, Bryce Young 23.8, D'Andre Swift 21.0, Roschon Johnson 13.5
 
 **Record:** 8-4, #5 of 12 · 1082.2 PF
-**Odds:** playoffs 100% · bye 42% · title 24%
+**Odds:** playoffs 100% · bye 42% · title 23%
 
 **Playoff path:** most likely seed 3; title chance with a bye 32% vs without 17%
-**Best trade idea:** give Malik Willis for Kirk Cousins: title chance 24% → 28%
+**Best trade idea:** give Malik Willis for Kirk Cousins: title chance 23% → 28%
 **Waivers:** Justice Hill would add 0.7 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
 
-**Week 7:** vs Lava Me Tender · projected 194.4 – 145.5 · win chance 90%
+**Week 7:** vs Lava Me Tender · projected 194.4 – 144.2 · win chance 91%
 On bye: Tre' Harris, Antonio Williams, Josh Cameron, Treylon Burks, Quentin Johnston
 Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 
@@ -29,7 +29,7 @@ Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 - **The True Behemoth** get Darren Waller (Push) ⇄ **Commish in Epstein Files** get 2028 3rd (The True Behemoth) (Push)
 
 ## Market
-- Sell-high: Michael Pittman Jr.: value 2,389 vs ~1,740 for 4.9 pts/wk of production
+- Sell-high: Michael Pittman Jr.: value 2,389 vs ~1,738 for 4.9 pts/wk of production
 - Buy-low: Mike Evans (The True Behemoth): +6.1 counted pts/wk for you, value 3,673
 - Buy-low: Brenton Strange (Straight Outta Hampton): +4.4 counted pts/wk for you, value 3,439
 - Buy-low: DJ Moore (The True Behemoth): +4.2 counted pts/wk for you, value 3,515
