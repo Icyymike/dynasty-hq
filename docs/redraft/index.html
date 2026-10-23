@@ -222,6 +222,7 @@ tr.bad td{background:var(--bad-soft)}
 .footer{font-size:12px;color:var(--muted);padding:24px 0 8px;display:flex;gap:12px;flex-wrap:wrap;justify-content:space-between}
 @media (max-width:560px){.li{grid-template-columns:minmax(0,1fr)}.li .right{align-items:flex-start;text-align:left}}
 @media (max-width:560px){.vsrow .sc{font-size:32px}.rng{width:70px}.hide-sm{display:none}}
+.wpbar{cursor:help}.wpcap{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--muted);margin-top:3px}.wpcap b{color:var(--ink);font-weight:600}
 </style>
 </head>
 <body>
@@ -328,6 +329,9 @@ function showTab(t){document.querySelectorAll('#tabs button').forEach(b=>b.setAt
   document.querySelectorAll('main>section').forEach(s=>s.hidden=s.id!=='t-'+t);store.set('rd_tab',t);if(location.hash!=='#'+t)history.replaceState(null,'','#'+t)}
 document.getElementById('tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(b)showTab(b.dataset.tab)});
 
+// the blue bar in matchups: your share = your win chance (hover or read the caption under it)
+const wpBar=(p,a,b,thin)=>{p=Math.max(0,Math.min(1,p||0));const tip=`Win chance: ${a} ${pct(p)}, ${b} ${pct(1-p)}. The blue part is ${a==='You'?'your':a+'\'s'} share, from 600 simulated games.`;
+  return `<div class="wpbar${thin?' thin':''}" role="img" title="${esc(tip)}" aria-label="${esc(tip)}"><i style="width:${Math.round(p*100)}%"></i></div>${thin?'':`<div class="wpcap"><span><b>${pct(p)}</b> ${esc(a)} win</span><span>${esc(b)} <b>${pct(1-p)}</b></span></div>`}`};
 // ---------- THIS WEEK
 function weekTab(){const m=D.meta,ss=D.startsit,wk=m.cur,o=D.odds[ME]||{},me=TEAMS.find(t=>t.id===ME);
   let h='';
@@ -338,7 +342,7 @@ function weekTab(){const m=D.meta,ss=D.startsit,wk=m.cur,o=D.odds[ME]||{},me=TEA
     <div style="text-align:right"><div class="nm">${esc(tname(opp))}</div><div class="sc">${live?fx(D.wk_mean[opp][0]):fx(ss.opp_proj)}</div><div class="sub">${live?'projected final · <b>'+fx(D.live[opp])+'</b> scored so far':'projected · likely '+(D.rng[opp]?D.rng[opp].join('–'):'')}</div></div></div>`;
   const word=wpB>=0.65?['w-good','Favored']:wpB>=0.5?['w-info','Slight edge']:wpB>=0.35?['w-mid','Underdog']:['w-bad','Big underdog'];
   h+=`<div class="card"><div class="row" style="justify-content:space-between"><h2>Week ${wk}: ${pct(wpB)} to win</h2><span class="word ${word[0]}">${word[1]}</span></div>${vs}
-    <div class="wpbar"><i style="width:${Math.round(wpB*100)}%"></i></div>
+    ${wpBar(wpB,'You',tname(opp))}
     <p class="sub">${ss.wp_now!=null&&Math.abs(ss.wp_best-ss.wp_now)>=0.005?`With your current lineup: <b>${pct(ss.wp_now)}</b>. With the changes below: <b>${pct(ss.wp_best)}</b>. `:'Your lineup is already the best one by the projections. '}Record ${me.w}-${me.l} · playoffs ${pct(o.playoffs)} · title ${pct(o.title)}.</p></div>`;
   // to-do
   const warn=[];const now=(ss.now||[]);
@@ -368,7 +372,7 @@ function weekTab(){const m=D.meta,ss=D.startsit,wk=m.cur,o=D.odds[ME]||{},me=TEA
   // league matchups
   const pr=D.sched[FUT[0]]||[],seen=new Set(),cards=[];
   pr.forEach(([r,mid])=>{if(seen.has(mid))return;seen.add(mid);const o2=pr.find(x=>x[1]===mid&&x[0]!==r);if(!o2)return;const a=r,b=o2[0],wa=D.odds[a].wp,wb=D.odds[b].wp;
-    cards.push(`<div class="mu${a===ME||b===ME?' mine':''}"><div class="mu-r"><span>${esc(tname(a))}</span><span class="num">${m.started?fx(D.live[a])+' · ':''}${fx(D.wk_mean[a][0])} · ${pct(wa)}</span></div><div class="mu-r"><span>${esc(tname(b))}</span><span class="num">${m.started?fx(D.live[b])+' · ':''}${fx(D.wk_mean[b][0])} · ${pct(wb)}</span></div><div class="wpbar thin"><i style="width:${Math.round(wa/(wa+wb||1)*100)}%"></i></div></div>`)});
+    cards.push(`<div class="mu${a===ME||b===ME?' mine':''}"><div class="mu-r"><span>${esc(tname(a))}</span><span class="num">${m.started?fx(D.live[a])+' · ':''}${fx(D.wk_mean[a][0])} · ${pct(wa)}</span></div><div class="mu-r"><span>${esc(tname(b))}</span><span class="num">${m.started?fx(D.live[b])+' · ':''}${fx(D.wk_mean[b][0])} · ${pct(wb)}</span></div>${wpBar(wa/(wa+wb||1),tname(a),tname(b),true)}</div>`)});
   h+=`<div class="card"><h2>Every game this week</h2><p class="sub">${m.started?'Points scored so far · projected final · win chance.':'Projected score and win chance.'}</p><div class="matchups">${cards.join('')}</div></div>`;
   h+=`<div class="card"><h2>Ask Claude about your week</h2><p class="sub">Copies a summary of your matchup, lineup, odds and options. Paste it into Claude with your question.</p><div class="row"><button class="btn" id="askCopy">Copy summary</button><span class="sub" id="askMsg"></span></div><details class="more"><summary>Preview</summary><div><textarea id="askTxt" rows="10" readonly></textarea></div></details></div>`;
   $('#t-week').innerHTML=h;$('#askTxt').value=context();

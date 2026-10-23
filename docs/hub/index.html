@@ -209,6 +209,7 @@ tr.cut-bye td{border-bottom:2px solid var(--good)}
 details.more{border-top:1px solid var(--line);padding-top:10px}details.more>summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--accent)}
 .footer{font-size:12px;color:var(--muted);padding:24px 0 8px}
 @media (max-width:560px){.li{grid-template-columns:minmax(0,1fr)}.li .right{align-items:flex-start;text-align:left}.vsrow .sc{font-size:28px}}
+.wpbar{cursor:help}.wpcap{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--muted);margin-top:3px}.wpcap b{color:var(--ink);font-weight:600}
 </style>
 </head>
 <body>
@@ -233,6 +234,9 @@ const LEAGUES=[{key:'512',label:'512 Best Ball',short:'512',url:'../',data:'../d
   {key:'redraft',label:'Fuller League',short:'Redraft',url:'../redraft/',data:'../redraft/data.json',kind:'red'}];
 const SEV={Out:4,IR:4,PUP:4,Sus:4,Doubtful:3,Questionable:2};
 
+// the blue bar in matchups: your share = your win chance (hover or read the caption under it)
+const wpBar=(p,a,b,thin)=>{p=Math.max(0,Math.min(1,p||0));const tip=`Win chance: ${a} ${pct(p)}, ${b} ${pct(1-p)}. The blue part is ${a==='You'?'your':a+'\'s'} share, from 600 simulated games.`;
+  return `<div class="wpbar${thin?' thin':''}" role="img" title="${esc(tip)}" aria-label="${esc(tip)}"><i style="width:${Math.round(p*100)}%"></i></div>${thin?'':`<div class="wpcap"><span><b>${pct(p)}</b> ${esc(a)} win</span><span>${esc(b)} <b>${pct(1-p)}</b></span></div>`}`};
 // one common shape for every league
 function summarize(L,d){const m=d.meta,me=m.me,P=d.players,tn=r=>(d.teams.find(t=>t.id===r)||{}).name||'Team '+r;
   const wk=m.this_week||m.cur,pr=(d.sched||{})[wk]||[],mid=(pr.find(x=>x[0]===me)||[])[1],opp=(pr.find(x=>x[1]===mid&&x[0]!==me)||[])[0];
@@ -265,7 +269,7 @@ function render(S){let h='';const fav=S.filter(s=>s.wp!=null&&s.wp>=0.5).length,
     <div class="row"><span class="word ${word[0]}">${word[1]}</span>${live?'<span class="live">LIVE</span>':''}<span class="sub">${s.w}-${s.l}</span></div>
     <div class="vsrow"><div><div class="nm">${esc(s.name)}</div><div class="sc num">${fx(s.proj)}</div><div class="sub">${live?`<b>${fx(s.live)}</b> so far`:'projected'}</div></div><div class="muted" style="padding-bottom:6px">vs</div>
     <div style="text-align:right"><div class="nm">${esc(s.oname||'—')}</div><div class="sc num">${fx(s.oproj)}</div><div class="sub">${live?`<b>${fx(s.olive)}</b> so far`:'projected'}</div></div></div>
-    <div class="wpbar"><i style="width:${Math.round((s.wp||0)*100)}%"></i></div>
+    ${wpBar(s.wp,'You',s.oname||'them')}
     <div class="kvs"><div><b>${pct(s.wp)}</b><span>win this week</span></div><div><b>${pct(s.odds.playoffs)}</b><span>playoffs</span></div><div><b>${pct(s.odds.title)}</b><span>title</span></div></div>
     ${s.moves[0]?`<p class="sub"><b>Top move:</b> ${esc(s.moves[0])}</p>`:''}</div>`}).join('')}</div>`;
   // injury report

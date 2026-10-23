@@ -269,6 +269,7 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
 @media (max-width:700px){.bd{grid-template-columns:minmax(0,1fr)}}
 .vr>span:first-child{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}.vr>span:last-child{flex:0 0 auto}.bd-box{min-width:0}
 @media (max-width:560px){.tx-sides{grid-template-columns:1fr}.vsrow .sc{font-size:32px}.tile .t-big{font-size:28px}}
+.wpbar{cursor:help}.wpcap{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--muted);margin-top:3px}.wpcap b{color:var(--ink);font-weight:600}
 </style>
 </head>
 <body>
@@ -739,7 +740,7 @@ function renderHome(){
   else if(o){const ww=winWord(me.wp),out=roster(ME).filter(s=>PL[s].bye===wk).map(s=>PL[s].n),inj=roster(ME).filter(s=>['Out','IR','Doubtful','Sus','PUP'].includes(PL[s].inj)).map(s=>`${PL[s].n} (${PL[s].inj.toLowerCase()})`);
     $('#weekCard').innerHTML=`<h2>Who wins this week?${me.live!=null?'<span class="live">LIVE</span>':''}</h2>
       <div class="vsrow"><div><div class="nm">You</div><div class="sc num">${me.proj}</div><div class="sub">${me.live!=null?`projected final · <b>${me.live.toFixed(1)}</b> scored so far`:'projected'}</div></div><div class="muted" style="padding-bottom:8px">vs</div><div style="text-align:right"><div class="nm">${esc(o.name)}</div><div class="sc num">${o.proj}</div><div class="sub">${o.live!=null?`projected final · <b>${o.live.toFixed(1)}</b> scored so far`:'projected'}</div></div></div>
-      <div class="wpbar" role="img" aria-label="Your win chance ${pct(me.wp)}"><i style="width:${Math.round(me.wp*100)}%"></i></div>
+      ${wpBar(me.wp,'You',o.name)}
       <p class="answer">${W(ww)} You win this one in ${chance(me.wp)}. ${me.live!=null?`Big numbers are projected final scores: points already scored plus what's still expected from players who haven't played. ${BB()?'Points so far come from each team\'s best possible lineup, which is how best ball scores (Sleeper\'s matchup screen can show only the set starters until the week ends).':'Points so far are from each team\'s starters, same as Sleeper.'} Finished games count as final.`:`Big numbers are projected scores; you'll usually land between ${me.rng?me.rng[0].toFixed(0):'?'} and ${me.rng?me.rng[1].toFixed(0):'?'}.`}</p>
       ${out.length||inj.length?`<p class="sub">${out.length?`<b>Not playing (bye):</b> ${esc(out.join(', '))}. `:''}${inj.length?`<b>Hurt:</b> ${esc(inj.join(', '))}.`:''} ${BB()?'Best ball fills your lineup with your best available players.':'Set your lineup around them in Sleeper.'}</p>`:''}`}
   else $('#weekCard').innerHTML=`<h2>Who wins this week?</h2><p class="answer">No matchup this week.</p>`;
@@ -787,7 +788,7 @@ function renderHome(){
   // games
   $('#gamesTitle').textContent=`Week ${wk} games`;const seen=new Set(),pairs=D.sched[wk]||[];
   $('#matchups').innerHTML=pairs.filter(p=>{if(seen.has(p[1]))return false;seen.add(p[1]);return true}).map(p=>{const a=TEAMS.find(t=>t.id===p[0]),b=TEAMS.find(t=>t.id===oppOf(p[0],wk));if(!a||!b)return'';const mineG=a.id===ME||b.id===ME,lv=a.live!=null;const fav=a.wp>=b.wp?a:b,fp=Math.max(a.wp,b.wp);
-    return `<div class="mu ${mineG?'mine':''}">${lv?'<span class="live" style="margin:0;align-self:flex-start">LIVE</span>':''}<div class="mu-r"><span>${esc(a.name)}</span><b class="num">${lv?a.live.toFixed(1):a.proj}</b></div><div class="wpbar thin"><i style="width:${Math.round(a.wp*100)}%"></i></div><div class="mu-r"><span>${esc(b.name)}</span><b class="num">${lv?(b.live??0).toFixed(1):b.proj}</b></div><div class="small muted">${fp<0.55?'Toss-up':`${esc(short(fav.name))} wins ${pct(fp)} of the time`}</div></div>`}).join('');
+    return `<div class="mu ${mineG?'mine':''}">${lv?'<span class="live" style="margin:0;align-self:flex-start">LIVE</span>':''}<div class="mu-r"><span>${esc(a.name)}</span><b class="num">${lv?a.live.toFixed(1):a.proj}</b></div>${wpBar(a.wp,a.name,b.name,true)}<div class="mu-r"><span>${esc(b.name)}</span><b class="num">${lv?(b.live??0).toFixed(1):b.proj}</b></div><div class="small muted">${fp<0.55?'Toss-up':`${esc(short(fav.name))} wins ${pct(fp)} of the time`}</div></div>`}).join('');
   // heat
   const dp=A.depth||{};if(dp[ME]){const n=TEAMS.length,cls=r=>r<=3?'top':r>n-3?'bot':'';const s=POS.slice().sort((a,b)=>dp[ME][a][1]-dp[ME][b][1]);
     $('#heatAnswer').innerHTML=`Your team is best at <b>${s[0]} (${ORD(dp[ME][s[0]][1])} in the league)</b> and weakest at <b>${s[3]} (${ORD(dp[ME][s[3]][1])})</b>.`;
@@ -809,6 +810,9 @@ function renderPast(){const el=$('#pastWeeks');if(!el)return;const AC=D.accuracy
    <div class="tbl-wrap"><table class="sortable-tbl" style="font-size:12.5px"><thead><tr><th>Wk</th><th>Opponent</th><th class="r">You scored</th><th class="r">Expected</th><th>Vs. expected</th><th class="r">Them</th><th class="r" title="Your win chance before the week">Win chance</th><th>Result</th>${D.meta.median?'<th title="Beat the league median that week">Median</th>':''}</tr></thead><tbody>
    ${R.map(r=>`<tr><td class="num">${r.wk}</td><td>${r.opp?esc(nm(r.opp)):'—'}</td><td class="r num"><b>${r.sc.toFixed(1)}</b></td><td class="r num">${r.exp.toFixed(1)} <span class="sub">(${r.lo.toFixed(0)}–${r.hi.toFixed(0)})</span></td><td>${vs(r)}</td><td class="r num">${r.osc!=null?r.osc.toFixed(1)+' <span class="sub">vs '+r.oexp.toFixed(0)+' exp.</span>':'—'}</td><td class="r num">${r.wp!=null?pct(r.wp):'—'}</td><td>${res(r)}</td>${D.meta.median?`<td>${r.med==null?'':r.med?'<span class="word w-good">Won</span>':'<span class="word w-plain">Lost</span>'}</td>`:''}</tr>`).join('')}</tbody></table></div>
    <p class="sub">Expected = the average of 300 replays of that week using the projections and lineup as they stood before it; the range in brackets is where you'd land 8 times in 10. "Well above/below" means outside that range.</p>`}
+// the blue bar in matchups: your share = your win chance (hover or read the caption under it)
+const wpBar=(p,a,b,thin)=>{p=Math.max(0,Math.min(1,p||0));const tip=`Win chance: ${a} ${pct(p)}, ${b} ${pct(1-p)}. The blue part is ${a==='You'?'your':a+'\'s'} share, from 600 simulated games.`;
+  return `<div class="wpbar${thin?' thin':''}" role="img" title="${esc(tip)}" aria-label="${esc(tip)}"><i style="width:${Math.round(p*100)}%"></i></div>${thin?'':`<div class="wpcap"><span><b>${pct(p)}</b> ${esc(a)} win</span><span>${esc(b)} <b>${pct(1-p)}</b></span></div>`}`};
 function holes(ids,k){const c={QB:0,RB:0,WR:0,TE:0};for(const s of ids){if(proj(s,k,'pr')>=6)c[PL[s].p]++}const out=[];
   if(c.QB<1)out.push('no QB available');else if(c.QB<2)out.push('only 1 QB, so your superflex spot goes to a lower-scoring player');
   if(c.TE<1)out.push('no TE available');if(c.RB<2)out.push(`only ${c.RB} RB available`);if(c.WR<3)out.push(`only ${c.WR} WRs available`);return out}
