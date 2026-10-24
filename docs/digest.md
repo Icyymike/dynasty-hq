@@ -4,10 +4,10 @@
 Top counted: C.J. Stroud 29.0, Bryce Young 23.8, D'Andre Swift 21.0, Roschon Johnson 13.5
 
 **Record:** 8-4, #5 of 12 · 1082.2 PF
-**Odds:** playoffs 100% · bye 43% · title 23%
+**Odds:** playoffs 100% · bye 43% · title 24%
 
-**Playoff path:** most likely seed 3; title chance with a bye 30% vs without 18%
-**Best trade idea:** give Malik Willis for Kirk Cousins: title chance 23% → 28%
+**Playoff path:** most likely seed 2; title chance with a bye 31% vs without 18%
+**Best trade idea:** give Malik Willis for Kirk Cousins: title chance 24% → 28%
 **Waivers:** Justice Hill would add 0.5 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 

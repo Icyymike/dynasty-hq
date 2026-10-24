@@ -10,7 +10,7 @@ Top counted: C.J. Stroud 36.4, Isaiah Likely 30.9, Jayden Daniels 29.1, DeVonta 
 **Best trade idea:** give Troy Franklin, C.J. Stroud for Kenneth Walker III: title chance 13% → 18%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 7:** vs SCLSU Mud Dogs · projected 191.0 – 114.7 · win chance 98%
+**Week 7:** vs SCLSU Mud Dogs · projected 190.8 – 114.7 · win chance 98%
 On bye: Jayden Daniels, Josh Cameron, Marcus Mariota
 Injured: Pat Bryant (IR), Marcus Mariota (Out), Romeo Doubs (IR)
 
@@ -19,8 +19,8 @@ Injured: Pat Bryant (IR), Marcus Mariota (Out), Romeo Doubs (IR)
 
 ## Market
 - Sell-high: Mike Gesicki: age 31: TE values usually drop after this season
-- Buy-low: Mike Evans (D-Generation-XRated): +4.3 counted pts/wk for you, value 3,588
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.3 counted pts/wk for you, value 3,002
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.3 counted pts/wk for you, value 2,892
 - Buy-low: Ollie Gordon II (Jesus the homeless hippy): +1.8 counted pts/wk for you, value 3,394
+- Buy-low: Zach Charbonnet (ShamirRamirez): +1.2 counted pts/wk for you, value 3,435
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
