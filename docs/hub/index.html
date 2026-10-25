@@ -271,7 +271,7 @@ function render(S){let h='';const fav=S.filter(s=>s.wp!=null&&s.wp>=0.5).length,
     <div style="text-align:right"><div class="nm">${esc(s.oname||'—')}</div><div class="sc num">${fx(s.oproj)}</div><div class="sub">${live?`<b>${fx(s.olive)}</b> so far`:'projected'}</div></div></div>
     ${wpBar(s.wp,'You',s.oname||'them')}
     <div class="kvs"><div><b>${pct(s.wp)}</b><span>win this week</span></div><div><b>${pct(s.odds.playoffs)}</b><span>playoffs</span></div><div><b>${pct(s.odds.title)}</b><span>title</span></div></div>
-    ${s.moves[0]?`<p class="sub"><b>Top move:</b> ${esc(s.moves[0])}</p>`:''}</div>`}).join('')}</div>`;
+    ${live?`<p class="sub">Win chance as of the ${new Date(Date.parse(s.generated.replace('Z',':00Z'))).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})} update. <a href="${s.L.url}">Open the league</a> for minute-by-minute numbers.</p>`:''}${s.moves[0]?`<p class="sub"><b>Top move:</b> ${esc(s.moves[0])}</p>`:''}</div>`}).join('')}</div>`;
   // injury report
   const inj={};S.forEach(s=>s.mine.forEach(p=>{const x=s.P[p];if(!x.inj)return;(inj[p]=inj[p]||{x,ls:[]}).ls.push({s,role:s.role(p)})}));
   const rows=Object.entries(inj).sort((a,b)=>(SEV[b[1].x.inj]||1)-(SEV[a[1].x.inj]||1)||(b[1].ls.some(l=>l.role.st)-a[1].ls.some(l=>l.role.st)));

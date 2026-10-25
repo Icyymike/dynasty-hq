@@ -909,7 +909,7 @@ def main():
                          why=f"+{ti['dm']:.1f} points a week for you, +{ti['dt']:.1f} for them", gain=ti["dm"]))
 
     data = dict(
-        meta=dict(league=league.get("name", "").strip(), season=season, cur=cur, done=done, fut=fut, reg_end=reg_end, me=me, sims=SIMS,
+        meta=dict(league=league.get("name", "").strip(), lid=str(lid), season=season, cur=cur, done=done, fut=fut, reg_end=reg_end, me=me, sims=SIMS,
                   generated=gen, started=week_started, slots=slots, n_playoff=n_playoff, deadline=deadline, median=median_on,
                   waiver=dict(type=S.get("waiver_type"), mine=wpos.get(me), order=wpos), scoring=dict(ppr=league["scoring_settings"].get("rec", 0),
                   pass_td=league["scoring_settings"].get("pass_td", 4)), checks=dict(lineups=checks["lineups"], lineup_bad=checks["lineup_bad"][:20],

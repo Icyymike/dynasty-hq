@@ -2326,7 +2326,7 @@ def main():
                     weeks_logged=sorted(PRED["weeks"].keys()), backtest=backtest, sources=src_rep, calib=cal, past_me=past_me, past_bias=past_bias,
                     odds=[dict(d=o_["d"], wk=o_["wk"], po=o_["t"].get(str(me), [None, None])[0], t=o_["t"].get(str(me), [None, None])[1]) for o_ in PRED["odds"]])
 
-    data = dict(meta=dict(league=league.get("name"), season=season, done=done, fut=fut, reg_end=reg_end, me=me, median=median_on,
+    data = dict(meta=dict(league=league.get("name"), lid=str(lid), season=season, done=done, fut=fut, reg_end=reg_end, me=me, median=median_on,
                           n_playoff=n_playoff, generated=gen, this_week=this_week, actions=actions,
                           pick_prices={rd: pick_base(season + 1, rd) for rd in range(1, int(settings.get("draft_rounds", 4) or 4) + 1)},
                           rules=dict(best_ball=bool(settings.get("best_ball")), teams=nT, playoff_teams=n_playoff, playoff_start=playoff_start,

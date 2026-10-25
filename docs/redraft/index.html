@@ -332,6 +332,36 @@ document.getElementById('tabs').addEventListener('click',e=>{const b=e.target.cl
 // the blue bar in matchups: your share = your win chance (hover or read the caption under it)
 const wpBar=(p,a,b,thin)=>{p=Math.max(0,Math.min(1,p||0));const tip=`Win chance: ${a} ${pct(p)}, ${b} ${pct(1-p)}. The blue part is ${a==='You'?'your':a+'\'s'} share, from 600 simulated games.`;
   return `<div class="wpbar${thin?' thin':''}" role="img" title="${esc(tip)}" aria-label="${esc(tip)}"><i style="width:${Math.round(p*100)}%"></i></div>${thin?'':`<div class="wpcap"><span><b>${pct(p)}</b> ${esc(a)} win</span><span>${esc(b)} <b>${pct(1-p)}</b></span></div>`}`};
+// ---------- live mode: while games are on, this page reads Sleeper's live scores and ESPN's game clock every minute
+// and re-plays this week's matchups itself (same model as the update), so it doesn't wait for the next refresh.
+async function liveFeeds(lid,season,wk){
+  const [mu,sb]=await Promise.all([fetch(`https://api.sleeper.app/v1/league/${lid}/matchups/${wk}`,{cache:'no-store'}).then(r=>r.json()),
+    fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates=${season}&seasontype=2&week=${wk}`,{cache:'no-store'}).then(r=>r.json())]);
+  const left={};let inProg=0,pending=0;
+  for(const e of (sb&&sb.events)||[]){const c=(e.competitions||[])[0]||{},st=c.status||e.status||{},ty=st.type||{};let l=1;
+    if(ty.state==='post'||ty.completed)l=0;else if(ty.state==='in'){const per=+st.period||1,clk=+st.clock||0;l=per>4?0.03:Math.max(0,Math.min(1,((4-per)*900+clk)/3600));inProg++}else pending++;
+    for(const t of c.competitors||[]){let ab=(t.team||{}).abbreviation;if(ab==='WSH')ab='WAS';if(ab)left[ab]=l}}
+  const pp={},starters={},pts={};for(const x of mu||[]){Object.assign(pp,x.players_points||{});starters[x.roster_id]=(x.starters||[]).filter(s=>s&&s!=='0');pts[x.roster_id]=x.points||0}
+  return {left,pp,starters,pts,inProg,pending}}
+const LIVE={at:null,timer:null,err:null};
+function liveStamp(){return LIVE.at?`<span class="sub" style="margin-left:8px;font-size:12px">live · updated ${LIVE.at.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}</span>`:''}
+function liveSchedule(f){clearTimeout(LIVE.timer);if(f.inProg)LIVE.timer=setTimeout(liveTick,60000);else if(f.pending)LIVE.timer=setTimeout(liveTick,600000)}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&LIVE.at&&Date.now()-LIVE.at>60000)liveTick()});
+async function liveTick(){const m=D.meta,wk=m.cur;if(!m.lid||!FUT.length)return;let f;
+  try{f=await liveFeeds(m.lid,m.season,wk)}catch(e){LIVE.err=String(e);LIVE.timer=setTimeout(liveTick,120000);return}
+  let started=false;
+  for(const sid in PL){const p=PL[sid],l=f.left[p.t];if(l==null||l>=1)continue;started=true;const nl=[+(+(f.pp[sid]||0)).toFixed(2),+l.toFixed(3)];
+    if(!p.lk||p.lk[0]!==nl[0]||p.lk[1]!==nl[1]){p.lk=nl;VC.delete(sid)}}
+  if(!started){liveSchedule(f);return}
+  const S=D.meta.sims,pr=D.sched[FUT[0]]||[];
+  // the lineups actually set in Sleeper right now (empty slots count as zero once the week is under way)
+  const lu=r=>(f.starters[r]||[]).filter(x=>PL[x]);const score=(r,s)=>lu(r).reduce((t,x)=>t+draws(x)[s*NW],0);
+  const seen=new Set();
+  for(const [r,mid] of pr){if(seen.has(mid))continue;seen.add(mid);const o=(pr.find(x=>x[1]===mid&&x[0]!==r)||[])[0];if(o==null)continue;
+    let w=0,sa=0,sb=0;for(let s=0;s<S;s++){const x=score(r,s),y=score(o,s);if(x>y)w++;sa+=x;sb+=y}
+    D.odds[r].wp=w/S;D.odds[o].wp=1-w/S;D.wk_mean[r][0]=sa/S;D.wk_mean[o][0]=sb/S;D.live[r]=f.pts[r];D.live[o]=f.pts[o];
+    if(r===ME||o===ME){const mine=r===ME;D.startsit.wp_best=mine?w/S:1-w/S;D.startsit.wp_now=D.startsit.wp_best;D.startsit.proj_best=(mine?sa:sb)/S;D.startsit.opp_proj=(mine?sb:sa)/S}}
+  D.meta.started=true;LIVE.at=new Date();weekTab();liveSchedule(f)}
 // ---------- THIS WEEK
 function weekTab(){const m=D.meta,ss=D.startsit,wk=m.cur,o=D.odds[ME]||{},me=TEAMS.find(t=>t.id===ME);
   let h='';
@@ -341,7 +371,7 @@ function weekTab(){const m=D.meta,ss=D.startsit,wk=m.cur,o=D.odds[ME]||{},me=TEA
     <div class="vsx" style="font-family:var(--f-display);color:var(--muted);font-size:18px;padding-bottom:6px">vs</div>
     <div style="text-align:right"><div class="nm">${esc(tname(opp))}</div><div class="sc">${live?fx(D.wk_mean[opp][0]):fx(ss.opp_proj)}</div><div class="sub">${live?'projected final · <b>'+fx(D.live[opp])+'</b> scored so far':'projected · likely '+(D.rng[opp]?D.rng[opp].join('–'):'')}</div></div></div>`;
   const word=wpB>=0.65?['w-good','Favored']:wpB>=0.5?['w-info','Slight edge']:wpB>=0.35?['w-mid','Underdog']:['w-bad','Big underdog'];
-  h+=`<div class="card"><div class="row" style="justify-content:space-between"><h2>Week ${wk}: ${pct(wpB)} to win</h2><span class="word ${word[0]}">${word[1]}</span></div>${vs}
+  h+=`<div class="card"><div class="row" style="justify-content:space-between"><h2>Week ${wk}: ${pct(wpB)} to win${liveStamp()}</h2><span class="word ${word[0]}">${word[1]}</span></div>${vs}
     ${wpBar(wpB,'You',tname(opp))}
     <p class="sub">${ss.wp_now!=null&&Math.abs(ss.wp_best-ss.wp_now)>=0.005?`With your current lineup: <b>${pct(ss.wp_now)}</b>. With the changes below: <b>${pct(ss.wp_best)}</b>. `:'Your lineup is already the best one by the projections. '}Record ${me.w}-${me.l} · playoffs ${pct(o.playoffs)} · title ${pct(o.title)}.</p></div>`;
   // to-do
@@ -560,7 +590,7 @@ fetch('data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{D=d;PL=d.player
   $('#chips').innerHTML=`<span class="chip">${esc(d.meta.league)}</span><span class="chip">Week <b>${d.meta.cur}</b></span><span class="chip"><b>${me.w}-${me.l}</b></span><span class="chip">Playoffs <b>${pct(o.playoffs)}</b></span>`;
   const ck=d.meta.checks,ok=!ck.lineup_bad.length&&!ck.score_bad.length;const age=(Date.now()-Date.parse(d.meta.generated.replace('Z',':00Z')))/36e5;
   $('#foot').innerHTML=`<span>Updated ${new Date(Date.parse(d.meta.generated.replace('Z',':00Z'))).toLocaleString([], {weekday:'short',hour:'numeric',minute:'2-digit'})}${age>8?' <b class="neg-v">(over 8 hours old)</b>':''}</span><span>${ok?`Data check passed: ${ck.lineups} lineups and ${ck.scored.toLocaleString()} player scores match Sleeper`:`<b class="neg-v">Data check: ${ck.lineup_bad.length+ck.score_bad.length} mismatches with Sleeper</b>`}</span><span>Values: ${esc(d.meta.value_src)}</span>`;
-  weekTab();waiverTab();tradeTab();playersTab();leagueTab();
+  weekTab();waiverTab();tradeTab();playersTab();leagueTab();liveTick();
   const t0=(location.hash||'').slice(1)||store.get('rd_tab')||'week';showTab(['week','waivers','trades','players','league'].includes(t0)?t0:'week')})
  .catch(e=>{$('#t-week').innerHTML=`<div class="card"><h2>Couldn't load the data</h2><p class="sub">${esc(e.message)}</p></div>`});
 </script>

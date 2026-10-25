@@ -1,6 +1,6 @@
 name: Game day (keeps refreshing during games)
 # GitHub's scheduler often skips runs on busy Sundays. This workflow only needs ONE of its starts to fire:
-# it then refreshes every 20 minutes until the night's games are over, and restarts itself before
+# it then refreshes about every 10 minutes until the night's games are over, and restarts itself before
 # GitHub's 6-hour job limit. Extra starts while it's running just wait in line and exit quickly.
 on:
   schedule:
@@ -35,7 +35,7 @@ jobs:
           path: cache
           key: sleeper-cache-${{ github.run_id }}
           restore-keys: sleeper-cache-
-      - name: Refresh every 20 minutes until the games are over
+      - name: Refresh about every 10 minutes until the games are over
         run: |
           python3 - > window_end.txt <<'PY'
           import datetime as dt
@@ -56,5 +56,5 @@ jobs:
             if [ $((NOW - START)) -ge 19800 ]; then   # 5.5 hours in: hand over to a fresh run
               gh workflow run gameday.yml --ref main && echo "Handed over to a new run."; break
             fi
-            sleep 1200
+            sleep 540   # about every 10 minutes (GitHub Pages allows ~10 site updates an hour)
           done

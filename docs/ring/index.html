@@ -719,6 +719,36 @@ function renderAdvice(){
 }
 
 // ---------- LEAGUE ----------
+// ---------- live mode: while games are on, this page reads Sleeper's live scores and ESPN's game clock every minute
+// and re-plays this week's matchups itself (same model as the update), so it doesn't wait for the next refresh.
+async function liveFeeds(lid,season,wk){
+  const [mu,sb]=await Promise.all([fetch(`https://api.sleeper.app/v1/league/${lid}/matchups/${wk}`,{cache:'no-store'}).then(r=>r.json()),
+    fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates=${season}&seasontype=2&week=${wk}`,{cache:'no-store'}).then(r=>r.json())]);
+  const left={};let inProg=0,pending=0;
+  for(const e of (sb&&sb.events)||[]){const c=(e.competitions||[])[0]||{},st=c.status||e.status||{},ty=st.type||{};let l=1;
+    if(ty.state==='post'||ty.completed)l=0;else if(ty.state==='in'){const per=+st.period||1,clk=+st.clock||0;l=per>4?0.03:Math.max(0,Math.min(1,((4-per)*900+clk)/3600));inProg++}else pending++;
+    for(const t of c.competitors||[]){let ab=(t.team||{}).abbreviation;if(ab==='WSH')ab='WAS';if(ab)left[ab]=l}}
+  const pp={},starters={},pts={};for(const x of mu||[]){Object.assign(pp,x.players_points||{});starters[x.roster_id]=(x.starters||[]).filter(s=>s&&s!=='0');pts[x.roster_id]=x.points||0}
+  return {left,pp,starters,pts,inProg,pending}}
+const LIVE={at:null,timer:null,err:null};
+function liveStamp(){return LIVE.at?`<span class="sub" style="margin-left:8px;font-size:12px">live · updated ${LIVE.at.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}</span>`:''}
+function liveSchedule(f){clearTimeout(LIVE.timer);if(f.inProg)LIVE.timer=setTimeout(liveTick,60000);else if(f.pending)LIVE.timer=setTimeout(liveTick,600000)}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&LIVE.at&&Date.now()-LIVE.at>60000)liveTick()});
+async function liveTick(){const m=D.meta,wk=m.this_week;if(!wk||!m.lid||OFF)return;let f;
+  try{f=await liveFeeds(m.lid,m.season,wk)}catch(e){LIVE.err=String(e);LIVE.timer=setTimeout(liveTick,120000);return}
+  let started=false;
+  for(const sid in PL){const p=PL[sid],l=f.left[p.t];if(l==null||l>=1)continue;started=true;const nl=[+(+(f.pp[sid]||0)).toFixed(2),+l.toFixed(3)];
+    if(!p.lk||p.lk[0]!==nl[0]||p.lk[1]!==nl[1]){p.lk=nl;for(const k in VC)VC[k].delete(sid)}}
+  if(!started){liveSchedule(f);return}
+  const S=D.meta.sims,pr=D.sched[wk]||[],man=LUC().managed;
+  const score=(r,s)=>man?(f.starters[r]||[]).reduce((t,x)=>t+(PL[x]?draws(x,'pr')[s*NW]:0),0):lineupAt(roster(r),s,0,'pr');
+  const livePts=r=>man?f.pts[r]:best(roster(r).filter(x=>!PL[x].slot).map(x=>[PL[x].p,+(f.pp[x]||0)]));
+  const seen=new Set();
+  for(const [r,mid] of pr){if(seen.has(mid))continue;seen.add(mid);const o=(pr.find(x=>x[1]===mid&&x[0]!==r)||[])[0];if(o==null)continue;
+    const a=new Float64Array(S),b=new Float64Array(S);let w=0,sa=0,sb=0;for(let s=0;s<S;s++){a[s]=score(r,s);b[s]=score(o,s);if(a[s]>b[s])w++;sa+=a[s];sb+=b[s]}
+    const A=TEAMS.find(t=>t.id===r),B=TEAMS.find(t=>t.id===o);
+    A.wp=w/S;B.wp=1-w/S;A.proj=Math.round(sa/S*10)/10;B.proj=Math.round(sb/S*10)/10;A.live=livePts(r);B.live=livePts(o)}
+  LIVE.at=new Date();renderHome();liveSchedule(f)}
 function renderHome(){
   const wk=D.meta.this_week,me=TEAMS.find(t=>t.id===ME),oid=oppOf(ME,wk),o=TEAMS.find(t=>t.id===oid);
   const order=[...TEAMS].sort((a,b)=>b.w-a.w||b.pf-a.pf),rank=order.findIndex(t=>t.id===ME)+1,nP=D.meta.n_playoff||6;
@@ -738,7 +768,7 @@ function renderHome(){
   // week
   if(OFF){$('#weekCard').innerHTML=`<h2>Season's over</h2><p class="answer">There are no games left this season. Standings below are final. The Draft Picks and Trades pages are the ones that matter until next season.</p>`;$('#gamesCard').hidden=true}
   else if(o){const ww=winWord(me.wp),out=roster(ME).filter(s=>PL[s].bye===wk).map(s=>PL[s].n),inj=roster(ME).filter(s=>['Out','IR','Doubtful','Sus','PUP'].includes(PL[s].inj)).map(s=>`${PL[s].n} (${PL[s].inj.toLowerCase()})`);
-    $('#weekCard').innerHTML=`<h2>Who wins this week?${me.live!=null?'<span class="live">LIVE</span>':''}</h2>
+    $('#weekCard').innerHTML=`<h2>Who wins this week?${me.live!=null?'<span class="live">LIVE</span>':''}${liveStamp()}</h2>
       <div class="vsrow"><div><div class="nm">You</div><div class="sc num">${me.proj}</div><div class="sub">${me.live!=null?`projected final · <b>${me.live.toFixed(1)}</b> scored so far`:'projected'}</div></div><div class="muted" style="padding-bottom:8px">vs</div><div style="text-align:right"><div class="nm">${esc(o.name)}</div><div class="sc num">${o.proj}</div><div class="sub">${o.live!=null?`projected final · <b>${o.live.toFixed(1)}</b> scored so far`:'projected'}</div></div></div>
       ${wpBar(me.wp,'You',o.name)}
       <p class="answer">${W(ww)} You win this one in ${chance(me.wp)}. ${me.live!=null?`Big numbers are projected final scores: points already scored plus what's still expected from players who haven't played. ${BB()?'Points so far come from each team\'s best possible lineup, which is how best ball scores (Sleeper\'s matchup screen can show only the set starters until the week ends).':'Points so far are from each team\'s starters, same as Sleeper.'} Finished games count as final; for games in progress, only the time left on the clock is still projected.`:`Big numbers are projected scores; you'll usually land between ${me.rng?me.rng[0].toFixed(0):'?'} and ${me.rng?me.rng[1].toFixed(0):'?'}.`}</p>
@@ -1519,7 +1549,7 @@ $('#askCopy2').addEventListener('click',()=>{if(!$('#askQ').value.trim()){$('#as
 const opt=f=>fetch(f,{cache:'no-cache'}).then(r=>r.ok?r.json():[]).catch(()=>[]);
 Promise.all([fetch('data.json',{cache:'no-cache'}).then(r=>r.json()),opt('ledger.json'),opt('history.json'),opt('alerts.json')]).then(([d,l,h,al])=>{
   D=d;LEDGER=l;HIST=h;ALERTS=al;PL=d.players;FUT=d.meta.fut;NW=FUT.length;OFF=NW===0;TEAMS=d.teams;PICKS=d.picks;A=d.analysis;ME=d.meta.me;
-  header();renderAdvice();renderWindow();renderPlan();renderHome();
+  header();renderAdvice();renderWindow();renderPlan();renderHome();liveTick();
   $('#partner').innerHTML=standOrder().filter(t=>t.id!==ME).map(t=>`<option value="${t.id}">${esc(t.name)} (${t.w}-${t.l})</option>`).join('');
   st.partner=+$('#partner').value;
   {const d=deadline();$('#dlBanner').innerHTML=!d?'':d.open?`${d.left<=1?'<b>This is the last week to trade.</b>':`<b>${d.left} weeks left to trade</b> (deadline is after Week ${d.dl}).`} Anyone you add now also plays for you in the playoffs.`:`<b>Trading is closed</b> until the season ends. You can still plan offseason trades here.`}
