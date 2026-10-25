@@ -4,14 +4,14 @@
 Top counted: C.J. Stroud 29.0, Bryce Young 23.8, D'Andre Swift 21.0, Roschon Johnson 13.5
 
 **Record:** 8-4, #5 of 12 · 1082.2 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 43% · title 23% (+4 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 43% · title 22% (+3 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 29% vs without 18%
-**Best trade idea:** give Jaylen Warren, C.J. Stroud for Josh Allen: title chance 23% → 24%
+**Playoff path:** most likely seed 3; title chance with a bye 30% vs without 16%
+**Best trade idea:** give Jaylen Warren, C.J. Stroud for Josh Allen: title chance 22% → 25%
 **Waivers:** Justice Hill would add 0.5 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
 
-**Week 7:** vs Lava Me Tender · projected 196.4 – 133.1 · win chance 100%
+**Week 7:** vs Lava Me Tender · projected 191.3 – 141.0 · win chance 100%
 On bye: Tre' Harris, Antonio Williams, Josh Cameron, Treylon Burks, Quentin Johnston
 Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 
