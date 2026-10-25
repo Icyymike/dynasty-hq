@@ -9,7 +9,7 @@ on:
     - cron: "52 22,23 * * 1,4"  # Monday and Thursday ~6:50pm ET: inactives for the night game
   push:                          # refresh right away whenever the app's code or settings change
     branches: [main]
-    paths: ["pipeline/**", "scripts/**", "config.json", "docs/index.html", "docs/redraft/index.html", "docs/ring/index.html", ".github/workflows/refresh.yml"]
+    paths: ["pipeline/**", "scripts/*.sh", "config.json", "docs/index.html", "docs/redraft/index.html", "docs/ring/index.html", ".github/workflows/refresh.yml"]
   workflow_dispatch:
     inputs:
       digest:
