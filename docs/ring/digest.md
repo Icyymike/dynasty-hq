@@ -4,13 +4,13 @@
 Top counted: C.J. Stroud 36.4, Isaiah Likely 30.9, Jayden Daniels 29.1, DeVonta Smith 20.7
 
 **Record:** 5-1, #3 of 12 · 1101.1 PF
-**Odds:** playoffs 100% · bye 0% · title 12%
+**Odds:** playoffs 100% · bye 0% · title 11%
 
 
-**Best trade idea:** give Hunter Henry, Mike Gesicki for Colston Loveland: title chance 12% → 15%
-**Window:** Retool: compete while getting younger. Projected rank 2026: 5, 2027: 4, 2028: 4.
+**Best trade idea:** give Hunter Henry, Mike Gesicki for Colston Loveland: title chance 11% → 14%
+**Window:** Retool: compete while getting younger. Projected rank 2026: 4, 2027: 4, 2028: 4.
 
-**Week 7:** vs SCLSU Mud Dogs · projected 175.2 – 109.1 · win chance 100%
+**Week 7:** vs SCLSU Mud Dogs · projected 174.0 – 110.9 · win chance 100%
 On bye: Jayden Daniels, Josh Cameron, Marcus Mariota, Charlie Kolar
 Injured: Pat Bryant (IR), Marcus Mariota (Out), DeVonta Smith (Out), Romeo Doubs (IR)
 
