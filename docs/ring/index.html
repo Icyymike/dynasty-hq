@@ -748,7 +748,17 @@ async function liveTick(){const m=D.meta,wk=m.this_week;if(!wk||!m.lid||OFF)retu
     const a=new Float64Array(S),b=new Float64Array(S);let w=0,sa=0,sb=0;for(let s=0;s<S;s++){a[s]=score(r,s);b[s]=score(o,s);if(a[s]>b[s])w++;sa+=a[s];sb+=b[s]}
     const A=TEAMS.find(t=>t.id===r),B=TEAMS.find(t=>t.id===o);
     A.wp=w/S;B.wp=1-w/S;A.proj=Math.round(sa/S*10)/10;B.proj=Math.round(sb/S*10)/10;A.live=livePts(r);B.live=livePts(o)}
-  LIVE.at=new Date();renderHome();liveSchedule(f)}
+  LIVE.st=f.starters;LIVE.at=new Date();renderHome();liveSchedule(f)}
+// game status of a player this week: what he has scored, and how much of his game is left
+const gstat=x=>x.lk?(x.lk[1]===0?'<span class="word w-plain">Final</span>':`<span class="live">LIVE</span> <span class="sub">${Math.round(x.lk[1]*100)}% of game left</span>`):'<span class="sub">not started</span>';
+const scored=x=>x.lk?`<b>${x.lk[0].toFixed(1)}</b>`:'<span class="muted">—</span>';
+// who is scoring for each side this week: best ball counts the best possible lineup (by projected final); managed leagues the set starters
+function lineupBox(r){const L=LUC(),ids=roster(r).filter(s=>!PL[s].slot),fin=s=>{const p=PL[s];return p.lk?p.lk[0]+(p.pr[0]||0)*p.lk[1]:(p.pr[0]||0)};
+  const cnt=L.managed?((LIVE.st&&LIVE.st[r])||bestIds(ids.map(s=>[PL[s].p,PL[s].pr[0]||0,s]))):bestIds(ids.map(s=>[PL[s].p,fin(s),s]));
+  const other=ids.filter(s=>!cnt.includes(s)&&(PL[s].lk||PL[s].pr[0]>0)).sort((a,b)=>fin(b)-fin(a));
+  const row=s=>{const x=PL[s];return `<tr><td>${posTag(x.p)} ${pl(s)}<div class="sub">${esc(x.t||'')} · ${gstat(x)}</div></td><td class="r num">${scored(x)}</td><td class="r num">${fin(s).toFixed(1)}</td></tr>`};
+  return `<div class="tbl-wrap"><table style="font-size:13px"><thead><tr><th>${L.managed?'Starters':'Counting now'}</th><th class="r">Scored</th><th class="r">Proj final</th></tr></thead><tbody>${cnt.filter(s=>PL[s]).sort((a,b)=>fin(b)-fin(a)).map(row).join('')}
+    ${other.length?`<tr class="sep"><td colspan="3">${L.managed?'Bench':'Not counting (right now)'}</td></tr>${other.map(row).join('')}`:''}</tbody></table></div>`}
 function renderHome(){
   const wk=D.meta.this_week,me=TEAMS.find(t=>t.id===ME),oid=oppOf(ME,wk),o=TEAMS.find(t=>t.id===oid);
   const order=[...TEAMS].sort((a,b)=>b.w-a.w||b.pf-a.pf),rank=order.findIndex(t=>t.id===ME)+1,nP=D.meta.n_playoff||6;
@@ -772,6 +782,8 @@ function renderHome(){
       <div class="vsrow"><div><div class="nm">You</div><div class="sc num">${me.proj}</div><div class="sub">${me.live!=null?`projected final · <b>${me.live.toFixed(1)}</b> scored so far`:'projected'}</div></div><div class="muted" style="padding-bottom:8px">vs</div><div style="text-align:right"><div class="nm">${esc(o.name)}</div><div class="sc num">${o.proj}</div><div class="sub">${o.live!=null?`projected final · <b>${o.live.toFixed(1)}</b> scored so far`:'projected'}</div></div></div>
       ${wpBar(me.wp,'You',o.name)}
       <p class="answer">${W(ww)} You win this one in ${chance(me.wp)}. ${me.live!=null?`Big numbers are projected final scores: points already scored plus what's still expected from players who haven't played. ${BB()?'Points so far come from each team\'s best possible lineup, which is how best ball scores (Sleeper\'s matchup screen can show only the set starters until the week ends).':'Points so far are from each team\'s starters, same as Sleeper.'} Finished games count as final; for games in progress, only the time left on the clock is still projected.`:`Big numbers are projected scores; you'll usually land between ${me.rng?me.rng[0].toFixed(0):'?'} and ${me.rng?me.rng[1].toFixed(0):'?'}.`}</p>
+      <details class="more"${me.live!=null?' open':''}><summary>Player by player: scored vs. projected</summary><div><div class="grid2"><div><h3 style="margin-bottom:4px">You</h3>${lineupBox(ME)}</div><div><h3 style="margin-bottom:4px">${esc(o.name)}</h3>${lineupBox(oid)}</div></div>
+        <p class="sub">${BB()?'In best ball the players who count can change until the last game ends: “Counting now” is the best lineup by projected final.':'Starters as set in Sleeper.'} Scored = real points so far; Proj final adds what's still expected for the time left in each game.</p></div></details>
       ${out.length||inj.length?`<p class="sub">${out.length?`<b>Not playing (bye):</b> ${esc(out.join(', '))}. `:''}${inj.length?`<b>Hurt:</b> ${esc(inj.join(', '))}.`:''} ${BB()?'Best ball fills your lineup with your best available players.':'Set your lineup around them in Sleeper.'}</p>`:''}`}
   else $('#weekCard').innerHTML=`<h2>Who wins this week?</h2><p class="answer">No matchup this week.</p>`;
   // playoff path

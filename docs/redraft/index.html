@@ -361,7 +361,10 @@ async function liveTick(){const m=D.meta,wk=m.cur;if(!m.lid||!FUT.length)return;
     let w=0,sa=0,sb=0;for(let s=0;s<S;s++){const x=score(r,s),y=score(o,s);if(x>y)w++;sa+=x;sb+=y}
     D.odds[r].wp=w/S;D.odds[o].wp=1-w/S;D.wk_mean[r][0]=sa/S;D.wk_mean[o][0]=sb/S;D.live[r]=f.pts[r];D.live[o]=f.pts[o];
     if(r===ME||o===ME){const mine=r===ME;D.startsit.wp_best=mine?w/S:1-w/S;D.startsit.wp_now=D.startsit.wp_best;D.startsit.proj_best=(mine?sa:sb)/S;D.startsit.opp_proj=(mine?sb:sa)/S}}
-  D.meta.started=true;LIVE.at=new Date();weekTab();liveSchedule(f)}
+  D.meta.started=true;LIVE.st=f.starters;LIVE.at=new Date();weekTab();liveSchedule(f)}
+// game status of a player this week: what he has scored, and how much of his game is left
+const gstat=x=>x.lk?(x.lk[1]===0?'<span class="word w-plain">Final</span>':`<span class="live">LIVE</span> <span class="sub">${Math.round(x.lk[1]*100)}% of game left</span>`):'<span class="sub">not started</span>';
+const scored=x=>x.lk?`<b>${x.lk[0].toFixed(1)}</b>`:'<span class="muted">—</span>';
 // ---------- THIS WEEK
 function weekTab(){const m=D.meta,ss=D.startsit,wk=m.cur,o=D.odds[ME]||{},me=TEAMS.find(t=>t.id===ME);
   let h='';
@@ -383,22 +386,25 @@ function weekTab(){const m=D.meta,ss=D.startsit,wk=m.cur,o=D.odds[ME]||{},me=TEA
   h+=todo.length?`<div class="todo"><h2>Do this</h2><ol>${todo.join('')}</ol></div>`:`<div class="card"><h2>Nothing urgent</h2><p class="sub">Your lineup is set, no pickup is worth it right now and no trade clearly helps. Check back after injury news.</p></div>`;
   // lineup
   const best=ss.best,mx=Math.max(30,...best.filter(Boolean).map(p=>(ss.rng[p]||[0,0,0])[2]));
+  const LV=!!m.started;
   const rowOf=(p,slot,cls)=>{const x=PL[p];if(!x)return `<tr class="bad"><td class="slot">${slot}</td><td colspan="5" class="hole">Empty</td></tr>`;const r=ss.rng[p];
-    return `<tr class="${cls||''}"><td class="slot">${SLOTNAME[slot]||slot}</td><td>${posTag(x.p)} ${nm(p)}${injTag(x)}${x.lk?' <span class="live">'+(x.lk[1]?'LIVE':'FINAL')+'</span>':''}<div class="sub">${esc(x.t)}${x.opp[0]?' vs '+esc(x.opp[0])+' '+mfWord(x.mf[0]):x.bye===FUT[0]?' · bye':''}</div></td><td class="r num">${fx(expK(p,0))}</td><td class="hide-sm">${rngBar(r,mx)}</td><td class="r num hide-sm sub">${r?r[0]+'–'+r[2]:''}</td></tr>`};
+    return `<tr class="${cls||''}"><td class="slot">${SLOTNAME[slot]||slot}</td><td>${posTag(x.p)} ${nm(p)}${injTag(x)}<div class="sub">${esc(x.t)}${x.opp[0]?' vs '+esc(x.opp[0])+' '+mfWord(x.mf[0]):x.bye===FUT[0]?' · bye':''}${LV?' · '+gstat(x):''}</div></td>${LV?`<td class="r num">${scored(x)}</td>`:''}<td class="r num">${fx(expK(p,0))}</td><td class="hide-sm">${rngBar(r,mx)}</td><td class="r num hide-sm sub">${r?r[0]+'–'+r[2]:''}</td></tr>`};
   const changed=new Set(best.filter(p=>p&&!now.includes(p)));
-  const benchIds=active(ME).filter(p=>!best.includes(p)).sort((a,b)=>expK(b,0)-expK(a,0));
+  // during games show the lineup actually set in Sleeper; before kickoff, the suggested one
+  const shown=LV?((LIVE.st&&LIVE.st[ME])||D.cur_starters[ME]||best).slice(0,SLOTS.length):best;
+  const benchIds=active(ME).filter(p=>!shown.includes(p)).sort((a,b)=>expK(b,0)-expK(a,0));
   const moves=(ss.moves||[]).filter(mv=>mv.inn);
-  h+=`<div class="card"><h2>Your lineup</h2><p class="answer">${moves.length?moves.map(mv=>`Start <b>${esc(PL[mv.inn].n)}</b>${mv.out?` over ${esc(PL[mv.out].n)}`:''} (${f1(mv.gain)}).`).join(' '):'Start these. It\'s the highest-projected lineup you can set.'}</p>
-    <div class="tbl-wrap"><table class="lu"><thead><tr><th>Slot</th><th>Player</th><th class="r">Proj</th><th class="hide-sm">Likely range</th><th class="r hide-sm">10–90%</th></tr></thead><tbody>
-    ${best.map((p,i)=>rowOf(p,SLOTS[i],changed.has(p)?'chg':'')).join('')}
-    <tr class="sep"><td colspan="5" style="background:var(--bg);color:var(--muted);font-size:12px;font-weight:600;text-align:center;padding:4px">Bench</td></tr>
+  h+=`<div class="card"><h2>Your lineup</h2><p class="answer">${LV?'Your lineup as set in Sleeper. <b>Scored</b> is real points so far; <b>Proj final</b> adds what\'s still expected for the time left in each game.':moves.length?moves.map(mv=>`Start <b>${esc(PL[mv.inn].n)}</b>${mv.out?` over ${esc(PL[mv.out].n)}`:''} (${f1(mv.gain)}).`).join(' '):'Start these. It\'s the highest-projected lineup you can set.'}</p>
+    <div class="tbl-wrap"><table class="lu"><thead><tr><th>Slot</th><th>Player</th>${LV?'<th class="r">Scored</th><th class="r">Proj final</th>':'<th class="r">Proj</th>'}<th class="hide-sm">Likely range</th><th class="r hide-sm">10–90%</th></tr></thead><tbody>
+    ${(LV?shown:best).map((p,i)=>rowOf(p,SLOTS[i],!LV&&changed.has(p)?'chg':'')).join('')}
+    <tr class="sep"><td colspan="${LV?6:5}" style="background:var(--bg);color:var(--muted);font-size:12px;font-weight:600;text-align:center;padding:4px">Bench</td></tr>
     ${benchIds.map(p=>rowOf(p,'BN')).join('')}</tbody></table></div>
     <p class="sub">Injury news last checked ${upd()} (the app also updates when inactives are announced, about 90 minutes before kickoff). Green rows are changes from what you have set in Sleeper. The bar shows the likely range (10th to 90th percentile) with the middle marked: a wide bar is a boom-or-bust player. Matchup words compare this week's defense with what it usually allows to that position.</p></div>`;
   if(ss.alts&&ss.alts.length){h+=`<div class="card"><h2>Close calls</h2><p class="sub">Bench players within 3 projected points of a starter. Win chances come from 600 simulated games against your opponent's lineup, so they count each player's ups and downs, not just the average.</p><div class="list">
     ${ss.alts.map(a=>{const d=(a.wp_b??0)-(a.wp_a??0),ln=s=>PL[s].n.split(' ').slice(-1)[0];return `<div class="li"><div class="main"><div>${nm(a.start)} <span class="muted">or</span> ${nm(a.alt)} <span class="sub">(${SLOTNAME[a.slot]||a.slot})</span></div><div class="why">${fx(expK(a.start,0))} vs ${fx(expK(a.alt,0))} projected · ranges ${(ss.rng[a.start]||[]).filter((_,i)=>i!==1).join('–')} vs ${(ss.rng[a.alt]||[]).filter((_,i)=>i!==1).join('–')}</div></div>
     <div class="right"><span class="num">${pct(a.wp_a)} vs ${pct(a.wp_b)}</span><span class="word ${d>=0.02?'w-good':d>-0.02?'w-plain':'w-info'}">${d>=0.02?'Lean '+esc(ln(a.alt)):d>-0.02?'Toss-up':'Keep '+esc(ln(a.start))}</span></div></div>`}).join('')}</div></div>`}
   // opponent
-  if(opp){const ol=ss.opp_lu||[];h+=`<div class="card"><h2>${esc(tname(opp))}'s lineup</h2><p class="sub">Their current lineup in Sleeper, with obvious holes (byes, players ruled out) filled from their bench.</p><div class="tbl-wrap"><table class="lu"><tbody>${ol.map((p,i)=>rowOf(p,SLOTS[i])).join('')}</tbody></table></div></div>`}
+  if(opp){const ol=LV?((LIVE.st&&LIVE.st[opp])||D.cur_starters[opp]||ss.opp_lu||[]):(ss.opp_lu||[]);h+=`<div class="card"><h2>${esc(tname(opp))}'s lineup</h2><p class="sub">Their current lineup in Sleeper, with obvious holes (byes, players ruled out) filled from their bench.</p><div class="tbl-wrap"><table class="lu"><thead><tr><th>Slot</th><th>Player</th>${LV?'<th class="r">Scored</th><th class="r">Proj final</th>':'<th class="r">Proj</th>'}<th class="hide-sm">Likely range</th><th class="r hide-sm">10–90%</th></tr></thead><tbody>${ol.map((p,i)=>rowOf(p,SLOTS[i])).join('')}</tbody></table></div></div>`}
   // league matchups
   const pr=D.sched[FUT[0]]||[],seen=new Set(),cards=[];
   pr.forEach(([r,mid])=>{if(seen.has(mid))return;seen.add(mid);const o2=pr.find(x=>x[1]===mid&&x[0]!==r);if(!o2)return;const a=r,b=o2[0],wa=D.odds[a].wp,wb=D.odds[b].wp;
