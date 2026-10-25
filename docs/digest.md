@@ -4,14 +4,14 @@
 Top counted: C.J. Stroud 29.0, Bryce Young 23.8, D'Andre Swift 21.0, Roschon Johnson 13.5
 
 **Record:** 8-4, #5 of 12 · 1082.2 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 43% · title 22% (+3 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 42% · title 22% (+3 pts this week)
 
 **Playoff path:** most likely seed 3; title chance with a bye 30% vs without 16%
-**Best trade idea:** give Jaylen Warren, C.J. Stroud for Josh Allen: title chance 22% → 25%
+**Best trade idea:** give Tre' Harris, Jordan Love for Caleb Williams: title chance 22% → 25%
 **Waivers:** Justice Hill would add 0.5 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
 
-**Week 7:** vs Lava Me Tender · projected 191.3 – 141.0 · win chance 100%
+**Week 7:** vs Lava Me Tender · projected 181.4 – 157.0 · win chance 99%
 On bye: Tre' Harris, Antonio Williams, Josh Cameron, Treylon Burks, Quentin Johnston
 Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 
@@ -33,6 +33,6 @@ Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 - Sell-high: Jalen Nailor: value 1,813 vs ~1,314 for 3.1 pts/wk of production
 - Buy-low: Mike Evans (The True Behemoth): +6.0 counted pts/wk for you, value 3,526
 - Buy-low: Brenton Strange (Straight Outta Hampton): +4.3 counted pts/wk for you, value 3,417
-- Buy-low: Ollie Gordon II (Lava Me Tender): +3.8 counted pts/wk for you, value 3,458
+- Buy-low: Ollie Gordon II (Lava Me Tender): +3.9 counted pts/wk for you, value 3,458
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
