@@ -8,10 +8,10 @@ Top counted: C.J. Stroud 36.4, Isaiah Likely 30.9, Jayden Daniels 29.1, DeVonta 
 
 
 **Best trade idea:** give Hunter Henry, DeVonta Smith for Christian McCaffrey: title chance 12% → 15%
-**Waivers:** Tyler Huntley would add 1.1 pts/wk to your lineup.
+**Waivers:** Tyler Huntley would add 1.0 pts/wk to your lineup.
 **Window:** Retool: compete while getting younger. Projected rank 2026: 4, 2027: 4, 2028: 4.
 
-**Week 7:** vs SCLSU Mud Dogs · projected 179.9 – 121.8 · win chance 94%
+**Week 7:** vs SCLSU Mud Dogs · projected 180.1 – 121.7 · win chance 94%
 On bye: Jayden Daniels, Josh Cameron, Marcus Mariota
 Injured: Pat Bryant (IR), Marcus Mariota (Out), DeVonta Smith (Out), Romeo Doubs (IR)
 
@@ -19,9 +19,6 @@ Injured: Pat Bryant (IR), Marcus Mariota (Out), DeVonta Smith (Out), Romeo Doubs
 - Lamar Jackson is now Out. Rest-of-season, he now adds 0.0 counted pts/wk to your lineup.
 - DeVonta Smith is now Out. Rest-of-season, he now adds 2.7 counted pts/wk to your lineup.
 - Tank Dell is back (active).
-
-## League trades
-- **Keep Trade Cut ** get J.J. McCarthy, Brian Thomas Jr., 2027 2nd (YinzerKing), 2028 1st (YinzerKing) (Push) ⇄ **YinzerKing** get Wan'Dale Robinson, Bryce Young, Brenton Strange (Win)
 
 ## Market
 - Sell-high: Mike Gesicki: age 31: TE values usually drop after this season
