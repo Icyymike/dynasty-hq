@@ -8,7 +8,7 @@ Top counted: C.J. Stroud 36.4, Isaiah Likely 30.9, Jayden Daniels 29.1, DeVonta 
 
 
 **Best trade idea:** give Hunter Henry, Mike Gesicki for Colston Loveland: title chance 13% → 16%
-**Window:** Retool: compete while getting younger. Projected rank 2026: 5, 2027: 4, 2028: 4.
+**Window:** Window open: contend. Projected rank 2026: 5, 2027: 4, 2028: 4.
 
 **Week 7:** vs SCLSU Mud Dogs · projected 169.2 – 106.5 · win chance 100%
 On bye: Jayden Daniels, Josh Cameron, Marcus Mariota, Charlie Kolar

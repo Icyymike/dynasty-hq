@@ -4,7 +4,7 @@
 Top counted: C.J. Stroud 29.0, Bryce Young 23.8, D'Andre Swift 21.0, Roschon Johnson 13.5
 
 **Record:** 8-4, #5 of 12 · 1082.2 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 42% · title 22% (+4 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 42% · title 22% (+5 pts this week)
 
 **Playoff path:** most likely seed 3; title chance with a bye 29% vs without 16%
 **Best trade idea:** give Jaylen Warren, C.J. Stroud for Josh Allen: title chance 22% → 24%
