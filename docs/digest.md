@@ -7,7 +7,7 @@ Top counted: C.J. Stroud 29.0, Bryce Young 23.8, D'Andre Swift 21.0, Roschon Joh
 **Odds:** playoffs 100% (+0 pts this week) · bye 43% · title 22% (+5 pts this week)
 
 **Playoff path:** most likely seed 3; title chance with a bye 29% vs without 16%
-**Best trade idea:** give Jaylen Warren, C.J. Stroud for Josh Allen: title chance 22% → 24%
+**Best trade idea:** give Tre' Harris, Jordan Love for Caleb Williams: title chance 22% → 24%
 **Waivers:** Justice Hill would add 0.5 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
 
