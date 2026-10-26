@@ -19,11 +19,12 @@ Injured: Pat Bryant (IR), Marcus Mariota (Out), DeVonta Smith (Out), Romeo Doubs
 - DeVonta Smith is now Out. Rest-of-season, he now adds 2.7 counted pts/wk to your lineup.
 - Tank Dell is back (active).
 - Cam Skattebo's value moved 3,533 → 3,991 (+13%).
+- Charlie Kolar's value moved 1,296 → 11 (-99%).
 
 ## Market
 - Sell-high: Mike Gesicki: age 31: TE values usually drop after this season
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +5.7 counted pts/wk for you, value 2,958
-- Buy-low: Mike Evans (D-Generation-XRated): +4.3 counted pts/wk for you, value 3,519
-- Buy-low: Tony Pollard (D-Generation-XRated): +3.0 counted pts/wk for you, value 2,891
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +5.7 counted pts/wk for you, value 2,901
+- Buy-low: Mike Evans (D-Generation-XRated): +4.3 counted pts/wk for you, value 3,526
+- Buy-low: Tony Pollard (D-Generation-XRated): +3.0 counted pts/wk for you, value 2,899
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
