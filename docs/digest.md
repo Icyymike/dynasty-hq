@@ -8,10 +8,10 @@ Top counted: C.J. Stroud 29.0, Bryce Young 23.8, D'Andre Swift 21.0, Roschon Joh
 
 **Playoff path:** most likely seed 3; title chance with a bye 30% vs without 16%
 **Best trade idea:** give Jaylen Warren, C.J. Stroud for Josh Allen: title chance 22% → 24%
-**Waivers:** Justice Hill would add 0.5 pts/wk to your lineup.
+**Waivers:** Justice Hill would add 0.7 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
 
-**Week 7:** vs Lava Me Tender · projected 183.1 – 153.7 · win chance 100%
+**Week 7:** vs Lava Me Tender · projected 183.1 – 153.6 · win chance 100%
 On bye: Tre' Harris, Antonio Williams, Josh Cameron, Treylon Burks, Quentin Johnston
 Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 
@@ -29,10 +29,10 @@ Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 - **The True Behemoth** get Darren Waller (Push) ⇄ **Commish in Epstein Files** get 2028 3rd (The True Behemoth) (Push)
 
 ## Market
-- Sell-high: Michael Pittman Jr.: value 2,389 vs ~1,729 for 4.9 pts/wk of production
-- Sell-high: Jalen Nailor: value 1,813 vs ~1,314 for 3.1 pts/wk of production
-- Buy-low: Mike Evans (The True Behemoth): +6.0 counted pts/wk for you, value 3,526
-- Buy-low: Brenton Strange (Straight Outta Hampton): +4.3 counted pts/wk for you, value 3,417
-- Buy-low: Kirk Cousins (Lava Me Tender): +3.7 counted pts/wk for you, value 3,264
+- Sell-high: Michael Pittman Jr.: value 2,344 vs ~1,711 for 4.9 pts/wk of production
+- Sell-high: Jalen Nailor: value 1,696 vs ~1,290 for 3.1 pts/wk of production
+- Buy-low: Mike Evans (The True Behemoth): +6.2 counted pts/wk for you, value 3,526
+- Buy-low: Brenton Strange (Straight Outta Hampton): +4.5 counted pts/wk for you, value 3,394
+- Buy-low: Kirk Cousins (Lava Me Tender): +4.0 counted pts/wk for you, value 3,280
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
