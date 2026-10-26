@@ -23,8 +23,8 @@ Injured: Pat Bryant (IR), Marcus Mariota (Out), DeVonta Smith (Out), Romeo Doubs
 
 ## Market
 - Sell-high: Mike Gesicki: age 31: TE values usually drop after this season
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +5.7 counted pts/wk for you, value 2,901
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +5.7 counted pts/wk for you, value 2,899
 - Buy-low: Mike Evans (D-Generation-XRated): +4.3 counted pts/wk for you, value 3,526
-- Buy-low: Tony Pollard (D-Generation-XRated): +3.0 counted pts/wk for you, value 2,899
+- Buy-low: Tony Pollard (D-Generation-XRated): +3.0 counted pts/wk for you, value 2,901
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
