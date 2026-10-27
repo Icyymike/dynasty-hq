@@ -142,8 +142,8 @@ document.getElementById('lgSwitch').innerHTML=L.map(function(x){return '<a href=
     <div class="card" id="weekCard"></div>
     <div class="card" id="seasonCard"></div>
   </div>
-  <div class="card lineup" id="lineupCard" hidden></div>
-  <div class="card advice" id="advice"></div>
+  <div class="card lineup" id="lineupCard" data-fold-default="0" hidden></div>
+  <div class="card advice" id="advice" data-fold-default="0"></div>
   <div class="card" id="windowCard"></div>
   <div class="card" id="planCard"></div>
 </section>
@@ -1351,5 +1351,6 @@ Promise.all([fetch('data.json',{cache:'no-cache'}).then(r=>r.json()),opt('ledger
 }).catch(err=>{$('#seasonCard').innerHTML='<p class="answer">Couldn\'t load the data. Reload the page; if it keeps failing, the data update on GitHub may have failed.</p>';console.error(err)});
 })();
 </script>
+<script>/*UX*/</script>
 </body>
 </html>

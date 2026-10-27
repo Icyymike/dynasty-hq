@@ -105,7 +105,7 @@ function render(S){let h='';const fav=S.filter(s=>s.wp!=null&&s.wp>=0.5).length,
   h+=todo.length?`<div class="todo"><h2>Do this</h2><ol>${todo.join('')}</ol></div>`:'';
   // league cards
   h+=`<div class="lg-grid">${S.map(s=>{const live=s.live!=null;const word=s.wp>=0.65?['w-good','Favored']:s.wp>=0.5?['w-info','Slight edge']:s.wp>=0.35?['w-mid','Underdog']:['w-bad','Big underdog'];
-    return `<div class="card lg"><div class="lg-h"><h2 style="font-size:19px">${esc(s.L.label)}</h2><a href="${s.L.url}">Open →</a></div>
+    return `<div class="card lg nofold"><div class="lg-h"><h2 style="font-size:19px">${esc(s.L.label)}</h2><a href="${s.L.url}">Open →</a></div>
     <div class="row"><span class="word ${word[0]}">${word[1]}</span>${live?'<span class="live">LIVE</span>':''}<span class="sub">${s.w}-${s.l}</span></div>
     <div class="vsrow"><div><div class="nm">${esc(s.name)}</div><div class="sc num">${fx(s.proj)}</div><div class="sub">${live?`<b>${fx(s.live)}</b> so far`:'projected'}</div></div><div class="muted" style="padding-bottom:6px">vs</div>
     <div style="text-align:right"><div class="nm">${esc(s.oname||'—')}</div><div class="sc num">${fx(s.oproj)}</div><div class="sub">${live?`<b>${fx(s.olive)}</b> so far`:'projected'}</div></div></div>
@@ -121,7 +121,7 @@ function render(S){let h='';const fav=S.filter(s=>s.wp!=null&&s.wp>=0.5).length,
      <div>${o.ls.map(l=>`<span class="chip-l${l.role.st?' st':''}">${esc(l.s.L.short)}: ${esc(l.role.txt)}</span>`).join('')}</div></div>
      <div class="right"><span class="word ${SEV[x.inj]>=4?'w-bad':SEV[x.inj]===3?'w-bad':'w-mid'}">${esc(x.inj)}</span></div></div>`};
   const longT=r=>['IR','PUP','Sus'].includes(r[1].x.inj),now=rows.filter(r=>!longT(r)),lt=rows.filter(longT);
-  h+=`<div class="card"><h2>Injury report for your players</h2><p class="sub">This week's injury questions on any of your teams, worst first. Green-outlined tags mean he matters to that lineup.</p><div class="list">
+  h+=`<div class="card" data-fold-default="0"><h2>Injury report for your players</h2><p class="sub">This week's injury questions on any of your teams, worst first. Green-outlined tags mean he matters to that lineup.</p><div class="list">
    ${now.map(row).join('')||'<p class="sub">No game-week injury questions on your rosters right now.</p>'}</div>
    ${lt.length?`<details class="more"><summary>Long-term: ${lt.length} player${lt.length>1?'s':''} on IR or suspended</summary><div class="list">${lt.map(row).join('')}</div></details>`:''}</div>`;
   h+=`<div class="card" id="newsCard"><h2>News about your players</h2><p class="sub">Loading the latest from ESPN…</p></div>`;
@@ -149,5 +149,6 @@ async function loadTrending(S){const el=$('#trendCard');
   catch(e){el.innerHTML=`<h2>Hot pickups you can get</h2><p class="sub">Couldn't load Sleeper's trending list right now.</p>`}}
 load();
 </script>
+<script>/*UX*/</script>
 </body>
 </html>

@@ -208,3 +208,39 @@ dialog{border-radius:var(--r-lg);padding:20px}
 a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .scoreboard .tiles{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
 .scoreboard .tile .t-big{font-size:28px}
+
+/* ---------- folding cards: question + answer when closed ---------- */
+.fold-head{cursor:pointer;-webkit-tap-highlight-color:transparent}
+h2.fold-head,h3.fold-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.fold-head:has(> .fold-btn){position:relative}
+.fold-btn{flex:none;width:30px;height:30px;border-radius:99px;border:1px solid var(--line);background:var(--bg);cursor:pointer;display:inline-grid;place-items:center;padding:0;margin-left:auto;color:var(--muted)}
+.fold-btn::before{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .2s}
+.fold-btn[aria-expanded="false"]::before{transform:translateY(1px) rotate(-45deg)}
+.fold-btn:hover{color:var(--ink);border-color:var(--line2)}
+.fold-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.card.folded{gap:6px;padding-top:14px;padding-bottom:14px}
+.card.folded > *:not(.fold-head):not(.answer){display:none!important}
+.card.folded > .answer ~ .answer{display:none!important}
+.card.folded > .answer{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:14.5px;color:var(--muted)}
+.card.folded > .answer b{color:var(--ink)}
+.card.folded > .fold-head .fold-btn{background:var(--panel)}
+.card.folded .fold-head > :not(h2):not(h3):not(.fold-btn){display:none}
+@media (prefers-reduced-motion:reduce){.fold-btn::before{transition:none}}
+/* long lists and tables: first rows, then "Show all" */
+.list.capped > :nth-child(n+6){display:none!important}
+table.capped tbody tr:nth-child(n+13){display:none}
+.more-btn{align-self:flex-start;font:inherit;font-size:13.5px;font-weight:650;color:var(--accent);background:transparent;border:1px solid var(--line2);border-radius:99px;padding:6px 14px;margin-top:6px;cursor:pointer}
+.more-btn:hover{border-color:var(--accent)}
+/* header: title scrolls away, tabs stay */
+header.board{transition:none}
+
+@media (max-width:560px){
+  .li{grid-template-columns:minmax(0,1fr)!important;gap:6px}
+  .li .right{flex-direction:row!important;align-items:center!important;justify-content:flex-start;flex-wrap:wrap;text-align:left!important;gap:8px}
+}
+
+p.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer;position:relative}
+p.clamp.open{display:block;-webkit-line-clamp:unset}
+p.clamp:not(.open)::after{content:"more";position:absolute;right:0;bottom:0;padding-left:28px;color:var(--accent);font-weight:650;background:linear-gradient(90deg,transparent,var(--panel) 26px)}
+p.clamp:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+@media (max-width:640px){.brand h1 span{display:none}.li .right .btn{padding:6px 12px;font-size:13px}}

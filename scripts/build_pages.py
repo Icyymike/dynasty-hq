@@ -2,9 +2,9 @@
 import os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 W = lambda f: open(os.path.join(ROOT, "web", f)).read()
-css, eng, theme = W("style.css"), W("engine.js"), W("theme.css")
+css, eng, theme, ux = W("style.css"), W("engine.js"), W("theme.css"), W("ux.js")
 def out(path, s):
-    s = s.replace("/*THEME*/", theme)
+    s = s.replace("/*THEME*/", theme).replace("/*UX*/", ux)
     p = os.path.join(ROOT, "docs", path); os.makedirs(os.path.dirname(p), exist_ok=True); open(p, "w").write(s); print("wrote", path, len(s))
 dyn = W("dynasty.html").replace("/*BASECSS*/", css).replace("/*ENGINE*/", eng)
 out("index.html", dyn)

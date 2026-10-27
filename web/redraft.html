@@ -246,7 +246,7 @@ function weekTab(){const m=D.meta,ss=D.startsit,wk=m.cur,o=D.odds[ME]||{},me=TEA
     <tr class="sep"><td colspan="${LV?6:5}" style="background:var(--bg);color:var(--muted);font-size:12px;font-weight:600;text-align:center;padding:4px">Bench</td></tr>
     ${benchIds.map(p=>rowOf(p,'BN')).join('')}</tbody></table></div>
     <p class="sub">Injury news last checked ${upd()} (the app also updates when inactives are announced, about 90 minutes before kickoff). Green rows are changes from what you have set in Sleeper. The bar shows the likely range (10th to 90th percentile) with the middle marked: a wide bar is a boom-or-bust player. Matchup words compare this week's defense with what it usually allows to that position.</p></div>`;
-  if(ss.alts&&ss.alts.length){h+=`<div class="card"><h2>Close calls</h2><p class="sub">Bench players within 3 projected points of a starter. Win chances come from 600 simulated games against your opponent's lineup, so they count each player's ups and downs, not just the average.</p><div class="list">
+  if(ss.alts&&ss.alts.length){h+=`<div class="card" data-fold-default="0"><h2>Close calls</h2><p class="sub">Bench players within 3 projected points of a starter. Win chances come from 600 simulated games against your opponent's lineup, so they count each player's ups and downs, not just the average.</p><div class="list">
     ${ss.alts.map(a=>{const d=(a.wp_b??0)-(a.wp_a??0),ln=s=>PL[s].n.split(' ').slice(-1)[0];return `<div class="li"><div class="main"><div>${nm(a.start)} <span class="muted">or</span> ${nm(a.alt)} <span class="sub">(${SLOTNAME[a.slot]||a.slot})</span></div><div class="why">${fx(expK(a.start,0))} vs ${fx(expK(a.alt,0))} projected · ranges ${(ss.rng[a.start]||[]).filter((_,i)=>i!==1).join('–')} vs ${(ss.rng[a.alt]||[]).filter((_,i)=>i!==1).join('–')}</div></div>
     <div class="right"><span class="num">${pct(a.wp_a)} vs ${pct(a.wp_b)}</span><span class="word ${d>=0.02?'w-good':d>-0.02?'w-plain':'w-info'}">${d>=0.02?'Lean '+esc(ln(a.alt)):d>-0.02?'Toss-up':'Keep '+esc(ln(a.start))}</span></div></div>`}).join('')}</div></div>`}
   // opponent
@@ -446,5 +446,6 @@ fetch('data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{D=d;PL=d.player
   const t0=(location.hash||'').slice(1)||store.get('rd_tab')||'week';showTab(['week','waivers','trades','players','league'].includes(t0)?t0:'week')})
  .catch(e=>{$('#t-week').innerHTML=`<div class="card"><h2>Couldn't load the data</h2><p class="sub">${esc(e.message)}</p></div>`});
 </script>
+<script>/*UX*/</script>
 </body>
 </html>
