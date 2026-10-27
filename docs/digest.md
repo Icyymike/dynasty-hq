@@ -1,13 +1,13 @@
 # Gibb Me My Trophy · Week 8 briefing
 
-**Week 7:** 114.5 vs Lava Me Tender 70.1 (W/W, median 111.8)
+**Week 7:** 183.1 vs Lava Me Tender 159.4 (W/W, median 160.2)
 Top counted: Malik Willis 30.0, Jordan Love 21.0, Amon-Ra St. Brown 19.7, Cam Skattebo 18.6
 
-**Record:** 10-4, #4 of 12 · 1196.7 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 46% · title 23% (+3 pts this week)
+**Record:** 10-4, #4 of 12 · 1265.3 PF
+**Odds:** playoffs 100% (+0 pts this week) · bye 38% · title 22% (+2 pts this week)
 
-**Playoff path:** most likely seed 2; title chance with a bye 30% vs without 18%
-**Best trade idea:** give Tre' Harris, Malik Willis for Parker Washington: title chance 23% → 26%
+**Playoff path:** most likely seed 3; title chance with a bye 30% vs without 17%
+**Best trade idea:** give Tre' Harris, Malik Willis for Parker Washington: title chance 22% → 26%
 **Waivers:** Justice Hill would add 0.6 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
 
