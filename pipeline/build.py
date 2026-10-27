@@ -945,9 +945,9 @@ def main():
     K_GRID = [1.0, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0]
     k_err = {k: round(st.median(abs(math.log(pkg(a_, k) / pkg(b_, k))) for a_, b_ in tr_fit), 3) for k in K_GRID} if tr_fit else {}
     PRIOR_K = 2.0   # from both dynasty leagues' 2026 trades pooled (k = 2 fit best, 31 trades)
-    if len(tr_fit) >= 25:
+    if len(tr_fit) >= 15:   # enough of this league's own trades: use its rule when it clearly fits better than the prior
         best_k = min(K_GRID, key=lambda k: k_err[k])
-        VAL_K = best_k if k_err[best_k] < k_err[PRIOR_K] - 0.01 else PRIOR_K
+        VAL_K = best_k if k_err[best_k] < k_err[PRIOR_K] - (0.01 if len(tr_fit) >= 30 else 0.02) else PRIOR_K
     else:
         VAL_K = PRIOR_K
     # does the TE premium make this league's real trades look more even? (trades with a TE in them only)
