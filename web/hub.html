@@ -6,7 +6,7 @@
 <title>My Leagues</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
 <style>
 /*BASECSS*/
 .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
@@ -48,13 +48,15 @@ details.more{border-top:1px solid var(--line);padding-top:10px}details.more>summ
 .footer{font-size:12px;color:var(--muted);padding:24px 0 8px}
 @media (max-width:560px){.li{grid-template-columns:minmax(0,1fr)}.li .right{align-items:flex-start;text-align:left}.vsrow .sc{font-size:28px}}
 .wpbar{cursor:help}.wpcap{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--muted);margin-top:3px}.wpcap b{color:var(--ink);font-weight:600}
+
+/*THEME*/
 </style>
 </head>
 <body>
 <header class="board"><div class="board-in">
-  <div class="brand"><h1>My <span>Leagues</span></h1>
+  <div class="brand"><h1>My leagues</h1>
     <div class="row" style="gap:8px"><div class="chips" id="chips"></div>
-    <nav class="switch" aria-label="Switch league" id="lgSwitch"></nav><script>(function(){var L=[["Home","hub/"],["512 BB",""],["Ring","ring/"],["Redraft","redraft/"]],p=location.pathname,m=p.match(/^(.*?\/)(ring|redraft|hub)\/(index\.html)?$/),root=m?m[1]:p.replace(/index\.html$/,''),cur=m?m[2]+'/':'';
+    <nav class="switch" aria-label="Switch league" id="lgSwitch"></nav><script>(function(){var L=[["Home","hub/"],["512",""],["Ring","ring/"],["Redraft","redraft/"]],p=location.pathname,m=p.match(/^(.*?\/)(ring|redraft|hub)\/(index\.html)?$/),root=m?m[1]:p.replace(/index\.html$/,''),cur=m?m[2]+'/':'';
 document.getElementById('lgSwitch').innerHTML=L.map(function(x){return '<a href="'+root+x[1]+'"'+(x[1]===cur?' aria-current="page"':'')+'>'+x[0]+'</a>'}).join('')})()</script></div></div>
   <div style="height:10px"></div>
 </div></header>
@@ -73,15 +75,15 @@ const LEAGUES=[{key:'512',label:'512 Best Ball',short:'512',url:'../',data:'../d
 const SEV={Out:4,IR:4,PUP:4,Sus:4,Doubtful:3,Questionable:2};
 
 // the blue bar in matchups: your share = your win chance (hover or read the caption under it)
-const wpBar=(p,a,b,thin)=>{p=Math.max(0,Math.min(1,p||0));const tip=`Win chance: ${a} ${pct(p)}, ${b} ${pct(1-p)}. The blue part is ${a==='You'?'your':a+'\'s'} share, from 600 simulated games.`;
+const wpBar=(p,a,b,thin)=>{p=Math.max(0,Math.min(1,p||0));const tip=`Win chance: ${a} ${pct(p)}, ${b} ${pct(1-p)}. The green part of the field (where the ball sits) is ${a==='You'?'your':a+'\'s'} share, from 600 simulated games.`;
   return `<div class="wpbar${thin?' thin':''}" role="img" title="${esc(tip)}" aria-label="${esc(tip)}"><i style="width:${Math.round(p*100)}%"></i></div>${thin?'':`<div class="wpcap"><span><b>${pct(p)}</b> ${esc(a)} win</span><span>${esc(b)} <b>${pct(1-p)}</b></span></div>`}`};
 // one common shape for every league
 function summarize(L,d){const m=d.meta,me=m.me,P=d.players,tn=r=>(d.teams.find(t=>t.id===r)||{}).name||'Team '+r;
   const wk=m.this_week||m.cur,pr=(d.sched||{})[wk]||[],mid=(pr.find(x=>x[0]===me)||[])[1],opp=(pr.find(x=>x[1]===mid&&x[0]!==me)||[])[0];
   const mine=Object.keys(P).filter(s=>P[s].r===me&&!P[s].gone);let out;
   if(L.kind==='dyn'){const t=d.teams.find(x=>x.id===me),o=d.teams.find(x=>x.id===opp)||{};
-    out={wk,w:t.w,l:t.l,name:t.name,odds:t.odds,proj:t.proj,live:t.live,wp:t.wp,oname:o.name,oproj:o.proj,olive:o.live,
-      moves:(d.advice&&d.advice.moves||[]).map(x=>x.text).filter(Boolean),headline:d.advice&&d.advice.headline,watch:(d.advice&&d.advice.watch||[]).map(x=>typeof x==='string'?x:x.text||''),
+    out={wk,w:t.w,l:t.l,name:t.name,odds:t.odds,proj:t.proj,live:t.live,wp:t.wp,oname:o.name,oproj:o.proj,olive:o.live,managed:!!(m.lu&&m.lu.managed),
+      moves:(m.actions||[]).filter(x=>/^Set your lineup/.test(x)).concat((d.advice&&d.advice.moves||[]).map(x=>x.text).filter(Boolean)),headline:d.advice&&d.advice.headline,watch:(d.advice&&d.advice.watch||[]).map(x=>typeof x==='string'?x:x.text||''),
       role:s=>{const p=P[s];if(p.slot)return {txt:p.slot==='taxi'?'taxi':'IR',st:false};const imp=p.imp||0;return {txt:imp>=0.5?`${imp.toFixed(1)} pts/wk to your lineup`:'depth',st:imp>=1}},generated:m.generated}}
   else{const t=d.teams.find(x=>x.id===me),od=d.odds[me]||{},ss=d.startsit||{},best=new Set((ss.best||[]).filter(Boolean));
     out={wk,w:t.w,l:t.l,name:t.name,odds:{playoffs:od.playoffs,title:od.title},proj:(d.wk_mean[me]||[])[0],live:m.started?d.live[me]:null,wp:ss.wp_best??od.wp,
@@ -95,11 +97,11 @@ async function load(){const got=await Promise.all(LEAGUES.map(L=>fetch(L.data,{c
 
 function render(S){let h='';const fav=S.filter(s=>s.wp!=null&&s.wp>=0.5).length,wk=S[0]?S[0].wk:'';
   $('#chips').innerHTML=`<span class="chip">Week <b>${wk}</b></span>${S.map(s=>`<span class="chip">${esc(s.L.short)} <b>${s.w}-${s.l}</b></span>`).join('')}`;
-  h+=`<div class="card"><h2>Week ${wk}: favored in ${fav} of ${S.length}</h2><p class="answer">${S.map(s=>`<b>${esc(s.L.label)}</b> ${pct(s.wp)} to win`).join(' · ')}.</p></div>`;
+  h+=`<div class="hub-hero"><h2>Week ${wk}</h2><p>${fav===S.length?`You're favored in all ${S.length} matchups.`:fav===0?`You're the underdog in all ${S.length} matchups.`:`You're favored in ${fav} of ${S.length} matchups.`}</p></div>`;
   // to-do across leagues
   const todo=[];S.forEach(s=>{s.moves.slice(0,2).forEach(t=>todo.push(`<li><span class="chip-l">${esc(s.L.short)}</span> ${esc(t)}</li>`))});
   const injStart=[];S.forEach(s=>s.mine.forEach(p=>{const x=s.P[p];if(SEV[x.inj]>=2&&s.role(p).st)injStart.push({s,p,x})}));
-  injStart.filter(o=>SEV[o.x.inj]>=3).forEach(o=>todo.push(`<li><span class="chip-l">${esc(o.s.L.short)}</span> <b>${esc(o.x.n)}</b> is ${esc(o.x.inj.toLowerCase())}: ${o.s.L.kind==='red'?'swap him out of your lineup':'best ball will skip him, but your depth matters this week'}.</li>`));
+  injStart.filter(o=>SEV[o.x.inj]>=3).forEach(o=>todo.push(`<li><span class="chip-l">${esc(o.s.L.short)}</span> <b>${esc(o.x.n)}</b> is ${esc(o.x.inj.toLowerCase())}: ${o.s.L.kind==='red'||o.s.managed?'swap him out of your lineup':'best ball skips him, but your depth matters this week'}.</li>`));
   h+=todo.length?`<div class="todo"><h2>Do this</h2><ol>${todo.join('')}</ol></div>`:'';
   // league cards
   h+=`<div class="lg-grid">${S.map(s=>{const live=s.live!=null;const word=s.wp>=0.65?['w-good','Favored']:s.wp>=0.5?['w-info','Slight edge']:s.wp>=0.35?['w-mid','Underdog']:['w-bad','Big underdog'];
@@ -119,7 +121,7 @@ function render(S){let h='';const fav=S.filter(s=>s.wp!=null&&s.wp>=0.5).length,
      <div>${o.ls.map(l=>`<span class="chip-l${l.role.st?' st':''}">${esc(l.s.L.short)}: ${esc(l.role.txt)}</span>`).join('')}</div></div>
      <div class="right"><span class="word ${SEV[x.inj]>=4?'w-bad':SEV[x.inj]===3?'w-bad':'w-mid'}">${esc(x.inj)}</span></div></div>`};
   const longT=r=>['IR','PUP','Sus'].includes(r[1].x.inj),now=rows.filter(r=>!longT(r)),lt=rows.filter(longT);
-  h+=`<div class="card"><h2>Injury report for your players</h2><p class="sub">This week's injury questions on any of your teams, worst first. Blue tags mean he matters to that lineup.</p><div class="list">
+  h+=`<div class="card"><h2>Injury report for your players</h2><p class="sub">This week's injury questions on any of your teams, worst first. Green-outlined tags mean he matters to that lineup.</p><div class="list">
    ${now.map(row).join('')||'<p class="sub">No game-week injury questions on your rosters right now.</p>'}</div>
    ${lt.length?`<details class="more"><summary>Long-term: ${lt.length} player${lt.length>1?'s':''} on IR or suspended</summary><div class="list">${lt.map(row).join('')}</div></details>`:''}</div>`;
   h+=`<div class="card" id="newsCard"><h2>News about your players</h2><p class="sub">Loading the latest from ESPN…</p></div>`;

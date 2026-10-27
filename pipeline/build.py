@@ -33,8 +33,11 @@ def _fixture_name(url):
     return re.sub(r"[^A-Za-z0-9]+", "_", url.split("://", 1)[1])[:180] + ".json"
 
 
-def get(url, cache_hours=None, required=True, headers=None):
-    """GET JSON. Optional on-disk cache (hours). In fixture mode reads saved responses."""
+def get(url, cache_hours=None, required=True, headers=None, raw=False):
+    """GET JSON (raw=True: text). Optional on-disk cache (hours). In fixture mode reads saved responses."""
+    if raw:
+        d_ = get(url, cache_hours, required, dict(headers or {}, **{"X-Raw": "1"}))
+        return d_.get("_raw") if isinstance(d_, dict) else None
     if FIX:
         p = os.path.join(FIX, _fixture_name(url))
         if os.path.exists(p):
@@ -53,7 +56,8 @@ def get(url, cache_hours=None, required=True, headers=None):
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "dynasty-hq/1.0", **(headers or {})})
             with urllib.request.urlopen(req, timeout=60) as r:
-                data = json.loads(r.read().decode())
+                body = r.read().decode()
+                data = {"_raw": body} if (headers or {}).get("X-Raw") else json.loads(body)
             if cp:
                 json.dump(data, open(cp, "w"))
             if REC:
@@ -695,7 +699,7 @@ def main():
                 tt_ = tm_tot.setdefault(tk_, [0.0, 0.0]); tt_[0] += g_("rec_tgt"); tt_[1] += g_("rush_att")
 
     # ---------- Sleeper projections (rescored), past weeks for backtest + future weeks
-    proj = {}
+    proj, proj_rec = {}, {}
     for wk in range(1, last_week + 1):
         data = get(f"{API}/projections/nfl/regular/{season}/{wk}", cache_hours=(24 * 365 if wk <= done else 0.3 if wk == done + 1 else 3), required=False) or {}
         for pid, s in data.items():
@@ -707,6 +711,8 @@ def main():
             v = score(s, pos)
             if v > 0:
                 proj.setdefault(pid, {})[wk] = v
+                if pos == "TE" and wk > done:
+                    proj_rec.setdefault(pid, []).append(float(s.get("rec") or 0))
 
     # ---------- more inputs: ESPN's projections and betting lines, kept only if they make this season's misses smaller
     import sources as SRC
@@ -755,50 +761,62 @@ def main():
             fc_picks[key] = fc_tier[key + ("Mid",)]
         else:
             fc_picks[key] = sum(sum(v) for v in d_.values()) / sum(len(v) for v in d_.values())
-    ktc_path = os.path.join(ROOT, "pipeline", "ktc_snapshot.json")
-    ktc = json.load(open(ktc_path)) if os.path.exists(ktc_path) else {"date": None, "players": {}, "picks": {}}
-    # ---------- one value scale for players AND picks.
-    # FantasyCalc (built from real trades, updated daily, set to 12-team superflex 0.5 PPR) decides the ORDER and
-    # the gaps between everything, picks included. Its numbers are then laid onto the KeepTradeCut superflex
-    # TE-premium scale by rank: the Nth most valuable asset on FantasyCalc gets the KTC value of the Nth most
-    # valuable player in the KTC snapshot. One curve for everyone keeps players and picks on the same footing.
-    # A per-position factor from the snapshot then adds back what FantasyCalc doesn't price, mainly TE premium.
-    KP = ktc.get("players") or {}
-    both = [(fc_vals[p_], KP[p_], (players_db.get(p_) or {}).get("position")) for p_ in KP if fc_vals.get(p_, 0) > 0 and KP[p_] > 0]
-    def make_curve(prs):
-        xf = sorted(x for x, _ in prs); xk = sorted(y for _, y in prs)
-        def f_(v):
-            if not xf or v <= 0:
-                return None
-            if v <= xf[0]:
-                return xk[0] * v / xf[0]
-            if v >= xf[-1]:
-                return xk[-1]
-            i = bisect.bisect_left(xf, v)
-            lo, hi = xf[i - 1], xf[i]
-            t_ = (v - lo) / (hi - lo) if hi > lo else 0.0
-            return xk[i - 1] + t_ * (xk[i] - xk[i - 1])
-        return f_
-    nq = len(both)
-    conv_all = make_curve([(x[0], x[1]) for x in both]) if nq >= 30 else (lambda v: None)
-    def conv(f):  # for picks and anything without a position: the all-players curve
-        return conv_all(f) if f else None
-    # players: one curve per position, so each position keeps KTC's own shape (TE premium, QB premium in superflex)
-    cal = {}
-    for ps in POS:
-        prs = [(x[0], x[1]) for x in both if x[2] == ps]
-        if len(prs) >= 20:
-            cal[ps] = (make_curve(prs), len(prs))
+    # ---------- one value scale for players AND picks: FantasyCalc, set to this league's format (teams, superflex, PPR).
+    # It is built from real trades and updated daily. KeepTradeCut is not used: its terms forbid scraping or reusing its values.
+    # FantasyCalc has no TE-premium setting, so TEs get a premium computed from this league's own scoring: how much the
+    # per-catch bonus raises a TE's points above a replacement TE, softened (square root) because values don't move
+    # one-for-one with points. Checked against the trades completed in this league (see "values" in the data file).
+    te_bonus = float(sc_.get("bonus_rec_te") or 0)
+    te_mult = {}
+    if te_bonus > 0:
+        tes = []
+        for pid_, d_ in proj.items():
+            if (players_db.get(pid_) or {}).get("position") != "TE":
+                continue
+            fw = [v for w, v in d_.items() if w > done]
+            if len(fw) >= 3 and pid_ in proj_rec:
+                ppg_ = st.mean(fw); rec_ = st.mean(proj_rec[pid_])
+                if rec_ > 0:
+                    tes.append((pid_, ppg_, ppg_ - te_bonus * rec_))
+        if len(tes) >= 20:
+            k_ = min(len(tes) - 1, 12 * max(1, LU_N.get("TE", 1)) + 6)
+            r_tep = sorted((x[1] for x in tes), reverse=True)[k_]; r_base = sorted((x[2] for x in tes), reverse=True)[k_]
+            for pid_, a_, b_ in tes:
+                if b_ - r_base > 0.5:
+                    te_mult[pid_] = round(min(1.35, max(1.0, math.sqrt((a_ - r_tep) / (b_ - r_base)))), 3)
+            avg_ = st.mean(te_mult.values()) if te_mult else 1.0
+            te_default = round(1 + (avg_ - 1) / 2, 3)   # TEs without a useful projection (rookies, stashes): half the typical premium
+        else:
+            te_default = 1.0
+    else:
+        te_default = 1.0
     def unified(pid, f=None, pos=None):
         f = fc_vals.get(pid) if f is None else f
         pos = pos or (players_db.get(pid) or {}).get("position")
-        c_ = (cal[pos][0](f) if pos in cal else conv(f)) if f else None
-        if c_ is not None:
-            return int(round(min(9999, c_)))
-        return KP.get(pid) or 0
-    val_src = dict(live=nq >= 30, snapshot=ktc.get("date"), fitted={ps: cal[ps][1] for ps in cal}, matched=nq,
-                   label=("FantasyCalc, updated daily, laid onto the KeepTradeCut superflex TE-premium scale" if nq >= 30
-                          else f"KeepTradeCut snapshot from {ktc.get('date')} (live values unavailable this run)"))
+        if not f:
+            return 0
+        m_ = (te_mult.get(pid, te_default) if pos == "TE" else 1.0)
+        return int(round(f * m_))
+    def conv(f):
+        return f or None
+    ktc = {"date": None, "players": {}, "picks": {}}
+    val_src = dict(live=len(fc_vals) >= 100, matched=len(fc_vals), te_bonus=te_bonus,
+                   te_premium=dict(n=len(te_mult), default=te_default, top={(players_db.get(p_) or {}).get("full_name", p_): m_ for p_, m_ in sorted(te_mult.items(), key=lambda x: -fc_vals.get(x[0], 0))[:6]}),
+                   label=f"FantasyCalc (real trades, updated daily, {nT_ if (nT_ := len(rosters)) else 12}-team {'superflex' if LU_SF else '1QB'}, {sc_.get('rec', 0):g} PPR)"
+                         + (f" + TE premium from this league's +{te_bonus:g}/catch scoring" if te_mult else ""))
+    print(f"values: {val_src['label']}; TE premium {val_src['te_premium']}")
+    # KeepTradeCut player ids (from DynastyProcess's open player-id map), only to open KTC's own calculator with a trade filled in
+    ktc_id = {}
+    try:
+        ids_csv = get("https://raw.githubusercontent.com/dynastyprocess/data/master/files/db_playerids.csv", cache_hours=24 * 7, required=False, raw=True)
+        if ids_csv:
+            import csv, io
+            for r_ in csv.DictReader(io.StringIO(ids_csv)):
+                if r_.get("sleeper_id") not in (None, "", "NA") and r_.get("ktc_id") not in (None, "", "NA"):
+                    ktc_id[str(r_["sleeper_id"])] = str(r_["ktc_id"])
+    except Exception as e:  # noqa
+        print(f"WARN KTC id map unavailable: {e}")
+    print(f"KTC ids: {len(ktc_id)}")
 
     # ---------- matchups (past scores, future pairings, weekly rosters)
     weeks, sched, my_weekly, live, live_pp = {}, {}, {}, {}, {}
@@ -905,6 +923,50 @@ def main():
                 ts = t.get("status_updated") or t.get("created") or 0
                 trades.append(dict(id=t.get("transaction_id"), season=yr, leg=max(rd, int(t.get("leg") or rd)), ts=ts, sides=list(sides.values())))
     trades.sort(key=lambda x: -x["ts"])
+    # ---------- how this league adds up a package: "2-for-1" premium learned from the trades managers here actually made.
+    # A side is worth (sum of value^k)^(1/k): k = 1 is a plain sum; a bigger k means one star beats several lesser pieces.
+    # k is the one that makes this season's completed trades look most even at today's values (assets under 300 ignored).
+    def pick_now(pk):
+        y_, rd_ = pk[0], pk[1]
+        y_ = y_ if y_ > season else season + 1
+        return fc_picks.get((y_, rd_)) or fc_picks.get((y_ - 1, rd_), 0) or {1: 5000, 2: 3200, 3: 2300, 4: 1600}.get(rd_, 800)
+    def side_vals(sd):
+        return [unified(x) for x in sd["got"]] + [pick_now(x) for x in sd["pin"]]
+    def pkg(vs, k):
+        vs = [v for v in vs if v > 300]
+        return sum(v ** k for v in vs) ** (1 / k) if vs else 0.0
+    tr_fit = []
+    for tr in trades:
+        if tr["season"] != season or len(tr["sides"]) != 2:
+            continue
+        a_, b_ = side_vals(tr["sides"][0]), side_vals(tr["sides"][1])
+        if pkg(a_, 1) >= 500 and pkg(b_, 1) >= 500:
+            tr_fit.append((a_, b_))
+    K_GRID = [1.0, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0]
+    k_err = {k: round(st.median(abs(math.log(pkg(a_, k) / pkg(b_, k))) for a_, b_ in tr_fit), 3) for k in K_GRID} if tr_fit else {}
+    PRIOR_K = 2.0   # from both dynasty leagues' 2026 trades pooled (k = 2 fit best, 31 trades)
+    if len(tr_fit) >= 25:
+        best_k = min(K_GRID, key=lambda k: k_err[k])
+        VAL_K = best_k if k_err[best_k] < k_err[PRIOR_K] - 0.01 else PRIOR_K
+    else:
+        VAL_K = PRIOR_K
+    # does the TE premium make this league's real trades look more even? (trades with a TE in them only)
+    te_tr = []
+    for tr in trades:
+        if tr["season"] != season or len(tr["sides"]) != 2 or not any(pinfo(x)["p"] == "TE" for sd in tr["sides"] for x in sd["got"]):
+            continue
+        w_ = [side_vals(sd) for sd in tr["sides"]]
+        o_ = [[fc_vals.get(x, 0) for x in sd["got"]] + [pick_now(x) for x in sd["pin"]] for sd in tr["sides"]]
+        if min(pkg(x, 1) for x in w_) >= 500 and min(pkg(x, 1) for x in o_) >= 500:
+            te_tr.append((abs(math.log(pkg(w_[0], VAL_K) / pkg(w_[1], VAL_K))), abs(math.log(pkg(o_[0], VAL_K) / pkg(o_[1], VAL_K)))))
+    te_test = dict(n=len(te_tr), with_=round(st.median(x[0] for x in te_tr), 3), without=round(st.median(x[1] for x in te_tr), 3)) if te_tr else None
+    # keep the TE premium only if this league's own trades don't argue against it
+    if te_mult and te_test and te_test["n"] >= 8 and te_test["with_"] > te_test["without"] + 0.01:
+        te_mult.clear(); te_default = 1.0
+        te_test["dropped"] = True
+        val_src["label"] = val_src["label"].split(" + TE premium")[0] + " (no extra TE premium: this league's trades don't pay one)"
+    val_src.update(k=VAL_K, k_err=k_err, k_trades=len(tr_fit), te_test=te_test)
+    print(f"package rule: k={VAL_K} from {len(tr_fit)} trades, median miss by k {k_err}")
     trade_pids = {p for tr in trades if tr["season"] == season for s in tr["sides"] for p in s["got"] + s["gave"]}
 
     # ---------- rookie drafts (this league's history): every pick, who made it, whose pick it originally was
@@ -1175,7 +1237,7 @@ def main():
         bye = None
         prev25 = g(pid, season - 1)
         P[pid] = dict(n=info["n"], p=info["p"], t=team, age=info["age"], inj=info["inj"], r=rostered.get(pid, 0),
-                      ktc=ktc["players"].get(pid, 0), fc=fc_vals.get(pid, 0), val=unified(pid),
+                      fc=fc_vals.get(pid, 0), val=unified(pid), kid=ktc_id.get(pid),
                       a=[pts.get(pid, {}).get(f"{season}-{w}") for w in range(1, done + 1)],
                       a25=round(st.mean(v for _, v in prev25), 1) if prev25 else None,
                       sl=sl, ou=ou, pr=pr, sd=round(our_sd(pid, max(o, 1)) * CAL_M, 2),
@@ -1633,10 +1695,11 @@ def main():
             continue
         tids = ids_by[t["id"]]; bt = sum(base[t["id"]]); out = []
         for give in [(x,) for x in mk] + list(itertools.combinations(mk, 2)):
-            gv = sum(v_of(x) for x in give)
+            gv = sum(v_of(x) for x in give); ge = pkg([v_of(x) for x in give], VAL_K) or gv
             for got in tids:
                 rv = v_of(got)
-                if not rv or gv < 0.92 * rv or gv > 1.30 * rv:
+                # fair the way this league's managers add up packages (see VAL_K), without overpaying in raw value
+                if not rv or ge < 0.95 * rv or gv > 1.45 * rv or ge > 1.30 * rv:
                     continue
                 nm = [i for i in mk if i not in give] + [got]; nt = [i for i in tids if i != got] + list(give)
                 dwm = det_weeks(nm); dm = (sum(dwm) - bm) / NW; dt = (sum(det_weeks(nt)) - bt) / NW
@@ -1696,13 +1759,9 @@ def main():
     nT = len(teams)
 
     # ---------- picks (next 3 rookie drafts) with projected slots for next year's draft
-    PV = ktc.get("picks") or {}
     def pick_base(y, rd):
-        f = conv(fc_picks.get((y, rd), 0)); k_ = PV.get(f"{y}-{rd}")
-        if f and k_:
-            # the all-players curve runs a little hot at the low end (late-round picks), so average it with KTC's own pick price
-            return 0.5 * f + 0.5 * k_
-        return f or k_ or {1: 5000, 2: 3200, 3: 2300, 4: 1600}.get(rd, 1000)
+        f = fc_picks.get((y, rd), 0) or fc_picks.get((y - 1, rd), 0) * 0.95
+        return f or {1: 5000, 2: 3200, 3: 2300, 4: 1600}.get(rd, 1000) * (0.5 if rd > 4 else 1)
     def pick_val(y, rd, orig=None):
         v = pick_base(y, rd)
         if y == season + 1 and orig in slot:  # early / mid / late: FantasyCalc's own price for that tier when it has one
@@ -1732,6 +1791,7 @@ def main():
         return f"{y} {ORD[rd] if rd < len(ORD) else rd} ({names.get(o, 'former team')})"
     def pname(pid):
         return (P.get(pid) or {}).get("n") or pinfo(pid)["n"]
+
 
     # ---------- what each traded asset is worth TODAY, wherever it ended up.
     # A player nobody in the league rosters any more counts as 0 (if no team wants him, he isn't worth anything here).
@@ -1857,6 +1917,84 @@ def main():
     buy.sort(key=lambda x: -x["add"] / (x["v"] / 1000 + 0.5))
     buy_po = sorted([b_ for b_ in buy if b_.get("add_po") is not None], key=lambda x: -x["add_po"] / (x["v"] / 1000 + 0.5))
     market = dict(sell=sell[:8], buy=buy[:12] + [b_ for b_ in buy_po[:12] if b_ not in buy[:12]])
+
+    # ---------- value outlook: which players' market values are likely to rise or fall over the next 4 weeks.
+    # Model tested on the 2025 season (DynastyProcess weekly values, walk-forward, 6 weeks scored): its top 20% did
+    # +2.5% over the next 4 weeks and its bottom 20% -6.5%, vs -2.3% for everyone. What it learned:
+    # recent climbs partly give back (markets overreact), players producing more than their value suggests catch up,
+    # a recent hot streak carries on a little, recent missed games keep dragging, older players drift down.
+    VO_COEF = [-0.014, 0.031, 0.022, 0.02, -0.141, -0.015]
+    vo_rows = []
+    for pid, d in P.items():
+        f_ = fc_vals.get(pid, 0)
+        if d.get("gone") or f_ < 1000 or not d.get("age"):
+            continue
+        g_ = []
+        for w in range(1, done + 1):
+            g_.append(pts.get(pid, {}).get(f"{season}-{w}"))
+        played_ = [x for x in g_ if x is not None]
+        if len(played_) < 2:
+            continue
+        l3 = [x for x in g_[-3:] if x is not None]; early = [x for x in g_[:-3] if x is not None]
+        byew = d.get("bye")
+        miss3 = sum(1 for i, x in enumerate(g_[-3:]) if x is None and (done - len(g_[-3:]) + 1 + i) != (int(byew) if str(byew).isdigit() else -1))
+        tr_ = (fc_meta.get(pid) or (0, None))[0] or 0
+        mom = max(-0.5, min(0.5, math.log(f_ / max(f_ - tr_, 100)))) if tr_ else 0.0
+        vo_rows.append(dict(id=pid, pos=d["p"], age=float(d["age"]), v=f_, ppg=st.mean(played_), gp=len(played_),
+                            form=((st.mean(l3) if l3 else 0) - (st.mean(early) if early else st.mean(played_))) / 10, miss3=miss3, mom=mom))
+    if len(vo_rows) >= 60:
+        X_ = [[1.0, r["pos"] == "RB", r["pos"] == "WR", r["pos"] == "TE", r["age"] - 26, (r["age"] - 26) ** 2, math.log(r["ppg"] + 1), r["gp"]] for r in vo_rows]
+        b_ = lstsq([[float(x) for x in xx] for xx in X_], [math.log(r["v"]) for r in vo_rows])
+        for r, xx in zip(vo_rows, X_):
+            r["res"] = math.log(r["v"]) - sum(bi * xi for bi, xi in zip(b_, xx))
+            fx = [1.0, -r["res"], r["form"], -r["miss3"], r["mom"], (r["age"] - 26) / 4]
+            parts = [c * x for c, x in zip(VO_COEF, fx)]
+            r["pred"] = max(-0.25, min(0.25, sum(parts)))
+            r["parts"] = parts
+        avg_ = st.mean(r["pred"] for r in vo_rows)
+        for r in vo_rows:
+            parts = r["parts"]; why = []
+            if abs(parts[1]) >= 0.008: why.append((abs(parts[1]), "producing more than his price suggests" if parts[1] > 0 else "priced above his production"))
+            if abs(parts[4]) >= 0.008: why.append((abs(parts[4]), f"value up {r['mom'] * 100:.0f}% in 30 days; climbs like that tend to cool off" if parts[4] < 0
+                                                 else f"value down {-r['mom'] * 100:.0f}% in 30 days; drops like that tend to bounce back a little"))
+            if abs(parts[2]) >= 0.008: why.append((abs(parts[2]), "scoring more in recent weeks" if parts[2] > 0 else "scoring less in recent weeks"))
+            if r["miss3"]: why.append((abs(parts[3]), f"missed {r['miss3']} of the last 3 games"))
+            if abs(parts[5]) >= 0.01: why.append((abs(parts[5]), f"age {r['age']:.0f}: values drift down" if parts[5] < 0 else "young: values drift up"))
+            why.sort(key=lambda x: -x[0])
+            # shown relative to the whole market (everyone drifts down in season), as % over the next 4 weeks
+            P[r["id"]]["vo"] = [round((r["pred"] - avg_) * 100, 1), [w for _, w in why[:3]]]
+    # track record: predictions logged daily, graded 28+ days later against FantasyCalc's value then
+    vw_path = os.path.join(DOCS, "value_watch.json")
+    try:
+        VW = json.load(open(vw_path)) if os.path.exists(vw_path) else {}
+    except Exception:  # noqa
+        VW = {}
+    today_ = time.strftime("%Y-%m-%d", time.gmtime())
+    if vo_rows and "pred" in vo_rows[0] and not FIX:
+        VW.setdefault(today_, {r["id"]: [r["v"], round(r["pred"], 4)] for r in vo_rows if "pred" in r})
+        for k_ in sorted(VW)[:-120]:
+            VW.pop(k_, None)
+        json.dump(VW, open(vw_path, "w"), separators=(",", ":"))
+    graded = []
+    for d_, rows_ in VW.items():
+        try:
+            age_d = (datetime.date.fromisoformat(today_) - datetime.date.fromisoformat(d_)).days
+        except Exception:  # noqa
+            continue
+        if 28 <= age_d <= 35:
+            for pid_, (v0, pr_) in rows_.items():
+                if fc_vals.get(pid_, 0) > 0:
+                    graded.append((pr_, math.log(fc_vals[pid_] / v0)))
+    vo_track = dict(n=len(graded), since=min(VW) if VW else None)
+    if len(graded) >= 50:
+        o_ = sorted(graded); q = len(o_) // 5
+        vo_track.update(top=round(st.mean(x[1] for x in o_[-q:]) * 100, 1), bottom=round(st.mean(x[1] for x in o_[:q]) * 100, 1), all=round(st.mean(x[1] for x in o_) * 100, 1))
+    vo_list = sorted((r for r in vo_rows if "pred" in r), key=lambda r: -r["pred"])
+    value_watch = dict(model=dict(top=2.5, bottom=-6.5, all=-2.3, weeks=6, season=2025, src="DynastyProcess weekly values"), track=vo_track,
+                       buy=[r["id"] for r in vo_list if P[r["id"]]["r"] not in (0, me) and r["v"] >= 1500][:15],
+                       sell=[r["id"] for r in reversed(vo_list) if P[r["id"]]["r"] == me][:10],
+                       rise=[r["id"] for r in vo_list][:25], fall=[r["id"] for r in reversed(vo_list)][:25])
+    print(f"value outlook: {len(vo_list)} players; track {vo_track}")
 
     # ---------- positional strength: counted points per week by position, ranked across the league
     depth = {}
@@ -2621,7 +2759,7 @@ def main():
                           ktc_date=ktc.get("date"), values=val_src, backtest=backtest, checks=checks, byes=bye_src, fa_checked=len(fa_pool), faab=int(settings.get("waiver_budget", 0) or 0), sims=SIMS, ledger_through=CFG.get("ledger_through"),
                           scoring=CFG.get("scoring_label", ""), lu=dict(n=LU_N, flex=LU_FLEX, sf=LU_SF, managed=MANAGED), shape=SHAPE, key=DYN, slots=" · ".join(p for p in league.get("roster_positions", []) if p != "BN")),
                 teams=tm_out, players=P, weeks=weeks, po_actual={str(k): {str(r): v for r, v in d.items()} for k, d in po_actual.items()}, sched=sched, m26={str(k): v for k, v in my_weekly.items()}, picks=picks,
-                advice=advice, outlook=outlook, feed=feed, ledger_now=ledger_now, research=research, defense=DEF, accuracy=accuracy, past_picks=dict(used=used_picks, traded=traded_picks), profiles={str(k): v for k, v in profiles.items()}, rookies=rookies, digest=digest, lineup=lineup_adv,
+                advice=advice, outlook=outlook, feed=feed, ledger_now=ledger_now, research=research, defense=DEF, accuracy=accuracy, past_picks=dict(used=used_picks, traded=traded_picks), profiles={str(k): v for k, v in profiles.items()}, rookies=rookies, digest=digest, lineup=lineup_adv, value_watch=value_watch,
                 analysis=dict(board=board, sugg={str(k): v for k, v in sugg.items()}, needs={str(k): v for k, v in needs.items()},
                               market=market, depth={str(k): v for k, v in depth.items()}, fa=fa, cut=cut,
                               counted={k: [round(v[0], 1), v[1]] for k, v in counted.items()},

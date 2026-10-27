@@ -6,7 +6,7 @@
 <title>Dynasty HQ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
 <style>
 :root{
   --bg:#f3f5f7; --panel:#ffffff; --ink:#14212b; --muted:#5b6b78; --line:#d9e0e6;
@@ -270,6 +270,215 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
 .vr>span:first-child{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}.vr>span:last-child{flex:0 0 auto}.bd-box{min-width:0}
 @media (max-width:560px){.tx-sides{grid-template-columns:1fr}.vsrow .sc{font-size:32px}.tile .t-big{font-size:28px}}
 .wpbar{cursor:help}.wpcap{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--muted);margin-top:3px}.wpcap b{color:var(--ink);font-weight:600}
+
+/* ==========================================================================
+   Theme: "sideline" — loaded last on every page.
+   Chalk paper, ink type, turf green for you, penalty-flag yellow for things to act on.
+   One family (Archivo), width axis does the work: wide for headings, normal for text.
+   The one loud element is the field bar: win chance drawn as a football field.
+   ========================================================================== */
+:root{
+  --bg:#f3f5f2; --panel:#ffffff; --ink:#172026; --muted:#5d6a70; --line:#dde2de; --line2:#c9d0cb;
+  --accent:#1d6a45; --accent-ink:#ffffff; --accent-soft:#e3efe7;
+  --good:#1d6a45; --good-soft:#e3efe7;
+  --bad:#b5412d; --bad-soft:#f7e3dd;
+  --warn:#8a6400; --flag:#e9b31b; --warn-soft:#fbf2d3;
+  --opp:#aab3b8; --ball:#8a4b25;
+  --s1:#1d6a45; --s2:#c4801b; --silver:#aab3b8;
+  --f-display:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-body:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'Archivo',system-ui,sans-serif;
+  --r-lg:14px; --r-md:10px; --r-sm:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1512; --panel:#161e1a; --ink:#e6ece8; --muted:#97a59d; --line:#26312b; --line2:#34413a;
+  --accent:#4fb882; --accent-ink:#0b1410; --accent-soft:#183326;
+  --good:#4fb882; --good-soft:#183326; --bad:#e8735c; --bad-soft:#3a1d17;
+  --warn:#f0c449; --flag:#f0c449; --warn-soft:#30280f;
+  --opp:#4a5650; --ball:#c47a45; --s1:#4fb882; --s2:#e0a44a; --silver:#4a5650; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1512; --panel:#161e1a; --ink:#e6ece8; --muted:#97a59d; --line:#26312b; --line2:#34413a;
+  --accent:#4fb882; --accent-ink:#0b1410; --accent-soft:#183326;
+  --good:#4fb882; --good-soft:#183326; --bad:#e8735c; --bad-soft:#3a1d17;
+  --warn:#f0c449; --flag:#f0c449; --warn-soft:#30280f;
+  --opp:#4a5650; --ball:#c47a45; --s1:#4fb882; --s2:#e0a44a; --silver:#4a5650; color-scheme:dark}
+
+body{font-family:var(--f-body);font-size:15px;line-height:1.5;background:var(--bg);color:var(--ink);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+body::before{background:var(--panel)}
+::selection{background:var(--accent-soft)}
+a{color:var(--accent)}
+
+/* ---------- type: sentence case everywhere, width carries the hierarchy ---------- */
+h1,h2,h3,h4,.verdict,.verdict-h,.brief h4,.guide h4,.step,.word,.vtag,.tag,th,label.lab,.stat .k,.odds span,.kvs span,nav.tabs button,.switch a,.btn-hdr{text-transform:none!important;letter-spacing:0!important}
+h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:21px;line-height:1.2;letter-spacing:-.005em!important}
+h3{font-family:var(--f-display);font-stretch:108%;font-weight:650;font-size:16px;line-height:1.25}
+.card>h2,.card>header h2{font-size:20px}
+.num,.big,.big2,.sc,.t-big,.stat .v,.odds b,.kvs b,.verdict-h,.advice .stripe b{font-family:var(--f-display);font-variant-numeric:tabular-nums}
+.sub,.explain,.lede{color:var(--muted)}
+.sub{font-size:13.5px}
+.answer{font-size:16px}
+.small{font-size:12.5px}
+th{font-size:12px;font-weight:600;color:var(--muted);border-bottom:1px solid var(--line2);padding:8px}
+td{padding:8px;border-bottom:1px solid var(--line)}
+tr.hl td{background:var(--accent-soft)}
+table{font-size:14px}
+svg text{font-family:var(--f-body);font-size:10.5px}
+
+/* ---------- app bar ---------- */
+header.board{background:color-mix(in srgb,var(--panel) 92%,transparent);color:var(--ink);border-bottom:1px solid var(--line);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px)}
+:root[data-theme="dark"] header.board{background:color-mix(in srgb,var(--panel) 92%,transparent)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) header.board{background:color-mix(in srgb,var(--panel) 92%,transparent)}}
+.board-in{padding-block:10px 0;gap:8px;max-width:1120px}
+.wrap{max-width:1120px}
+.brand{align-items:center}
+.brand h1{font-family:var(--f-display);font-stretch:118%;font-size:22px;font-weight:800;letter-spacing:-.01em!important;color:var(--ink);display:flex;align-items:center;gap:10px}
+.brand h1::before{content:"";width:12px;height:22px;border-radius:3px;background:var(--accent);box-shadow:inset 0 -6px 0 rgba(255,255,255,.28);flex:none}
+.brand h1 span{color:var(--muted);font-weight:500;font-stretch:100%}
+.brand>.row{gap:8px!important}
+.chips{gap:6px}
+.chip{font-family:var(--f-body);font-size:12.5px;border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:99px;padding:3px 10px}
+.chip b{color:var(--ink);font-weight:650}
+.chip-warn{border-color:var(--flag);color:var(--warn);background:var(--warn-soft)}
+
+/* league switcher: the app-level control, so it sits apart and reads as one segmented pill */
+.switch{border:1px solid var(--line);border-radius:99px;background:var(--bg);padding:3px;gap:2px}
+.switch a{font-family:var(--f-body);font-size:13px;font-weight:600;color:var(--muted);padding:5px 12px;border-radius:99px;text-decoration:none;transition:background .15s,color .15s}
+.switch a:hover{color:var(--ink)}
+.switch a[aria-current="page"]{background:var(--ink);color:var(--panel)}
+.switch a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn-hdr{font-family:var(--f-body);font-size:13px;font-weight:600;background:transparent;color:var(--ink);border:1px solid var(--line2);border-radius:99px;padding:5px 12px}
+.btn-hdr:hover{border-color:var(--ink)}
+
+/* section tabs */
+nav.tabs{gap:4px;margin-top:2px;mask-image:linear-gradient(90deg,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent)}
+nav.tabs button{font-family:var(--f-body);font-size:14.5px;font-weight:600;color:var(--muted);padding:9px 10px 11px;border-bottom:2px solid transparent;border-radius:0}
+nav.tabs button:hover{color:var(--ink)}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+nav.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:6px}
+
+main section{gap:18px;padding-top:22px}
+
+/* ---------- surfaces ---------- */
+.card,.panel,.hero-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px 20px;box-shadow:none}
+.tile,.stat,.mu,.tx,.deal,.flag,.bd-box{border-radius:var(--r-md);border-color:var(--line)}
+.tile{background:var(--bg);border:0;padding:12px 14px}
+.tile .t-label{font-size:13px}
+.tile .t-big{font-size:32px;font-weight:750;font-stretch:105%;letter-spacing:-.02em}
+.mu.mine,.tx.mine{border-color:var(--accent);background:var(--accent-soft)}
+details.more{border-top:1px solid var(--line)}
+details.more>summary{color:var(--accent);font-weight:600}
+details.more>summary::before{content:"+ ";font-weight:700}
+details.more[open]>summary::before{content:"– "}
+
+/* ---------- pills, words, positions ---------- */
+.word,.vtag{font-size:12px;font-weight:650;padding:3px 10px;border-radius:99px}
+.w-mid{background:var(--warn-soft);color:var(--warn)}
+.pos{font-family:var(--f-body);font-size:11px;font-weight:700;border-radius:4px;padding:1px 0}
+.pos.QB{background:#6c4aa8}.pos.RB{background:#16806f}.pos.WR{background:#2f6fb0}.pos.TE{background:#c0661b}
+.live{font-family:var(--f-body);background:var(--bad);border-radius:99px;padding:0 7px;font-size:11px}
+
+/* ---------- buttons & inputs ---------- */
+.btn{font-family:var(--f-body);font-size:14px;font-weight:650;background:var(--accent);border:1px solid var(--accent);color:var(--accent-ink);border-radius:99px;padding:8px 16px;transition:filter .15s}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--accent);border-color:var(--line2)}
+.btn.ghost:hover{border-color:var(--accent)}
+.seg,.tabsub{border-radius:99px}
+.seg{border-color:var(--line);padding:2px;background:var(--bg)}
+.seg button{border-radius:99px;background:transparent;font-weight:600}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.tabsub button{border-radius:99px;font-size:13.5px}
+.tabsub button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--panel)}
+select,input[type=search],input[type=text],input[type=number],textarea{border-radius:var(--r-sm);border-color:var(--line2);padding:8px 10px;background:var(--panel)}
+.pick-list{border-radius:var(--r-md)}
+
+/* ---------- "Do this": the flag ---------- */
+.todo{background:var(--panel);border:1px solid var(--line);border-left:6px solid var(--flag);border-radius:var(--r-lg);padding:16px 20px}
+.todo h2,.todo h3{color:var(--ink)}
+.todo h2::after{content:"";display:inline-block;width:14px;height:10px;margin-left:8px;background:var(--flag);clip-path:polygon(0 0,100% 0,78% 50%,100% 100%,0 100%);vertical-align:1px}
+.todo ol{padding-left:22px;gap:8px}
+.todo ol li::marker{font-weight:700;color:var(--muted)}
+.advice{padding:22px 24px}
+.advice .verdict-h{font-stretch:118%;font-size:36px;font-weight:800;letter-spacing:-.02em!important;text-transform:none!important}
+.advice .move{border-left:4px solid var(--accent);border-radius:var(--r-md)}
+.advice .move.todo{border-left-color:var(--flag)}
+.advice ul{gap:7px}
+
+/* ---------- the field bar: win chance as a football field ---------- */
+.wpbar{position:relative;height:16px;border-radius:4px;background:var(--opp);overflow:visible;cursor:help;margin-top:4px}
+.wpbar::before{content:"";position:absolute;inset:0;border-radius:4px;pointer-events:none;z-index:2;
+  background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),rgba(255,255,255,.55) calc(10% - 1px) 10%)}
+.wpbar::after{content:"";position:absolute;inset:0;border-radius:4px;pointer-events:none;z-index:2;
+  background:linear-gradient(90deg,rgba(0,0,0,.14) 0 5%,transparent 5% 95%,rgba(0,0,0,.14) 95%)}
+.wpbar i{position:relative;display:block;height:100%;background:var(--accent);border-radius:4px 0 0 4px;z-index:1;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.wpbar i::after{content:"";position:absolute;right:-9px;top:50%;width:18px;height:11px;transform:translateY(-50%);border-radius:50%;z-index:3;
+  background:var(--ball);box-shadow:0 0 0 2px var(--panel);
+  background-image:linear-gradient(90deg,transparent 46%,rgba(255,255,255,.85) 46% 54%,transparent 54%)}
+.wpbar.thin{height:8px}
+.wpbar.thin i::after{display:none}
+.wpcap{font-size:12px;margin-top:6px}
+.wpcap b{font-weight:700}
+@media (prefers-reduced-motion:reduce){.wpbar i{transition:none}}
+
+/* scoreboard rows */
+.vsrow .nm,.vs .tn{font-weight:650;font-size:14px}
+.vsrow .sc{font-stretch:108%;font-weight:800;font-size:42px;letter-spacing:-.025em}
+.vsx{font-family:var(--f-body);font-size:13px}
+.kvs b,.odds b{font-stretch:105%;font-weight:750;color:var(--ink)}
+.kvs span,.odds span{font-size:12px}
+
+/* ---------- lists & tables ---------- */
+.li{padding:12px 0}
+.li .why{font-size:13.5px}
+.vr>span:last-child{font-family:var(--f-body)}
+.gl div{font-family:var(--f-body);border-radius:6px}
+.bar2 .track,.needbar .bar,.meter{background:var(--line)}
+.rng{background:var(--line)}
+.lu .slot{font-family:var(--f-body);font-weight:600}
+tr.chg td{background:var(--good-soft)}
+.chip-l{border-radius:99px;padding:1px 8px;font-size:11.5px}
+.takeaway{background:var(--accent-soft);border:0;border-radius:var(--r-md)}
+.note{border-left-color:var(--line2)}
+dialog{border-radius:var(--r-lg);padding:20px}
+.footer{color:var(--muted)}
+
+/* ---------- small screens ---------- */
+@media (max-width:640px){
+  .board-in{padding-top:8px}
+  .brand{flex-direction:column;align-items:stretch;gap:8px}
+  .brand h1{font-size:19px}
+  .brand>.row{justify-content:space-between}
+  .switch{order:-1;width:100%;justify-content:space-between}
+  .switch a{flex:1;text-align:center;padding:6px 4px}
+  .chips{order:2}
+  .card,.panel,.todo{padding:16px}
+  .advice{padding:18px}
+  .advice .verdict-h{font-size:28px}
+  .vsrow .sc{font-size:32px}
+  nav.tabs button{font-size:14px;padding:8px 9px 10px}
+}
+
+/* ---------- league home: scoreboard first ---------- */
+.scoreboard{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:18px;align-items:start}
+.scoreboard>.card{height:100%}
+.lineup{border-left:6px solid var(--flag)}
+.lineup h2{font-size:19px}
+@media (max-width:860px){.scoreboard{grid-template-columns:minmax(0,1fr)}}
+.tile .word{align-self:flex-start}
+.scoreboard>.card{height:auto}
+@media (max-width:640px){
+  .brand>.row{display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center}
+  .brand>.row>.switch{grid-column:1/-1;grid-row:1}
+  .brand>.row>.chips{grid-row:2;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;mask-image:linear-gradient(90deg,#000 85%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent)}
+  .brand>.row>.chips::-webkit-scrollbar{display:none}
+  .brand>.row>.btn-hdr{grid-row:2;grid-column:2}
+}
+/* hub: the week as a headline, not a card */
+.hub-hero{padding:6px 2px 0}
+.hub-hero h2{font-stretch:125%;font-size:46px;font-weight:800;letter-spacing:-.03em!important;line-height:1}
+.hub-hero p{margin:6px 0 0;font-size:18px;color:var(--muted)}
+@media (max-width:640px){.hub-hero h2{font-size:36px}.hub-hero p{font-size:16px}}
+.brand h1 span{font-size:.72em;align-self:flex-end;margin-bottom:.18em}
+
 </style>
 </head>
 <body>
@@ -277,18 +486,18 @@ dialog::backdrop{background:rgba(5,10,15,.55)}
   <div class="board-in">
     <div class="brand">
       <h1 id="title">Dynasty <span>HQ</span></h1>
-      <div class="row" style="gap:8px"><div class="chips" id="chips"></div><button class="btn-hdr" id="askBtn" type="button">Ask Claude</button><nav class="switch" aria-label="Switch league" id="lgSwitch"></nav><script>(function(){var L=[["Home","hub/"],["512 BB",""],["Ring","ring/"],["Redraft","redraft/"]],p=location.pathname,m=p.match(/^(.*?\/)(ring|redraft|hub)\/(index\.html)?$/),root=m?m[1]:p.replace(/index\.html$/,''),cur=m?m[2]+'/':'';
+      <div class="row" style="gap:8px"><div class="chips" id="chips"></div><button class="btn-hdr" id="askBtn" type="button">Ask Claude</button><nav class="switch" aria-label="Switch league" id="lgSwitch"></nav><script>(function(){var L=[["Home","hub/"],["512",""],["Ring","ring/"],["Redraft","redraft/"]],p=location.pathname,m=p.match(/^(.*?\/)(ring|redraft|hub)\/(index\.html)?$/),root=m?m[1]:p.replace(/index\.html$/,''),cur=m?m[2]+'/':'';
 document.getElementById('lgSwitch').innerHTML=L.map(function(x){return '<a href="'+root+x[1]+'"'+(x[1]===cur?' aria-current="page"':'')+'>'+x[0]+'</a>'}).join('')})()</script></div>
     </div>
     <nav class="tabs" role="tablist" aria-label="Sections">
-      <button role="tab" aria-selected="true" data-tab="home">What to do</button>
+      <button role="tab" aria-selected="true" data-tab="home">Today</button>
       <button role="tab" aria-selected="false" data-tab="league">League</button>
-      <button role="tab" aria-selected="false" data-tab="team">My Team</button>
+      <button role="tab" aria-selected="false" data-tab="team">My team</button>
       <button role="tab" aria-selected="false" data-tab="trades">Trades</button>
       <button role="tab" aria-selected="false" data-tab="players">Players</button>
-      <button role="tab" aria-selected="false" data-tab="draft">Draft Picks</button>
+      <button role="tab" aria-selected="false" data-tab="draft">Picks</button>
       <button role="tab" aria-selected="false" data-tab="research">Research</button>
-      <button role="tab" aria-selected="false" data-tab="teams">Other Teams</button>
+      <button role="tab" aria-selected="false" data-tab="teams">Other teams</button>
     </nav>
   </div>
 </header>
@@ -298,13 +507,14 @@ document.getElementById('lgSwitch').innerHTML=L.map(function(x){return '<a href=
 
 <!-- ================= HOME ================= -->
 <section data-panel="home">
+  <div class="scoreboard">
+    <div class="card" id="weekCard"></div>
+    <div class="card" id="seasonCard"></div>
+  </div>
+  <div class="card lineup" id="lineupCard" hidden></div>
   <div class="card advice" id="advice"></div>
   <div class="card" id="windowCard"></div>
   <div class="card" id="planCard"></div>
-  <div class="grid2">
-    <div class="card" id="seasonCard"></div>
-    <div class="card" id="weekCard"></div>
-  </div>
 </section>
 
 <!-- ================= LEAGUE ================= -->
@@ -351,10 +561,10 @@ document.getElementById('lgSwitch').innerHTML=L.map(function(x){return '<a href=
 <!-- ================= TRADES ================= -->
 <section data-panel="trades" hidden>
   <div class="tabsub" role="group" aria-label="Trade pages">
-    <button data-sub="lab" aria-pressed="true">Check a trade</button><button data-sub="ideas" aria-pressed="false">Trade ideas</button><button data-sub="feed" aria-pressed="false">League trades</button><button data-sub="ledger" aria-pressed="false">My past trades</button>
+    <button data-sub="lab" aria-pressed="true">Check a trade</button><button data-sub="ideas" aria-pressed="false">Trade ideas</button><button data-sub="watch" aria-pressed="false">Buy low, sell high</button><button data-sub="feed" aria-pressed="false">League trades</button><button data-sub="ledger" aria-pressed="false">My past trades</button>
   </div>
   <p class="answer" id="dlBanner" style="margin:0"></p>
-  <details class="card more" id="scaleCard" style="padding:12px 16px" open><summary>What do trade value numbers mean?</summary><div id="scale"></div></details>
+  <details class="card more" id="scaleCard" style="padding:12px 16px"><summary>What do trade value numbers mean?</summary><div id="scale"></div></details>
 
   <div data-sub-panel="lab" style="display:flex;flex-direction:column;gap:16px">
     <div class="card">
@@ -377,6 +587,8 @@ document.getElementById('lgSwitch').innerHTML=L.map(function(x){return '<a href=
     <div class="card"><h2>Who should I trade with?</h2><p class="sub">Each team below: what they're short on, what they have extra, and a deal that helps your lineup without hurting theirs much, at a fair price.</p><div class="row small" style="gap:12px;flex-wrap:wrap"><div id="ideasFocus"></div><label class="muted" for="idSort">Sort by</label><select id="idSort"><option value="deal">Best deal for you</option><option value="stand">Standings</option><option value="name">Name</option></select></div></div>
     <div id="ideas" class="grid2"></div>
   </div>
+
+  <div data-sub-panel="watch" hidden style="display:flex;flex-direction:column;gap:16px"><div id="watchBox" style="display:flex;flex-direction:column;gap:16px"></div></div>
 
   <div data-sub-panel="feed" hidden style="display:flex;flex-direction:column;gap:16px">
     <div class="card"><h2>Who's winning the league's trades?</h2><p class="sub">Every trade this season, with what each side got and what it's worth today. "Better for" uses the same two questions as your own trades: did it help that team's lineup, and did they get fair value?</p></div>
@@ -623,7 +835,7 @@ function showTab(t){document.querySelectorAll('nav.tabs button').forEach(b=>b.se
   if(t==='team')renderTeam();if(t==='players')renderPlayers();if(t==='trades')showSub(store.get('hq-sub2')||'lab');if(t==='draft')renderDraft();if(t==='teams')renderTeams();if(t==='research')renderResearch();window.scrollTo({top:0})}
 document.querySelectorAll('.tabsub button').forEach(b=>b.addEventListener('click',()=>showSub(b.dataset.sub)));
 function showSub(s){document.querySelectorAll('.tabsub button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.sub===s));document.querySelectorAll('[data-sub-panel]').forEach(p=>p.hidden=p.dataset.subPanel!==s);store.set('hq-sub2',s);
-  if(s==='lab'&&!$('#giveList').innerHTML)renderLists();if(s==='ideas')renderIdeas();if(s==='feed')renderFeed();if(s==='ledger')renderLedger()}
+  if(s==='lab'&&!$('#giveList').innerHTML)renderLists();if(s==='ideas')renderIdeas();if(s==='watch')renderWatch();if(s==='feed')renderFeed();if(s==='ledger')renderLedger()}
 function openLab(partner,give,get){st.partner=+partner;$('#partner').value=partner;st.give=new Set(give||[]);st.get=new Set(get||[]);renderLists();showTab('trades');showSub('lab');
   if(!st.give.size&&st.get.size&&!OFF){$('#offers').hidden=false;$('#offers').innerHTML='<h2>3 offers to try</h2><p class="sub">Working out what to offer…</p>';$('#result').innerHTML='<p class="sub">Pick one of the offers above, or tick players yourself.</p>';setTimeout(()=>{$('#offers').scrollIntoView({block:'start'});setTimeout(suggestOffers,30)},50)}
   else{$('#offers').hidden=true;scheduleRun();setTimeout(()=>$('#result').scrollIntoView({block:'start'}),50)}}
@@ -633,12 +845,12 @@ const me0=()=>TEAMS.find(t=>t.id===ME);
 // ---------- header ----------
 function ago(iso){const m=Math.round((Date.now()-Date.parse(iso))/60000);return m<60?`${m} min ago`:m<1440?`${Math.round(m/60)} hours ago`:`${Math.round(m/1440)} days ago`}
 function header(){
-  const me=TEAMS.find(t=>t.id===ME);$('#title').innerHTML=`${esc(me.name)} <span>HQ</span>`;document.title=`${me.name} HQ`;
+  const me=TEAMS.find(t=>t.id===ME);$('#title').innerHTML=`${esc(me.name)} <span>${esc(D.meta.league||'')}</span>`;document.title=`${me.name} HQ`;
   const stale=(Date.now()-Date.parse(D.meta.generated))/3600000>12,d=deadline();
   $('#chips').innerHTML=`<span class="chip">Record <b>${me.w}-${me.l}</b></span>${OFF?'<span class="chip">Season <b>over</b></span>':`<span class="chip">Playoffs <b>${poWord(me.odds.playoffs)[0]}</b></span>`}${d?(d.open?`<span class="chip ${d.left<=2?'chip-warn':''}">Trade deadline in <b>${d.left<=1?'this week':d.left+' weeks'}</b></span>`:`<span class="chip">Trading <b>closed</b></span>`):''}${stale?`<span class="chip chip-warn">Data is <b>${ago(D.meta.generated)}</b></span>`:''}`;
   const C=D.meta.checks||{},V=D.meta.values||{};
   const chk=C.lineups?(C.lineup_bad.length||C.score_bad.length?`⚠ Data check: ${C.lineup_bad.length} lineup totals and ${C.score_bad.length} player scores didn't match Sleeper. Treat numbers with care until this is fixed.`:`Data check passed: ${C.lineups} weekly lineups and ${C.scored} player scores match Sleeper exactly.`):'Data check: Sleeper didn\'t provide per-player points to verify against this run.';
-  $('#foot').innerHTML=`Updated ${esc(new Date(D.meta.generated).toLocaleString())}. ${esc(chk)}<br>Scores, rosters, injuries and projections: Sleeper. Trade values: ${esc(V.label||'KeepTradeCut')}. Bye weeks: ${esc(D.meta.byes||'')}. Projections and odds are estimates.`;
+  $('#foot').innerHTML=`Updated ${esc(new Date(D.meta.generated).toLocaleString())}. ${esc(chk)}<br>Scores, rosters, injuries and projections: Sleeper. Trade values: ${esc(V.label||'FantasyCalc')}. Bye weeks: ${esc(D.meta.byes||'')}. Projections and odds are estimates.`;
   if(C.lineup_bad&&C.lineup_bad.length||C.score_bad&&C.score_bad.length)$('#chips').innerHTML+=`<span class="chip chip-warn">Data <b>check failed</b></span>`;
 }
 
@@ -718,12 +930,34 @@ function renderAdvice(){
     <h2 class="verdict-h">${esc(a.headline||V[0])}</h2>
     ${a.summary?`<p class="lead">${esc(a.summary)}</p>`:''}
     ${a.moves&&a.moves.length?`<div style="display:flex;flex-direction:column;gap:8px"><h3>What to do</h3>${a.moves.map(moveHTML).join('')}</div>`:`<div><h3>What to do</h3><p class="lead">Nothing this week. Your roster is set up well for what matters: the playoffs.</p></div>`}
-    <div><h3>Why</h3><ul>${(a.reasons||[]).map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
+    <div><h3>Why</h3><ul>${(a.reasons||[]).slice(0,3).map(r=>`<li>${esc(r)}</li>`).join('')}</ul>${(a.reasons||[]).length>3?`<details class="more" style="border:0;padding-top:6px"><summary>${a.reasons.length-3} more reasons</summary><ul>${a.reasons.slice(3).map(r=>`<li>${esc(r)}</li>`).join('')}</ul></details>`:''}</div>
     ${a.watch&&a.watch.length?`<div><h3>Keep an eye on</h3><ul>${a.watch.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>`:''}
     ${OFF?'':`<div class="stripe"><span><b>${me.w}-${me.l}</b>record</span><span><b>${pct(n.playoffs??me.odds.playoffs)}</b>make playoffs</span>${NBYE()?`<span><b>${pct(n.bye??me.odds.bye)}</b>first-round bye</span>`:''}<span><b>${pct(n.title??me.odds.title)}${n.title_after!=null?` → ${pct(n.title_after)}`:''}</b>win the title${n.title_after!=null?' (with the trade)':''}</span></div>`}
     <p class="sub">Updated ${esc(new Date(D.meta.generated).toLocaleString())} and re-checked every 4 hours, and every 30 minutes while games are on (Sunday, Monday and Thursday nights).${a.changed_from?` Changed today from “${esc(a.changed_from)}”.`:''} ${a.source==='claude'?'Written by Claude from this app\'s simulations and data.':'Built from this app\'s simulations and data.'} Details are on the other tabs.</p>`;
 }
 
+
+// ---------- managed leagues: who to start this week ----------
+function renderLineup(){const L=D.lineup,box=$('#lineupCard');if(!L||!LUC().managed||OFF){box.hidden=true;return}box.hidden=false;
+  const nm=s=>PL[s]?esc(PL[s].n):'?',o=L.opp!=null?esc(teamName(L.opp)):'your opponent';
+  const head=L.changes&&L.changes.length&&L.cur_wp!=null&&(L.best_wp-L.cur_wp)>=0.005
+    ?`<h2>Fix your lineup in Sleeper</h2><p class="answer">${L.changes.map(c=>`Start <b>${nm(c.start)}</b> over ${nm(c.sit)}`).join('; ')}. Your win chance goes from <b>${pct(L.cur_wp)}</b> to <b>${pct(L.best_wp)}</b> against ${o}.</p>`
+    :`<h2>Your lineup is set</h2><p class="answer">Your Sleeper lineup is the best one by projection: <b>${pct(L.best_wp)}</b> to win against ${o} (${L.best_proj} projected).</p>`;
+  const close=(L.close||[]).filter(c=>PL[c.start]&&PL[c.sit]);
+  box.innerHTML=head+(close.length?`<div><h3>Closest calls on your bench</h3><div class="list">${close.map(c=>`<div class="li"><div class="main"><span>${posTag(PL[c.start].p)} ${pl(c.start)} instead of ${pl(c.sit)}</span><span class="why">${c.dproj>=0?'+':''}${c.dproj.toFixed(1)} projected points${c.wp!=null?` · win chance ${pct(c.wp)} (vs ${pct(L.best_wp)})`:''}</span></div></div>`).join('')}</div></div>`:'')
+    +`<p class="sub">${L.opp_set?`Against ${o}'s lineup as set in Sleeper.`:`${o} hasn't set a full lineup yet, so this uses their best lineup by projection.`} Players whose games already started stay where they are.</p>`}
+
+// ---------- buy low, sell high: where values are likely headed over the next 4 weeks ----------
+function renderWatch(){const W=D.value_watch,box=$('#watchBox');if(!W){box.innerHTML='<div class="card"><p class="answer">Not available yet.</p></div>';return}
+  const M=W.model||{},T=W.track||{};
+  const row=s=>{const p=PL[s];if(!p||!p.vo)return'';const v=p.vo[0];return `<div class="li"><div class="main"><span>${posTag(p.p)} ${pl(s)} <span class="muted small">${esc(p.t||'')}${p.age?` · ${p.age}`:''}${p.r&&p.r!==ME?` · ${esc(teamName(p.r))}`:''}</span></span><span class="why">${esc((p.vo[1]||[]).join('; '))}</span></div><div class="right"><span class="num" style="font-weight:700;color:var(--${v>=0?'good':'bad'})">${v>=0?'+':'−'}${Math.abs(v).toFixed(1)}%</span><span class="sub num">${fk(value(s))}</span>${p.r&&p.r!==ME?`<button class="btn ghost" data-lab="${p.r}||${s}" style="padding:4px 10px;font-size:12.5px">Build an offer</button>`:''}</div></div>`};
+  const track=T.n>=50?`So far in your league: the top fifth of picks moved <b>${T.top>=0?'+':''}${T.top}%</b> and the bottom fifth <b>${T.bottom>=0?'+':''}${T.bottom}%</b> four weeks later (everyone: ${T.all>=0?'+':''}${T.all}%), from ${T.n} graded calls.`:`Graded calls start appearing four weeks after ${T.since?esc(T.since):'today'}.`;
+  box.innerHTML=`<div class="card"><h2>Whose value is about to move?</h2>
+    <p class="answer">Each number is how much a player's trade value is expected to move over the next 4 weeks compared with the rest of the market. Buy the ones going up before they do; sell the ones going down while you still can.</p>
+    <p class="sub">How it decides: players producing more than their price usually catch up; big recent jumps or drops partly reverse; a hot or cold streak carries on a little; missed games keep dragging; older players drift down. Tested on the 2025 season week by week, using only what was known each week: its top fifth moved ${M.top>=0?'+':''}${M.top}% and its bottom fifth ${M.bottom}% over the next 4 weeks (everyone: ${M.all}%). ${track}</p></div>
+    <div class="grid2"><div class="card"><h2>Buy low</h2><p class="sub">On other teams, likely to rise.</p><div class="list">${(W.buy||[]).slice(0,10).map(row).join('')||'<p class="sub">Nobody stands out.</p>'}</div></div>
+    <div class="card"><h2>Sell high</h2><p class="sub">On your team, likely to fall. Selling only makes sense if your lineup can spare him: check the trade first.</p><div class="list">${(W.sell||[]).slice(0,8).map(row).join('')||'<p class="sub">None of your players look likely to drop.</p>'}</div></div></div>
+    <details class="card more" style="padding:14px 18px"><summary>Biggest expected moves across the league</summary><div class="grid2"><div><h3>Rising</h3><div class="list">${(W.rise||[]).slice(0,12).map(row).join('')}</div></div><div><h3>Falling</h3><div class="list">${(W.fall||[]).slice(0,12).map(row).join('')}</div></div></div></details>`}
 // ---------- LEAGUE ----------
 // ---------- live mode: while games are on, this page reads Sleeper's live scores and ESPN's game clock every minute
 // and re-plays this week's matchups itself (same model as the update), so it doesn't wait for the next refresh.
@@ -787,7 +1021,8 @@ function renderHome(){
     $('#weekCard').innerHTML=`<h2>Who wins this week?${me.live!=null?'<span class="live">LIVE</span>':''}${liveStamp()}</h2>
       <div class="vsrow"><div><div class="nm">You</div><div class="sc num">${me.proj}</div><div class="sub">${me.live!=null?`projected final · <b>${me.live.toFixed(1)}</b> scored so far`:'projected'}</div></div><div class="muted" style="padding-bottom:8px">vs</div><div style="text-align:right"><div class="nm">${esc(o.name)}</div><div class="sc num">${o.proj}</div><div class="sub">${o.live!=null?`projected final · <b>${o.live.toFixed(1)}</b> scored so far`:'projected'}</div></div></div>
       ${wpBar(me.wp,'You',o.name)}
-      <p class="answer">${W(ww)} You win this one in ${chance(me.wp)}. ${me.live!=null?`Big numbers are projected final scores: points already scored plus what's still expected from players who haven't played. ${BB()?'Points so far come from each team\'s best possible lineup, which is how best ball scores (Sleeper\'s matchup screen can show only the set starters until the week ends).':'Points so far are from each team\'s starters, same as Sleeper.'} Finished games count as final; for games in progress, only the time left on the clock is still projected.`:`Big numbers are projected scores; you'll usually land between ${me.rng?me.rng[0].toFixed(0):'?'} and ${me.rng?me.rng[1].toFixed(0):'?'}.`}</p>
+      <p class="answer">${W(ww)} You win this one in ${chance(me.wp)}.</p>
+      <p class="sub">${me.live!=null?`Big numbers are projected finals: points scored plus what's still expected for the time left in each game. ${BB()?'Points so far use each team\'s best possible lineup, as best ball scores it.':'Points so far are from each team\'s starters, same as Sleeper.'}`:`Projected scores. You'll usually land between ${me.rng?me.rng[0].toFixed(0):'?'} and ${me.rng?me.rng[1].toFixed(0):'?'}.`}</p>
       <details class="more"${me.live!=null?' open':''}><summary>Player by player: scored vs. projected</summary><div><div class="grid2"><div><h3 style="margin-bottom:4px">You</h3>${lineupBox(ME)}</div><div><h3 style="margin-bottom:4px">${esc(o.name)}</h3>${lineupBox(oid)}</div></div>
         <p class="sub">${BB()?'In best ball the players who count can change until the last game ends: “Counting now” is the best lineup by projected final.':'Starters as set in Sleeper.'} Scored = real points so far; Proj final adds what's still expected for the time left in each game.</p></div></details>
       ${out.length||inj.length?`<p class="sub">${out.length?`<b>Not playing (bye):</b> ${esc(out.join(', '))}. `:''}${inj.length?`<b>Hurt:</b> ${esc(inj.join(', '))}.`:''} ${BB()?'Best ball fills your lineup with your best available players.':'Set your lineup around them in Sleeper.'}</p>`:''}`}
@@ -859,7 +1094,7 @@ function renderPast(){const el=$('#pastWeeks');if(!el)return;const AC=D.accuracy
    ${R.map(r=>`<tr><td class="num">${r.wk}</td><td>${r.opp?esc(nm(r.opp)):'—'}</td><td class="r num"><b>${r.sc.toFixed(1)}</b></td><td class="r num">${r.exp.toFixed(1)} <span class="sub">(${r.lo.toFixed(0)}–${r.hi.toFixed(0)})</span></td><td>${vs(r)}</td><td class="r num">${r.osc!=null?r.osc.toFixed(1)+' <span class="sub">vs '+r.oexp.toFixed(0)+' exp.</span>':'—'}</td><td class="r num">${r.wp!=null?pct(r.wp):'—'}</td><td>${res(r)}</td>${D.meta.median?`<td>${r.med==null?'':r.med?'<span class="word w-good">Won</span>':'<span class="word w-plain">Lost</span>'}</td>`:''}</tr>`).join('')}</tbody></table></div>
    <p class="sub">Expected = the average of 300 replays of that week using the projections and lineup as they stood before it; the range in brackets is where you'd land 8 times in 10. "Well above/below" means outside that range.</p>`}
 // the blue bar in matchups: your share = your win chance (hover or read the caption under it)
-const wpBar=(p,a,b,thin)=>{p=Math.max(0,Math.min(1,p||0));const tip=`Win chance: ${a} ${pct(p)}, ${b} ${pct(1-p)}. The blue part is ${a==='You'?'your':a+'\'s'} share, from 600 simulated games.`;
+const wpBar=(p,a,b,thin)=>{p=Math.max(0,Math.min(1,p||0));const tip=`Win chance: ${a} ${pct(p)}, ${b} ${pct(1-p)}. The green part of the field (where the ball sits) is ${a==='You'?'your':a+'\'s'} share, from 600 simulated games.`;
   return `<div class="wpbar${thin?' thin':''}" role="img" title="${esc(tip)}" aria-label="${esc(tip)}"><i style="width:${Math.round(p*100)}%"></i></div>${thin?'':`<div class="wpcap"><span><b>${pct(p)}</b> ${esc(a)} win</span><span>${esc(b)} <b>${pct(1-p)}</b></span></div>`}`};
 function holes(ids,k){const c={QB:0,RB:0,WR:0,TE:0};for(const s of ids){if(proj(s,k,'pr')>=6)c[PL[s].p]++}const out=[];
   if(c.QB<1)out.push('no QB available');else if(c.QB<2)out.push('only 1 QB, so your superflex spot goes to a lower-scoring player');
@@ -960,11 +1195,24 @@ function breakdown(o){const gv=o.gave.reduce((a,x)=>a+x[1],0),rv=o.got.reduce((a
     <div class="small">${Math.abs(dv)<0.1*mx?`<b>About even</b> (${dv>=0?'+':'−'}${fk(Math.abs(dv))}).`:dv>0?`<b class="pos-v">You got ${fk(dv)} more</b>, like adding ${pickWord(dv).replace('about ','')}.`:`<b class="neg-v">You gave ${fk(-dv)} more</b>, like throwing in ${pickWord(-dv).replace('about ','')}.`}</div></div></div>`}
 function scaleHTML(){const P=D.meta.pick_prices||{1:5700,2:3500,3:2500,4:1900};const top=Object.keys(PL).filter(s=>!PL[s].gone).sort((a,b)=>value(b)-value(a))[0];const tv=value(top);
   const marks=[['A 4th-round pick',P[4]],['A 3rd-round pick',P[3]],['A 2nd-round pick',P[2]],['A 1st-round pick',P[1]],[`The most valuable player in your league (${PL[top].n})`,tv]];
-  return `<p class="sub" style="margin:0">Trade value is what the dynasty trade market (KeepTradeCut, set up for superflex leagues like yours) says a player or pick is worth <b>today</b>, counting future seasons too. It's how we tell whether a trade was fair. For a sense of size:</p>
+  return `<p class="sub" style="margin:0">Trade value is what the dynasty trade market says a player or pick is worth <b>today</b>, counting future seasons too: FantasyCalc's values from real trades, set to this league's format (teams, superflex, PPR), plus a TE premium from this league's scoring when its own trades support one. It's how we tell whether a trade was fair. For a sense of size:</p>
    <div class="list">${marks.map(([l,v])=>`<div class="bar2" style="padding:3px 0"><span class="small" style="flex:0 0 min(46%,260px)">${esc(l)}</span><span class="track" style="max-width:none"><i style="width:${v/tv*100}%"></i></span><span class="num small" style="min-width:48px;text-align:right">${fk(v)}</span></div>`).join('')}</div>
    <p class="sub" style="margin:0">Pick values are for a mid-round pick in next year's draft. <b>Points</b> are different: they measure what a trade did for your lineup this season.</p>
-   <p class="sub" style="margin:0">Source: ${esc((D.meta.values||{}).label||'KeepTradeCut')}. Updated ${esc(new Date(D.meta.generated).toLocaleDateString())}.</p>`}
+   <p class="sub" style="margin:0">Source: ${esc((D.meta.values||{}).label||'FantasyCalc')}. ${valuesNote()} Updated ${esc(new Date(D.meta.generated).toLocaleDateString())}.</p>`}
 
+
+// how the values were set up for this league, in one line
+function valuesNote(){const V=D.meta.values||{},bits=[];
+  if(V.k)bits.push(`Packages add up the way trades in this league do: one star is worth more than several lesser pieces (learned from ${V.k_trades||0} completed trades).`);
+  const T=V.te_test;if(T&&T.dropped)bits.push(`(Checked: in ${T.n} trades with a TE, values matched better without one.)`);
+  else if((V.te_premium||{}).n)bits.push(`TEs get up to +${Math.round((Math.max(...Object.values(V.te_premium.top||{1:1}))-1)*100)}% for the per-catch TE bonus.`);
+  return bits.join(' ')}
+// open the same trade in KeepTradeCut's own calculator (a link only; KTC's values are never read or stored here)
+function ktcLink(give,get){const id=k=>k.startsWith('pk:')?null:(PL[k]||{}).kid,miss=[...give,...get].filter(k=>!id(k)).map(keyName);
+  const a=give.map(id).filter(Boolean),b=get.map(id).filter(Boolean);if(!a.length&&!b.length)return '';
+  const V=D.meta.values||{},tep=(V.te_bonus||0)>=1?2:(V.te_bonus||0)>0?1:0;
+  const u=`https://keeptradecut.com/trade-calculator?var=5&pickVal=0&teamOne=${a.join('|')}&teamTwo=${b.join('|')}&format=${LUC().sf?2:1}&isStartup=0&tep=${tep}`;
+  return `<div class="row" style="gap:10px"><a class="btn ghost" href="${u}" target="_blank" rel="noopener">Open in KTC</a>${miss.length?`<span class="sub">Add by hand on KTC: ${esc(miss.join(', '))}</span>`:''}</div>`}
 // ---------- TRADES: check a trade ----------
 function listHTML(r,set,kind){
   const ids=roster(r).sort((a,b)=>value(b)-value(a));const picks=PICKS.filter(p=>p.own===r).sort((a,b)=>a.y-b.y||a.rd-b.rd);
@@ -1006,7 +1254,10 @@ function ptsLegendHTML(){const S=ptsScale(),w1=S.winsPer;return `<details class=
   <p class="sub" style="margin:0"><b>Where the number comes from:</b> each player's expected points for every week left (mostly Sleeper's projections, mixed with how he has actually scored; the mix is whatever predicted this season's games best). Then the rest of the season is played out ${D.meta.sims} times with realistic boom and bust weeks, byes and injuries, your best possible lineup is taken each week, and the result is averaged. So a bench player who rarely starts can still add a little, from the weeks he has a big game while a starter is off. It's an estimate: the weekly scores themselves are noisy.</p>
   <p class="sub" style="margin:0">Hover or long-press any points number to see what it means in wins.</p></div></details>`}
 // ---------- balance a trade: you pick players on both sides, the app evens it out 3 different ways ----------
-const effV=keys=>{const v=keys.map(val).sort((a,b)=>b-a);return v.reduce((a,x,i)=>a+x*([1,0.65,0.45][i]??0.3),0)};
+// how this league adds up a package: (sum of value^k)^(1/k), k learned from the league's own completed trades (pipeline)
+const PKK=()=>((D.meta.values||{}).k)||2;
+const pkgV=vs=>{const k=PKK(),v=vs.filter(x=>x>300);return v.length?Math.pow(v.reduce((a,x)=>a+Math.pow(x,k),0),1/k):vs.reduce((a,x)=>a+x,0)};
+const effV=keys=>pkgV(keys.map(val));
 // ---------- would they accept? an estimate from this manager's own trade history + the deal itself ----------
 function acceptOdds(pt,theyGet,theyGive,dt){
   const PR=(D.profiles||{})[pt]||{},H=PR.habits||{},sty=PR.style||'',reb=/Rebuild/.test(sty),win=/Win-now/.test(sty),sm=a=>a.reduce((x,y)=>x+y,0);
@@ -1107,7 +1358,7 @@ function suggestOffers(){
     for(let j=i+1;j<pool.length;j++){combos.push([pool[i],pool[j]]);for(let l=j+1;l<pool.length;l++)combos.push([pool[i],pool[j],pool[l]])}}
   // the other manager values a package the way real trades work: the best piece counts fully, extra pieces count less
   // (three 4th-round picks don't buy a starter). Offers must clear 95% of the target's value on that basis.
-  const eff=c=>{const v=c.map(x=>x.v).sort((a,b)=>b-a);return v[0]+0.65*(v[1]||0)+0.45*(v[2]||0)};
+  const eff=c=>pkgV(c.map(x=>x.v));
   const all=combos.map(c=>({c,g:sum(c.map(x=>x.v)),e:eff(c),cost:sum(c.map(x=>x.c)),mx:Math.max(...c.map(x=>x.v))}));
   let cand=all.filter(o=>o.e>=0.95*R&&o.g<=1.45*R&&o.mx>=0.55*R);
   if(cand.length<6)cand=all.filter(o=>o.e>=0.88*R&&o.g<=1.6*R&&o.mx>=0.4*R);  // few fits: widen the price window a little
@@ -1165,7 +1416,8 @@ function suggestOffers(){
     </div></div>`).join('')}</div>`;
 }
 $('#suggestBtn').addEventListener('click',()=>{$('#offers').hidden=false;$('#offers').innerHTML='<h2>3 offers to try</h2><p class="sub">Working out what to offer…</p>';setTimeout(suggestOffers,30)});
-function runTrade(){
+function runTrade(){runTrade0();const r=$('#result');if(st.give.size&&st.get.size&&!r.querySelector('.ktc'))r.insertAdjacentHTML('beforeend',`<div class="ktc">${ktcLink([...st.give],[...st.get])}</div>`)}
+function runTrade0(){
   const giveIds=[...st.give].filter(k=>!k.startsWith('pk:')),getIds=[...st.get].filter(k=>!k.startsWith('pk:'));
   const gv=[...st.give].reduce((a,k)=>a+val(k),0),rv=[...st.get].reduce((a,k)=>a+val(k),0);
   if(!st.give.size||!st.get.size){$('#result').innerHTML='<p class="sub">Your answer shows up here once both sides have something.</p>';return}
@@ -1577,7 +1829,7 @@ $('#askCopy2').addEventListener('click',()=>{if(!$('#askQ').value.trim()){$('#as
 const opt=f=>fetch(f,{cache:'no-cache'}).then(r=>r.ok?r.json():[]).catch(()=>[]);
 Promise.all([fetch('data.json',{cache:'no-cache'}).then(r=>r.json()),opt('ledger.json'),opt('history.json'),opt('alerts.json')]).then(([d,l,h,al])=>{
   D=d;LEDGER=l;HIST=h;ALERTS=al;PL=d.players;FUT=d.meta.fut;NW=FUT.length;OFF=NW===0;TEAMS=d.teams;PICKS=d.picks;A=d.analysis;ME=d.meta.me;
-  header();renderAdvice();renderWindow();renderPlan();renderHome();liveTick();
+  header();renderAdvice();renderLineup();renderWindow();renderPlan();renderHome();liveTick();
   $('#partner').innerHTML=standOrder().filter(t=>t.id!==ME).map(t=>`<option value="${t.id}">${esc(t.name)} (${t.w}-${t.l})</option>`).join('');
   st.partner=+$('#partner').value;
   {const d=deadline();$('#dlBanner').innerHTML=!d?'':d.open?`${d.left<=1?'<b>This is the last week to trade.</b>':`<b>${d.left} weeks left to trade</b> (deadline is after Week ${d.dl}).`} Anyone you add now also plays for you in the playoffs.`:`<b>Trading is closed</b> until the season ends. You can still plan offseason trades here.`}
