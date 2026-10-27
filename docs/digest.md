@@ -4,14 +4,14 @@
 Top counted: Malik Willis 30.0, Jordan Love 21.0, Amon-Ra St. Brown 19.7, Cam Skattebo 18.6
 
 **Record:** 10-4, #4 of 12 · 1265.3 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 38% · title 21% (+1 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 36% · title 21% (+1 pts this week)
 
 **Playoff path:** most likely seed 3; title chance with a bye 27% vs without 17%
-**Best trade idea:** give Tre' Harris, Pat Freiermuth for Josh Jacobs: title chance 21% → 24%
+**Best trade idea:** give Cam Skattebo, Malik Willis for Parker Washington: title chance 21% → 24%
 **Waivers:** Justice Hill would add 0.6 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
 
-**Week 8:** vs MoneyMertz · projected 163.8 – 146.5 · win chance 71%
+**Week 8:** vs MoneyMertz · projected 163.4 – 148.7 · win chance 67%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Juwan Johnson, C.J. Stroud
 Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 
@@ -29,9 +29,9 @@ Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 - **The True Behemoth** get Darren Waller (Push) ⇄ **Commish in Epstein Files** get 2028 3rd (The True Behemoth) (Push)
 
 ## Market
-- Sell-high: Cam Skattebo: value 2,335 vs ~1,644 for 6.4 pts/wk of production
-- Buy-low: Mike Evans (The True Behemoth): +6.8 counted pts/wk for you, value 1,993
-- Buy-low: T.J. Hockenson (jreese15): +4.5 counted pts/wk for you, value 1,859
-- Buy-low: Dalton Schultz (Francisco Franco’s Team): +2.5 counted pts/wk for you, value 865
+- Sell-high: Cam Skattebo: value 2,366 vs ~1,668 for 6.4 pts/wk of production
+- Buy-low: Mike Evans (The True Behemoth): +6.8 counted pts/wk for you, value 2,025
+- Buy-low: T.J. Hockenson (jreese15): +4.5 counted pts/wk for you, value 1,817
+- Buy-low: Dalton Schultz (Trust the Process): +2.5 counted pts/wk for you, value 834
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
