@@ -4,14 +4,14 @@
 Top counted: Malik Willis 30.0, Jordan Love 21.0, Amon-Ra St. Brown 19.7, Cam Skattebo 18.6
 
 **Record:** 10-4, #4 of 12 · 1196.7 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 47% · title 23% (+3 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 46% · title 23% (+3 pts this week)
 
-**Playoff path:** most likely seed 2; title chance with a bye 29% vs without 18%
+**Playoff path:** most likely seed 2; title chance with a bye 30% vs without 18%
 **Best trade idea:** give Tre' Harris, Malik Willis for Parker Washington: title chance 23% → 26%
 **Waivers:** Justice Hill would add 0.6 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
 
-**Week 8:** vs MoneyMertz · projected 165.6 – 146.5 · win chance 70%
+**Week 8:** vs MoneyMertz · projected 165.2 – 146.8 · win chance 70%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Juwan Johnson, C.J. Stroud
 Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 
@@ -29,7 +29,7 @@ Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 - **The True Behemoth** get Darren Waller (Push) ⇄ **Commish in Epstein Files** get 2028 3rd (The True Behemoth) (Loss)
 
 ## Market
-- Sell-high: Michael Pittman Jr.: value 2,298 vs ~1,756 for 4.9 pts/wk of production
+- Sell-high: Michael Pittman Jr.: value 2,298 vs ~1,757 for 4.9 pts/wk of production
 - Sell-high: Jalen Nailor: value 1,785 vs ~1,309 for 3.0 pts/wk of production
 - Buy-low: Mike Evans (The True Behemoth): +6.9 counted pts/wk for you, value 3,470
 - Buy-low: Kirk Cousins (Lava Me Tender): +4.0 counted pts/wk for you, value 3,306
