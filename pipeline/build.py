@@ -1180,6 +1180,70 @@ def main():
                 row.append(sim_points(d["pr"][k], cv, pid, d["t"], s_, wk, pm))
             rows.append(row)
         VAL[pid] = rows
+
+    # ---------- boom weeks: best ball keeps a player's big games and drops his duds, so how OFTEN he booms matters.
+    # A "boom" is a top-k week at his position (k = 3 per starting spot, e.g. a top-3 TE or a top-9 WR week in a 3-WR league):
+    # the threshold is the k-th best score at the position each week this season, averaged.
+    boom_thr = {}
+    for ps in POS:
+        kk = max(3, 3 * LU_N.get(ps, 1))
+        per = []
+        for wk in range(1, done + 1):
+            sc_ = sorted((v.get(f"{season}-{wk}") for pid_, v in pts.items() if (players_db.get(pid_) or {}).get("position") == ps
+                          and v.get(f"{season}-{wk}") is not None), reverse=True)
+            if len(sc_) >= kk:
+                per.append(sc_[kk - 1])
+        boom_thr[ps] = [round(st.mean(per), 1) if per else None, kk]
+    def lognorm_tail(m, cv, t):
+        if m <= 0 or not t:
+            return 0.0
+        sig = math.sqrt(math.log(1 + cv * cv)); mu = math.log(m) - sig * sig / 2
+        return 1 - 0.5 * (1 + math.erf((math.log(t) - mu) / (sig * math.sqrt(2))))
+    for pid, d in P.items():
+        thr = (boom_thr.get(d["p"]) or [None])[0]
+        if not thr or pid not in VAL:
+            continue
+        ks_ = [k for k in range(len(fut)) if d["pr"][k] > 0 and not (k == 0 and live_pp)]   # rest of season, games not yet under way
+        sim_rate = (sum(1 for s_ in range(SIMS) for k in ks_ if VAL[pid][s_][k] >= thr) / (SIMS * len(ks_))) if ks_ else None
+        played = [v for v in d["a"] if v is not None]
+        d["boom"] = [round(sim_rate, 3) if sim_rate is not None else None, round(sum(1 for v in played if v >= thr) / len(played), 3) if played else None, len(played)]
+    boom_pos = {}
+    for ps in POS:
+        n_st = 12 * (LU_N.get(ps, 1) + (1 if ps in ("RB", "WR") else 0))
+        top = sorted((d for d in P.values() if d["p"] == ps and d.get("boom") and d["boom"][0] is not None), key=lambda d: -sum(d["pr"]))[:n_st]
+        boom_pos[ps] = round(st.mean(d["boom"][0] for d in top), 3) if top else None
+
+    # honest test of the boom chances: replay this season's weeks using only what was known before each game
+    # (projection that week, spread from earlier games), and compare with how often big weeks actually happened.
+    # Also compare against giving every player his position's typical spread, to see if player-specific spreads help.
+    bt_boom = []
+    for pid_, d_ in pts.items():
+        ps_ = (players_db.get(pid_) or {}).get("position")
+        thr = (boom_thr.get(ps_) or [None])[0]
+        if ps_ not in POS or not thr:
+            continue
+        for wk in range(2, done + 1):
+            a_ = d_.get(f"{season}-{wk}"); m_ = (proj_sl.get(pid_) or {}).get(wk)
+            if a_ is None or not m_ or m_ < 3:
+                continue
+            hist_ = [v for w_, v in g(pid_, season, wk)] + [v for _, v in g(pid_, season - 1)]
+            cvp = CV.get(ps_, 0.6)
+            if len(hist_) >= 5:
+                sd_ = (len(hist_) * st.pstdev(hist_) + 6 * cvp * m_) / (len(hist_) + 6); cv_ = min(1.2, max(0.25, sd_ / max(m_, 1)))
+            else:
+                cv_ = cvp
+            bt_boom.append((lognorm_tail(m_, cv_ * CAL_M, thr) * 0.97, lognorm_tail(m_, cvp * CAL_M, thr) * 0.97, 1 if a_ >= thr else 0, ps_))
+    boom_test = dict(n=len(bt_boom), thr={k: v for k, v in boom_thr.items()}, pos_avg=boom_pos)
+    if len(bt_boom) >= 200:
+        ll = lambda i: st.mean(-(o * math.log(max(r[i], 1e-4)) + (1 - o) * math.log(max(1 - r[i], 1e-4))) for r in bt_boom for o in [r[2]])
+        bins = []
+        for lo, hi in ((0, 0.05), (0.05, 0.12), (0.12, 0.25), (0.25, 0.45), (0.45, 1.01)):
+            b_ = [r for r in bt_boom if lo <= r[0] < hi]
+            if b_:
+                bins.append([lo, hi, len(b_), round(st.mean(r[0] for r in b_), 3), round(st.mean(r[2] for r in b_), 3)])
+        boom_test.update(bins=bins, predicted=round(st.mean(r[0] for r in bt_boom), 3), actual=round(st.mean(r[2] for r in bt_boom), 3),
+                         ll_player=round(ll(0), 4), ll_pos=round(ll(1), 4))
+    print(f"boom: thresholds {boom_thr}; test {({k: v for k, v in boom_test.items() if k in ('n', 'predicted', 'actual', 'll_player', 'll_pos')})}")
     _ST = {}
     def starters(ids, k):
         """Managed lineups: who a manager starts in week k, chosen before the games by projection."""
@@ -2323,7 +2387,7 @@ def main():
                     favorites=round(mean_([1 if (g[1] >= 0.5) == (g[2] == 1) else 0 for g in G_]), 3) if G_ else None, bins=bins,
                     pl_mae=round(mean_(graded["pl_err"]), 2) if graded["pl_err"] else None, pl_n=len(graded["pl_err"]),
                     team_mae=round(mean_(graded["team_err"]), 1) if graded["team_err"] else None,
-                    weeks_logged=sorted(PRED["weeks"].keys()), backtest=backtest, sources=src_rep, calib=cal, past_me=past_me, past_bias=past_bias,
+                    weeks_logged=sorted(PRED["weeks"].keys()), backtest=backtest, sources=src_rep, calib=cal, past_me=past_me, past_bias=past_bias, boom=boom_test,
                     odds=[dict(d=o_["d"], wk=o_["wk"], po=o_["t"].get(str(me), [None, None])[0], t=o_["t"].get(str(me), [None, None])[1]) for o_ in PRED["odds"]])
 
     data = dict(meta=dict(league=league.get("name"), lid=str(lid), season=season, done=done, fut=fut, reg_end=reg_end, me=me, median=median_on,
