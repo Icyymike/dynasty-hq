@@ -7,10 +7,10 @@ Top counted: C.J. Stroud 36.4, Isaiah Likely 30.9, Jayden Daniels 29.1, DeVonta 
 **Odds:** playoffs 100% · bye 0% · title 13%
 
 
-**Best trade idea:** give Jayden Daniels, Mike Gesicki for Josh Allen: title chance 13% → 16%
-**Window:** Retool: compete while getting younger. Projected rank 2026: 5, 2027: 4, 2028: 4.
+**Best trade idea:** give Cam Skattebo, Cade Otton for Jordan Love: title chance 13% → 17%
+**Window:** Retool: compete while getting younger. Projected rank 2026: 4, 2027: 4, 2028: 4.
 
-**Week 7:** vs SCLSU Mud Dogs · projected 168.0 – 109.7 · win chance 100%
+**Week 7:** vs SCLSU Mud Dogs · projected 174.7 – 106.2 · win chance 100%
 On bye: Jayden Daniels, Josh Cameron, Marcus Mariota, Charlie Kolar
 Injured: Pat Bryant (IR), Marcus Mariota (Out), DeVonta Smith (Out), Romeo Doubs (IR)
 
@@ -22,9 +22,9 @@ Injured: Pat Bryant (IR), Marcus Mariota (Out), DeVonta Smith (Out), Romeo Doubs
 - Charlie Kolar's value moved 1,296 → 11 (-99%).
 
 ## Market
-- Sell-high: Mike Gesicki: value 2,457 vs ~1,864 for 9.2 pts/wk of production; age 31: TE values usually drop after this season
+- Sell-high: Mike Gesicki: age 31: TE values usually drop after this season
 - Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +5.9 counted pts/wk for you, value 2,899
-- Buy-low: Tony Pollard (D-Generation-XRated): +3.4 counted pts/wk for you, value 2,901
-- Buy-low: Kirk Cousins (jsous): +3.3 counted pts/wk for you, value 3,280
+- Buy-low: Tony Pollard (D-Generation-XRated): +3.4 counted pts/wk for you, value 3,065
+- Buy-low: Kirk Cousins (jsous): +3.3 counted pts/wk for you, value 3,287
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
