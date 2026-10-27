@@ -4,14 +4,14 @@
 Top counted: C.J. Stroud 29.0, Bryce Young 23.8, D'Andre Swift 21.0, Roschon Johnson 13.5
 
 **Record:** 8-4, #5 of 12 · 1082.2 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 41% · title 22% (+1 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 39% · title 21% (+1 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 30% vs without 15%
-**Best trade idea:** give Malik Willis for Kirk Cousins: title chance 22% → 25%
+**Playoff path:** most likely seed 3; title chance with a bye 28% vs without 16%
+**Best trade idea:** give Tre' Harris, Malik Willis for Parker Washington: title chance 21% → 25%
 **Waivers:** Justice Hill would add 0.7 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 7:** vs Lava Me Tender · projected 183.1 – 153.1 · win chance 100%
+**Week 7:** vs Lava Me Tender · projected 183.1 – 152.7 · win chance 100%
 On bye: Tre' Harris, Antonio Williams, Josh Cameron, Treylon Burks, Quentin Johnston
 Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 
