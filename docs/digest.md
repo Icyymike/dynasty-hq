@@ -7,16 +7,15 @@ Top counted: Malik Willis 30.0, Jordan Love 21.0, Amon-Ra St. Brown 19.7, Cam Sk
 **Odds:** playoffs 100% (+0 pts this week) · bye 36% · title 21% (+1 pts this week)
 
 **Playoff path:** most likely seed 3; title chance with a bye 27% vs without 17%
-**Best trade idea:** give Cam Skattebo, Malik Willis for Parker Washington: title chance 21% → 24%
+**Best trade idea:** give Cam Skattebo, Malik Willis for Parker Washington: title chance 21% → 25%
 **Waivers:** Justice Hill would add 0.6 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
 
-**Week 8:** vs MoneyMertz · projected 163.4 – 148.7 · win chance 67%
+**Week 8:** vs MoneyMertz · projected 163.7 – 149.0 · win chance 67%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Juwan Johnson, C.J. Stroud
-Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
+Injured: Tyrone Tracy Jr. (Out), Tre' Harris (Out), Michael Pittman Jr. (IR)
 
 ## Alerts this week
-- Malik Willis's value moved 3,519 → 2,016 (-43%).
 - Greg Dulcich's value moved 2,244 → 681 (-70%).
 - Jalen Nailor's value moved 1,785 → 233 (-87%).
 - Jaylen Warren's value moved 4,565 → 2,658 (-42%).
@@ -24,6 +23,7 @@ Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 - Bryce Young's value moved 6,082 → 4,453 (-27%).
 - Quentin Johnston's value moved 2,661 → 1,204 (-55%).
 - C.J. Stroud's value moved 5,939 → 4,388 (-26%).
+- Tyrone Tracy Jr. is now Out. Rest-of-season, he now adds 1.9 counted pts/wk to your lineup.
 
 ## League trades
 - **The True Behemoth** get Darren Waller (Push) ⇄ **Commish in Epstein Files** get 2028 3rd (The True Behemoth) (Push)
