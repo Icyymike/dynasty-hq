@@ -7,7 +7,7 @@ Top counted: Malik Willis 30.0, Jordan Love 21.0, Amon-Ra St. Brown 19.7, Cam Sk
 **Odds:** playoffs 100% (+0 pts this week) · bye 37% · title 20% (+0 pts this week)
 
 **Playoff path:** most likely seed 3; title chance with a bye 26% vs without 17%
-**Best trade idea:** give C.J. Stroud for Parker Washington: title chance 20% → 24%
+**Best trade idea:** give Cam Skattebo, Malik Willis for Parker Washington: title chance 20% → 24%
 **Waivers:** Justice Hill would add 0.6 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
 
