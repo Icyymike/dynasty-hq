@@ -4,35 +4,34 @@
 Top counted: Malik Willis 30.0, Jordan Love 21.0, Amon-Ra St. Brown 19.7, Cam Skattebo 18.6
 
 **Record:** 10-4, #4 of 12 · 1265.3 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 37% · title 21% (+1 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 37% · title 20% (+0 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 27% vs without 17%
-**Best trade idea:** give Tre' Harris, Malik Willis for Parker Washington: title chance 21% → 26%
-**Waivers:** Justice Hill would add 0.5 pts/wk to your lineup.
-**Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
+**Playoff path:** most likely seed 3; title chance with a bye 26% vs without 17%
+**Best trade idea:** give C.J. Stroud for Parker Washington: title chance 20% → 24%
+**Waivers:** Justice Hill would add 0.6 pts/wk to your lineup.
+**Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
 
 **Week 8:** vs MoneyMertz · projected 163.3 – 146.0 · win chance 72%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Juwan Johnson, C.J. Stroud
 Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 
 ## Alerts this week
-- Matt Hibner is back (Questionable).
-- Matt Hibner's value moved 2,573 → 1,923 (-25%).
-- Eli Raridon's value moved 3,264 → 2,729 (-16%).
-- Juwan Johnson's value moved 3,671 → 3,088 (-16%).
-- Pat Freiermuth's value moved 3,439 → 2,873 (-16%).
-- Tommy Tremble's value moved 2,172 → 1,402 (-35%).
-- Greg Dulcich's value moved 2,607 → 1,964 (-25%).
-- Jalen Nailor's value moved 1,813 → 1,506 (-17%).
+- Malik Willis's value moved 3,519 → 2,016 (-43%).
+- Greg Dulcich's value moved 2,244 → 681 (-70%).
+- Jalen Nailor's value moved 1,785 → 233 (-87%).
+- Jaylen Warren's value moved 4,565 → 2,658 (-42%).
+- Chase Brown's value moved 5,007 → 3,227 (-36%).
+- Bryce Young's value moved 6,082 → 4,453 (-27%).
+- Quentin Johnston's value moved 2,661 → 1,204 (-55%).
+- C.J. Stroud's value moved 5,939 → 4,388 (-26%).
 
 ## League trades
-- **The True Behemoth** get Darren Waller (Push) ⇄ **Commish in Epstein Files** get 2028 3rd (The True Behemoth) (Loss)
+- **The True Behemoth** get Darren Waller (Push) ⇄ **Commish in Epstein Files** get 2028 3rd (The True Behemoth) (Push)
 
 ## Market
-- Sell-high: Michael Pittman Jr.: value 2,298 vs ~1,757 for 4.9 pts/wk of production
-- Sell-high: Jalen Nailor: value 1,785 vs ~1,309 for 3.0 pts/wk of production
-- Buy-low: Mike Evans (The True Behemoth): +6.7 counted pts/wk for you, value 3,470
-- Buy-low: Kirk Cousins (Lava Me Tender): +3.7 counted pts/wk for you, value 3,306
-- Buy-low: Ollie Gordon II (Lava Me Tender): +3.8 counted pts/wk for you, value 3,515
+- Sell-high: Cam Skattebo: value 2,335 vs ~1,644 for 6.4 pts/wk of production
+- Buy-low: Mike Evans (The True Behemoth): +6.8 counted pts/wk for you, value 1,993
+- Buy-low: T.J. Hockenson (jreese15): +4.5 counted pts/wk for you, value 1,859
+- Buy-low: Dalton Schultz (Francisco Franco’s Team): +2.5 counted pts/wk for you, value 865
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
