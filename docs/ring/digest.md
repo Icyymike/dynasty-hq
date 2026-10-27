@@ -10,7 +10,7 @@ Top counted: C.J. Stroud 36.4, Isaiah Likely 30.9, Jayden Daniels 29.1, DeVonta 
 **Best trade idea:** give Cam Skattebo, Cade Otton for Jordan Love: title chance 13% → 17%
 **Window:** Retool: compete while getting younger. Projected rank 2026: 4, 2027: 4, 2028: 4.
 
-**Week 7:** vs SCLSU Mud Dogs · projected 174.7 – 106.2 · win chance 100%
+**Week 7:** vs SCLSU Mud Dogs · projected 174.5 – 105.9 · win chance 100%
 On bye: Jayden Daniels, Josh Cameron, Marcus Mariota, Charlie Kolar
 Injured: Pat Bryant (IR), Marcus Mariota (Out), DeVonta Smith (Out), Romeo Doubs (IR)
 
