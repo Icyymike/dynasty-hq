@@ -31,14 +31,19 @@ def sidnum(sid):
     return int(s) if s.isdigit() else 500000 + B.team_num(s)   # team defenses get their own number
 
 
-def sim(m, cv, sid, team, s, w, p_miss):
+def sim(m, cv, sid, team, s, w, p_miss, pos=None):
+    """Same model as build.sim_points: lognormal, or the measured real score shape (B.SHAPE) for QB/RB/WR/TE when it tested better."""
     if m <= 0:
         return 0.0
     a = sidnum(sid)
     if B.h3(a, s * 37 + 9, w * 41 + 17) < p_miss:
         return 0.0
-    sig = math.sqrt(math.log(1 + cv * cv))
     z = B.W_IND * B.znorm(a, s, w) + B.W_TEAM * B.team_z(team, s, w)
+    if B.SHAPE and pos:
+        cell = f"{pos}|{B.level(m)}"
+        if cell in B.SHAPE:
+            return m * B.shape_ratio(cell, cv / B.CV0.get(pos, 0.6), z)
+    sig = math.sqrt(math.log(1 + cv * cv))
     return m * math.exp(sig * z - sig * sig / 2)
 
 
@@ -403,26 +408,81 @@ def main():
 
     # ---------- how good were the pre-week numbers? Every game so far re-played with the projections for the lineups that were started.
     # The same re-play, with every player's spread scaled up or down, finds the "noise dial" that makes win chances match results.
-    def backfill(mult, sims=300):
+    # Real score shape (see build.SHAPE): this season's games plus last season's (Sleeper's projections then vs. results).
+    SK4 = ("QB", "RB", "WR", "TE")
+    shape_rows_all = [(w, (players_db.get(pid) or {}).get("position"), pts[pid][f"{season}-{w}"], proj[pid][w]) for pid in proj for w in proj[pid]
+                      if w <= done and f"{season}-{w}" in pts.get(pid, {}) and (players_db.get(pid) or {}).get("position") in SK4]
+    prev_rows = []
+    for wk in range(1, 18):
+        data = get(f"{API}/projections/nfl/regular/{season - 1}/{wk}", cache_hours=24 * 365, required=False) or {}
+        for pid, s_ in data.items():
+            pos = (players_db.get(pid) or {}).get("position")
+            a_ = pts.get(pid, {}).get(f"{season - 1}-{wk}")
+            if pos in SK4 and isinstance(s_, dict) and a_ is not None:
+                m_ = score(s_, pos)
+                if m_ > 0.5:
+                    prev_rows.append((0, pos, a_, m_))
+    print(f"score shape data: {len(shape_rows_all)} games this season, {len(prev_rows)} last season")
+    shape_rows_all = prev_rows + shape_rows_all
+    # how often a starter who still had a projection when the week locked didn't play (measured)
+    _n = _miss = 0
+    for wk in range(1, done + 1):
+        for rid, ids in (starters_wk.get(wk) or {}).items():
+            for p in ids:
+                ps_ = (players_db.get(p) or {}).get("position")
+                if ps_ in SK4 and proj.get(p, {}).get(wk, 0) > 0.5:
+                    _n += 1; _miss += 0 if f"{season}-{wk}" in pts.get(p, {}) else 1
+    BF_MISS = round(_miss / _n, 3) if _n >= 200 else 0.03
+    print(f"replay: {_miss}/{_n} projected starters didn't play -> miss chance {BF_MISS}")
+
+    def backfill(mult, sims=300, shape=None, wk_from=1):
         out_ = []
-        for wk in range(1, done + 1):
-            rows = weeks.get(wk) or []
-            means = {}
-            for rid, mid, _ in rows:
-                means[rid] = [(p, (proj.get(p, {}).get(wk) or 0), CV.get((players_db.get(p) or {}).get("position"), 0.6) * mult,
-                               (players_db.get(p) or {}).get("team") or p) for p in starters_wk[wk].get(rid, []) if p and p != "0"]
-            draws = {rid: [sum(sim(m, cv, p, tm, s_, 900 + wk, 0.03) for p, m, cv, tm in ms) for s_ in range(sims)] for rid, ms in means.items()}
-            for rid, mid, sc_ in rows:
-                o = next((r for r in rows if r[1] == mid and r[0] != rid), None)
-                if not o or rid > o[0]:
-                    continue
-                wp_ = (sum(1 for a, b in zip(draws[rid], draws[o[0]]) if a > b) + 0.5) / (sims + 1)
-                out_.append(dict(wk=wk, a=rid, b=o[0], wp=round(wp_, 3), pa=round(sum(m for _, m, _, _ in means[rid]), 1), pb=round(sum(m for _, m, _, _ in means[o[0]]), 1),
-                                 sa=sc_, sb=o[2]))
+        keep = B.SHAPE
+        try:
+            for wk in range(wk_from, done + 1):
+                B.SHAPE = B.fit_shape([(ps, a, m) for w, ps, a, m in shape_rows_all if w < wk], norm=(shape == "norm")) if shape else {}
+                rows = weeks.get(wk) or []
+                means = {}
+                for rid, mid, _ in rows:
+                    means[rid] = [(p, (proj.get(p, {}).get(wk) or 0), CV.get((players_db.get(p) or {}).get("position"), 0.6) * mult,
+                                   (players_db.get(p) or {}).get("team") or p, (players_db.get(p) or {}).get("position")) for p in starters_wk[wk].get(rid, []) if p and p != "0"]
+                draws = {rid: [sum(sim(m, cv, p, tm, s_, 900 + wk, BF_MISS if ps in SK4 else 0.03, ps) for p, m, cv, tm, ps in ms) for s_ in range(sims)] for rid, ms in means.items()}
+                for rid, mid, sc_ in rows:
+                    o = next((r for r in rows if r[1] == mid and r[0] != rid), None)
+                    if not o or rid > o[0]:
+                        continue
+                    wp_ = (sum(1 for a, b in zip(draws[rid], draws[o[0]]) if a > b) + 0.5) / (sims + 1)
+                    xa, xb = sorted(draws[rid]), sorted(draws[o[0]])
+                    out_.append(dict(wk=wk, a=rid, b=o[0], wp=round(wp_, 3), pa=round(sum(x[1] for x in means[rid]), 1), pb=round(sum(x[1] for x in means[o[0]]), 1),
+                                     sa=sc_, sb=o[2], ea=round(sum(xa) / sims, 1), eb=round(sum(xb) / sims, 1),
+                                     ca=int(xa[int(0.1 * sims)] <= sc_ <= xa[int(0.9 * sims)]), cb=int(xb[int(0.1 * sims)] <= o[2] <= xb[int(0.9 * sims)])))
+        finally:
+            B.SHAPE = keep
         return out_
-    cal = SRC.calibrate(lambda m_: [(g_["wk"], g_["wp"], 1 if g_["sa"] > g_["sb"] else 0) for g_ in backfill(m_, 200)]) if done else dict(m=1.0, n=0)
+    shape_rep = dict(used=False, mode=None)
+    try:
+        if done >= 3:
+            res = {}
+            for mode in (None, "norm", "raw"):
+                g_ = backfill(1.0, 200, shape=mode, wk_from=3)
+                ll_ = st.mean(-(o * math.log(max(p_, 1e-4)) + (1 - o) * math.log(max(1 - p_, 1e-4))) for p_, o in ((x["wp"], 1 if x["sa"] > x["sb"] else 0) for x in g_))
+                res[mode or "lognormal"] = dict(n=2 * len(g_), bias=round(st.mean([x["sa"] - x["ea"] for x in g_] + [x["sb"] - x["eb"] for x in g_]), 2),
+                                                cover=round(st.mean([x["ca"] for x in g_] + [x["cb"] for x in g_]), 3), logloss=round(ll_, 4))
+            fit_err = lambda r: abs(r["bias"]) / 4 + abs(r["cover"] - 0.8) * 50
+            base = res["lognormal"]
+            ok = [k for k in ("norm", "raw") if fit_err(res[k]) < fit_err(base) - 0.25 and res[k]["logloss"] <= base["logloss"] + 0.003]
+            pick = min(ok, key=lambda k: fit_err(res[k])) if ok else None
+            full = B.fit_shape([(ps, a, m) for w, ps, a, m in shape_rows_all], norm=(pick == "norm")) if pick else {}
+            shape_rep = dict(used=bool(pick and full), mode=pick, test=res, n_games=len(shape_rows_all), weeks=[3, done])
+            if shape_rep["used"]:
+                B.SHAPE = full
+                shape_rep["cells"] = {k: [len(v[0]), v[1]] for k, v in full.items()}
+            print(f"score shape test: {res} -> {pick or 'lognormal'}")
+    except Exception as e:  # noqa
+        print(f"WARN shape test skipped: {e}")
+    cal = SRC.calibrate(lambda m_: [(g_["wk"], g_["wp"], 1 if g_["sa"] > g_["sb"] else 0) for g_ in backfill(m_, 200, shape=shape_rep["mode"])]) if done else dict(m=1.0, n=0)
     CAL_M = cal["m"]
-    back = backfill(CAL_M)
+    back = backfill(CAL_M, shape=shape_rep["mode"])
     print(f"calibration: {cal}")
 
     # ---------- per-player record
@@ -497,11 +557,11 @@ def main():
             for k, wk in enumerate(fut):
                 if k == 0 and d.get("lk"):
                     lk = d["lk"]
-                    row.append(lk[0] + (sim(d["pr"][0] * lk[1], d["cv"], pid, d["t"], s_, wk, 0) if lk[1] > 0 else 0.0)); continue
+                    row.append(lk[0] + (sim(d["pr"][0] * lk[1], d["cv"], pid, d["t"], s_, wk, 0, d["p"]) if lk[1] > 0 else 0.0)); continue
                 if ab[k]:
                     row.append(0.0); continue
                 pm = B.P_MISS_STATUS.get(d["inj"], B.P_MISS) if k == 0 else 0
-                row.append(sim(d["pr"][k], d["cv"], pid, d["t"], s_, wk, pm))
+                row.append(sim(d["pr"][k], d["cv"], pid, d["t"], s_, wk, pm, d["p"]))
             rows.append(row)
         VAL[pid] = rows
 
@@ -618,6 +678,12 @@ def main():
             res[r]["seed"] = [round(x / SIMS, 3) for x in res[r]["seed"]]
         return res
 
+    try:
+        order0 = sorted(rec, key=lambda r: (rec[r][0], rec[r][2]), reverse=True)
+        checks["bracket"] = B.bracket_check(get(f"{API}/league/{lid}/winners_bracket", cache_hours=1, required=False), order0, n_playoff)
+        print(f"bracket check: {checks['bracket']}")
+    except Exception as e:  # noqa
+        print(f"WARN bracket check skipped: {e}")
     S0 = run_season(LU) if fut else {t["id"]: dict(playoffs=0, bye=0, title=0, xw=rec[t["id"]][0], wp=0, seed=[]) for t in teams}
 
     # weekly projected scores and ranges
@@ -913,7 +979,7 @@ def main():
                   generated=gen, started=week_started, slots=slots, n_playoff=n_playoff, deadline=deadline, median=median_on,
                   waiver=dict(type=S.get("waiver_type"), mine=wpos.get(me), order=wpos), scoring=dict(ppr=league["scoring_settings"].get("rec", 0),
                   pass_td=league["scoring_settings"].get("pass_td", 4)), checks=dict(lineups=checks["lineups"], lineup_bad=checks["lineup_bad"][:20],
-                  scored=checks["scored"], score_bad=checks["score_bad"][:20]), backtest=backtest, sources=src_rep, calib=cal, value_src="FantasyCalc redraft values (12-team, 1QB, full PPR)"),
+                  scored=checks["scored"], score_bad=checks["score_bad"][:20], bracket=checks.get("bracket")), backtest=backtest, sources=src_rep, calib=cal, shape=B.SHAPE, shape_test=shape_rep, value_src="FantasyCalc redraft values (12-team, 1QB, full PPR)"),
         teams=[dict(id=t["id"], name=t["name"], user=t["user"], w=rec[t["id"]][0], l=rec[t["id"]][1], pf=round(rec[t["id"]][2], 2), pa=round(rec[t["id"]][3], 2),
                     wpos=t["wpos"], moves=t["moves"], ppts=round(t["ppts"], 2)) for t in teams],
         odds={str(r): v for r, v in S0.items()}, repl={f"{ps}|{k}": v for (ps, k), v in repl.items()}, wk_mean={str(r): [round(x, 1) for x in v] for r, v in wk_mean.items()}, rng={str(r): v for r, v in rng.items()},

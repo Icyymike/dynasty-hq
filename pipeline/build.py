@@ -172,6 +172,32 @@ def bracket_shape(n):
     return B - n, max(1, B.bit_length() - 1)   # (byes, rounds)
 
 
+def bracket_check(wb, order, n_playoff):
+    """Compare our playoff format with Sleeper's own bracket (winners_bracket): number of teams, byes, rounds.
+    Sleeper fills its bracket from the current standings, so also report whether our current seeds put the same
+    teams in (byes and round 1); that confirms the tiebreakers too."""
+    if not isinstance(wb, list) or not wb:
+        return dict(available=False)
+    main_ = [m for m in wb if isinstance(m, dict) and not m.get("p") or (isinstance(m, dict) and m.get("p") == 1)]
+    r1 = [m for m in wb if isinstance(m, dict) and m.get("r") == 1]
+    r1_teams = {t for m in r1 for t in (m.get("t1"), m.get("t2")) if t}
+    byes = set()
+    for m in wb:
+        if isinstance(m, dict) and m.get("r") == 2 and not m.get("p"):
+            for side in ("t1", "t2"):
+                if m.get(side) and not m.get(side + "_from"):
+                    byes.add(m[side])
+    rounds = max((m.get("r") or 0) for m in main_) if main_ else 0
+    b_app, r_app = bracket_shape(n_playoff)
+    out = dict(available=True, sleeper=dict(teams=len(r1_teams) + len(byes), byes=len(byes), rounds=rounds),
+               app=dict(teams=n_playoff, byes=b_app, rounds=r_app))
+    out["format_ok"] = out["sleeper"] == out["app"]
+    seeds = order[:n_playoff]
+    if r1_teams:
+        out["seeds_match"] = set(seeds[:b_app]) == byes and set(seeds[b_app:]) == r1_teams
+    return out
+
+
 # ---------------------------------------------------------------- shared noise model
 # The site re-implements these exact functions in JavaScript, so a simulation run in the browser
 # uses the same random draws as the pipeline: odds shown on every page agree.
@@ -249,15 +275,87 @@ def absences(a, s, weeks):
     return out
 
 
-def sim_points(m, cv, sid, team, s, w, p_miss):
-    """One simulated score: right-skewed (lognormal, mean m), partly shared with teammates, with a chance of missing the game."""
+# Shape of a weekly score around its projection. Default: lognormal. When SHAPE has the player's cell (position and
+# projection level), draws follow the real outcomes measured for that cell instead: score / projection, as K quantiles.
+# Real weeks have more duds and more blow-ups than a lognormal, and players projected for only a few points (deep bench)
+# hit big weeks far more often than their projection suggests, which is what best ball lineups feed on.
+# The same random numbers are used either way, so teammates still move together.
+SHAPE = {}                    # "POS|level" -> [K quantiles of score/projection, their mean]
+CV0 = {"QB": 0.42, "RB": 0.55, "WR": 0.62, "TE": 0.65}   # typical spread by position: a player's cv / CV0 scales his spread
+LEVELS = (4, 8, 13)           # projection levels: under 4, 4-8, 8-13, 13+
+
+
+def level(m):
+    return 0 if m < 4 else 1 if m < 8 else 2 if m < 13 else 3
+
+
+def phi(x):
+    """Normal CDF (Abramowitz-Stegun 7.1.26; the page uses the identical formula)."""
+    y = abs(x) / 1.4142135623730951
+    t = 1.0 / (1.0 + 0.3275911 * y)
+    e = 1.0 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * math.exp(-y * y)
+    return 0.5 * (1.0 + (e if x >= 0 else -e))
+
+
+def shape_ratio(cell, f, z):
+    q, mu = SHAPE[cell]
+    K = len(q)
+    x = min(max(phi(z) * K - 0.5, 0.0), K - 1.0)
+    i = int(x)
+    r = q[i] if i >= K - 1 else q[i] + (q[i + 1] - q[i]) * (x - i)
+    return max(0.0, mu + (r - mu) * f)
+
+
+def fit_shape(rows, K=40, min_n=80, norm=False):
+    """rows: (pos, actual, projection) for games played. Returns {cell: [quantiles, mean]} for cells with enough games.
+    norm=True rescales each cell to average exactly 1 (keeps the projection's mean, changes only the shape)."""
+    out, by = {}, {}
+    for ps, a, m in rows:
+        if m > 0.5:
+            by.setdefault(f"{ps}|{level(m)}", []).append(max(a, 0) / m)
+    for cell, r in by.items():
+        if len(r) < min_n:
+            continue
+        r = sorted(r)
+        n = len(r)
+        q = []
+        for k in range(K):
+            x = (k + 0.5) / K * n - 0.5
+            i = min(max(int(x), 0), n - 2)
+            q.append(r[i] + (r[i + 1] - r[i]) * min(max(x - i, 0), 1))
+        mu = st.mean(q)
+        if norm:
+            q = [v / mu for v in q]; mu = 1.0
+        out[cell] = [[round(v, 3) for v in q], round(mu, 3)]
+    return out
+
+
+def shape_tail(pos, m, cv, t):
+    """Chance a score beats t under the measured shape (same table and scaling the draws use)."""
+    cell = f"{pos}|{level(m)}"
+    if m <= 0 or not t or cell not in SHAPE:
+        return None
+    q, mu = SHAPE[cell]
+    f = cv / CV0.get(pos, 0.6)
+    K = len(q)
+    vals = [max(0.0, mu + (v - mu) * f) * m for v in q]
+    return sum(1 for v in vals if v >= t) / K
+
+
+def sim_points(m, cv, sid, team, s, w, p_miss, pos=None):
+    """One simulated score (mean m), partly shared with teammates, with a chance of missing the game.
+    Lognormal, or the measured real shape when SHAPE has the player's cell."""
     if m <= 0:
         return 0.0
     a = int(sid) if str(sid).isdigit() else 7
     if h3(a, s * 37 + 9, w * 41 + 17) < p_miss:
         return 0.0
-    sig = math.sqrt(math.log(1 + cv * cv))
     z = W_IND * znorm(a, s, w) + W_TEAM * team_z(team, s, w)
+    if SHAPE and pos:
+        cell = f"{pos}|{level(m)}"
+        if cell in SHAPE:
+            return m * shape_ratio(cell, cv / CV0.get(pos, 0.6), z)
+    sig = math.sqrt(math.log(1 + cv * cv))
     return m * math.exp(sig * z - sig * sig / 2)
 
 
@@ -353,7 +451,7 @@ def future_strength(items, j):
     tot = 0.0
     for s_ in range(STR_S):
         for wk in range(STR_W):
-            tot += best_lineup((pos, sim_points(m, cv, sid, tm, s_, 200 + j * 20 + wk, P_MISS)) for pos, m, cv, sid, tm in items)
+            tot += best_lineup((pos, sim_points(m, cv, sid, tm, s_, 200 + j * 20 + wk, P_MISS, pos)) for pos, m, cv, sid, tm in items)
     return tot / (STR_S * STR_W)
 
 
@@ -521,7 +619,7 @@ def main():
     rosters = get(f"{API}/league/{lid}/rosters")
     traded = get(f"{API}/league/{lid}/traded_picks", required=False) or []
     settings = league.get("settings", {})
-    global MANAGED
+    global MANAGED, SHAPE
     set_lineup_shape(league.get("roster_positions") or [])
     MANAGED = not settings.get("best_ball")
     sc_ = league.get("scoring_settings") or {}
@@ -704,6 +802,7 @@ def main():
 
     # ---------- matchups (past scores, future pairings, weekly rosters)
     weeks, sched, my_weekly, live, live_pp = {}, {}, {}, {}, {}
+    cur_starters = {}
     all_weekly = {}
     checks = dict(lineups=0, lineup_bad=[], scored=0, score_bad=[])
     po_actual = {}
@@ -748,6 +847,8 @@ def main():
                 my_weekly[wk] = [str(p) for p in (mine.get("players") or [])]
         else:
             sched[wk] = [[x["roster_id"], x.get("matchup_id")] for x in m]
+            if wk == done + 1:
+                cur_starters = {x["roster_id"]: [str(p) for p in (x.get("starters") or []) if p and str(p) != "0"] for x in m}
             if wk == done + 1 and any(x.get("players_points") for x in m):
                 # Sleeper's "points" mid-week only counts the manually set starters; best ball counts the best
                 # possible lineup, so rebuild it from every rostered player's points so far.
@@ -941,38 +1042,103 @@ def main():
     # spread scaled up or down, and keep the "noise dial" whose win chances best match what happened (pulled toward 1 until
     # there are enough games to trust it).
     CVP = {"QB": 0.42, "RB": 0.55, "WR": 0.62, "TE": 0.65}
-    def backfill(mult, sims=200, detail=None):
+    # Games played this season: (week, pos, actual, projection that week). Used to measure the real shape of weekly scores.
+    shape_rows_all = [(w, pinfo(pid)["p"], pts[pid][f"{season}-{w}"], proj[pid][w]) for pid in proj for w in proj[pid]
+                      if w <= done and f"{season}-{w}" in pts.get(pid, {}) and pinfo(pid)["p"] in POS]
+    # last season's games too (Sleeper's projections then vs. what happened), always "earlier", so still an honest test
+    prev_rows = []
+    for wk in range(1, 18):
+        data = get(f"{API}/projections/nfl/regular/{season - 1}/{wk}", cache_hours=24 * 365, required=False) or {}
+        for pid, s_ in data.items():
+            pos = (players_db.get(pid) or {}).get("position")
+            a_ = pts.get(pid, {}).get(f"{season - 1}-{wk}")
+            if pos in POS and isinstance(s_, dict) and a_ is not None:
+                m_ = score(s_, pos)
+                if m_ > 0.5:
+                    prev_rows.append((0, pos, a_, m_))
+    print(f"score shape data: {len(shape_rows_all)} games this season, {len(prev_rows)} last season")
+    shape_rows_all = prev_rows + shape_rows_all
+    def shape_upto(wk, norm=False):
+        return fit_shape([(ps, a, m) for w, ps, a, m in shape_rows_all if w < wk], norm=norm)
+    # How often a player who still had a projection when the week locked didn't play at all (measured, not assumed):
+    # in managed leagues managers bench players ruled out, so for starters this is about zero.
+    _bf_n = _bf_miss = 0
+    for wk in range(1, done + 1):
+        for rid, ids in (all_weekly.get(wk) or {}).items():
+            for p in ids:
+                if pinfo(p)["p"] in POS and proj.get(p, {}).get(wk, 0) > 0:
+                    _bf_n += 1; _bf_miss += 0 if f"{season}-{wk}" in pts.get(p, {}) else 1
+    BF_MISS = round(_bf_miss / _bf_n, 3) if _bf_n >= 200 else 0.03
+    print(f"replay: {_bf_miss}/{_bf_n} projected {'starters' if MANAGED else 'rostered players'} didn't play -> miss chance {BF_MISS}")
+    def backfill(mult, sims=200, detail=None, shape=False, wk_from=1):
+        """Re-play past weeks with projections as they were. shape=True: each week uses the real score shape measured
+        from EARLIER weeks only (lognormal until there are enough games), so the test is honest."""
+        global SHAPE
+        keep = SHAPE
         out_ = []
-        for wk in range(1, done + 1):
-            rows = weeks.get(wk) or []
-            draws = {}
-            for rid, mid, _ in rows:
-                items = [(pinfo(p)["p"], proj.get(p, {}).get(wk, 0), CVP.get(pinfo(p)["p"], 0.6) * mult, p, pinfo(p)["t"]) for p in all_weekly.get(wk, {}).get(rid, [])]
-                items = [x for x in items if x[0] in POS and x[1] > 0]
-                draws[rid] = [(sum(sim_points(m_, cv_, sid, tm, s_, 900 + wk, 0.03) for ps, m_, cv_, sid, tm in items) if MANAGED
-                               else best_lineup((ps, sim_points(m_, cv_, sid, tm, s_, 900 + wk, 0.03)) for ps, m_, cv_, sid, tm in items)) for s_ in range(sims)]
-            if detail is not None:   # how every team did vs. what was expected before the week (for "your season so far")
-                med_ = st.median([r[2] for r in rows]) if rows else 0
+        try:
+            for wk in range(wk_from, done + 1):
+                SHAPE = shape_upto(wk, norm=(shape == "norm")) if shape else {}
+                rows = weeks.get(wk) or []
+                draws = {}
+                for rid, mid, _ in rows:
+                    items = []
+                    for p in all_weekly.get(wk, {}).get(rid, []):
+                        ps = pinfo(p)["p"]; m_ = proj.get(p, {}).get(wk, 0)
+                        if ps in POS and m_ > 0:
+                            items.append((ps, m_, CVP.get(ps, 0.6) * mult, p, pinfo(p)["t"]))
+                    draws[rid] = [(sum(sim_points(m_, cv_, sid, tm, s_, 900 + wk, BF_MISS, ps) for ps, m_, cv_, sid, tm in items) if MANAGED
+                                   else best_lineup((ps, sim_points(m_, cv_, sid, tm, s_, 900 + wk, BF_MISS, ps)) for ps, m_, cv_, sid, tm in items)) for s_ in range(sims)]
+                if detail is not None:   # how every team did vs. what was expected before the week (for "your season so far")
+                    med_ = st.median([r[2] for r in rows]) if rows else 0
+                    for rid, mid, sc_ in rows:
+                        if rid not in draws:
+                            continue
+                        o = next((r for r in rows if r[1] == mid and r[0] != rid), None)
+                        xs = sorted(draws[rid])
+                        rec_ = dict(wk=wk, rid=rid, sc=round(sc_, 1), exp=round(sum(xs) / len(xs), 1), lo=round(xs[int(0.1 * len(xs))], 1), hi=round(xs[int(0.9 * len(xs))], 1))
+                        if o and o[0] in draws:
+                            rec_.update(opp=o[0], osc=round(o[2], 1), oexp=round(sum(draws[o[0]]) / len(draws[o[0]]), 1),
+                                        wp=round((sum(1 for a, b in zip(draws[rid], draws[o[0]]) if a > b) + 0.5) / (len(xs) + 1), 3))
+                        if median_on:
+                            rec_["med"] = 1 if sc_ > med_ else 0
+                        detail.append(rec_)
                 for rid, mid, sc_ in rows:
-                    if rid not in draws:
-                        continue
                     o = next((r for r in rows if r[1] == mid and r[0] != rid), None)
-                    xs = sorted(draws[rid])
-                    rec_ = dict(wk=wk, rid=rid, sc=round(sc_, 1), exp=round(sum(xs) / len(xs), 1), lo=round(xs[int(0.1 * len(xs))], 1), hi=round(xs[int(0.9 * len(xs))], 1))
-                    if o and o[0] in draws:
-                        rec_.update(opp=o[0], osc=round(o[2], 1), oexp=round(sum(draws[o[0]]) / len(draws[o[0]]), 1),
-                                    wp=round((sum(1 for a, b in zip(draws[rid], draws[o[0]]) if a > b) + 0.5) / (len(xs) + 1), 3))
-                    if median_on:
-                        rec_["med"] = 1 if sc_ > med_ else 0
-                    detail.append(rec_)
-            for rid, mid, sc_ in rows:
-                o = next((r for r in rows if r[1] == mid and r[0] != rid), None)
-                if not o or rid > o[0] or rid not in draws or o[0] not in draws:
-                    continue
-                out_.append((wk, (sum(1 for a, b in zip(draws[rid], draws[o[0]]) if a > b) + 0.5) / (sims + 1), 1 if sc_ > o[2] else 0))
+                    if not o or rid > o[0] or rid not in draws or o[0] not in draws:
+                        continue
+                    out_.append((wk, (sum(1 for a, b in zip(draws[rid], draws[o[0]]) if a > b) + 0.5) / (sims + 1), 1 if sc_ > o[2] else 0))
+        finally:
+            SHAPE = keep
         return out_
+
+    # Which score shape fits this league better? Replay weeks 3+ each way (shapes learned only from earlier games) and keep
+    # a real shape only if team scores land where expected more often without making win chances worse.
+    shape_rep = dict(used=False, mode=None)
     try:
-        cal = SRC.calibrate(backfill) if done else dict(m=1.0, n=0)
+        if done >= 3:
+            res = {}
+            for mode in (None, "norm", "raw"):
+                det_ = []
+                g_ = backfill(1.0, 200, detail=det_, shape=mode, wk_from=3)
+                ll_ = st.mean(-(o * math.log(max(p_, 1e-4)) + (1 - o) * math.log(max(1 - p_, 1e-4))) for _, p_, o in g_) if g_ else None
+                res[mode or "lognormal"] = dict(n=len(det_), bias=round(st.mean(r["sc"] - r["exp"] for r in det_), 2),
+                                                cover=round(st.mean(1 if r["lo"] <= r["sc"] <= r["hi"] else 0 for r in det_), 3),
+                                                mae=round(st.mean(abs(r["sc"] - r["exp"]) for r in det_), 2), logloss=round(ll_, 4) if ll_ else None)
+            fit_err = lambda r: abs(r["bias"]) / 4 + abs(r["cover"] - 0.8) * 50   # 4 pts of bias ~ 5 points of coverage miss
+            base = res["lognormal"]
+            ok = [k for k in ("norm", "raw") if fit_err(res[k]) < fit_err(base) - 0.25 and (res[k]["logloss"] or 0) <= (base["logloss"] or 0) + 0.003]
+            pick = min(ok, key=lambda k: fit_err(res[k])) if ok else None
+            full = fit_shape([(ps, a, m) for w, ps, a, m in shape_rows_all], norm=(pick == "norm")) if pick else {}
+            shape_rep = dict(used=bool(pick and full), mode=pick, test=res, n_games=len(shape_rows_all), weeks=[3, done])
+            if shape_rep["used"]:
+                SHAPE = full
+                shape_rep["cells"] = {k: [len(v[0]), v[1]] for k, v in full.items()}
+            print(f"score shape test: {res} -> {pick or 'lognormal'}")
+    except Exception as e:  # noqa
+        print(f"WARN shape test skipped: {e}")
+    try:
+        cal = SRC.calibrate(lambda m_, *a, **k: backfill(m_, *a, shape=shape_rep["mode"], **k)) if done else dict(m=1.0, n=0)
     except Exception as e:  # noqa
         print(f"WARN calibration skipped: {e}"); cal = dict(m=1.0, n=0)
     CAL_M = cal["m"]
@@ -980,7 +1146,7 @@ def main():
     past_all = []
     try:
         if done:
-            backfill(CAL_M, 300, detail=past_all)
+            backfill(CAL_M, 300, detail=past_all, shape=shape_rep["mode"])
     except Exception as e:  # noqa
         print(f"WARN past weeks skipped: {e}")
     past_me = [r for r in past_all if r["rid"] == me]
@@ -1160,7 +1326,7 @@ def main():
         lk = d.get("lk")
         if not lk:
             return None
-        return lk[0] + (sim_points(d["pr"][0] * lk[1], cv, pid, d["t"], s_, fut[0], 0) if lk[1] > 0 else 0.0)
+        return lk[0] + (sim_points(d["pr"][0] * lk[1], cv, pid, d["t"], s_, fut[0], 0, d["p"]) if lk[1] > 0 else 0.0)
 
     VAL = {}
     sim_ids = [p for p in P if (P[p]["r"] and not P[p].get("gone")) or P[p].get("fa")]
@@ -1177,7 +1343,7 @@ def main():
                 if ab[k]:
                     row.append(0.0); continue
                 pm = P_MISS_STATUS.get(d["inj"], P_MISS) if k == 0 else 0
-                row.append(sim_points(d["pr"][k], cv, pid, d["t"], s_, wk, pm))
+                row.append(sim_points(d["pr"][k], cv, pid, d["t"], s_, wk, pm, d["p"]))
             rows.append(row)
         VAL[pid] = rows
 
@@ -1232,7 +1398,8 @@ def main():
                 sd_ = (len(hist_) * st.pstdev(hist_) + 6 * cvp * m_) / (len(hist_) + 6); cv_ = min(1.2, max(0.25, sd_ / max(m_, 1)))
             else:
                 cv_ = cvp
-            bt_boom.append((lognorm_tail(m_, cv_ * CAL_M, thr) * 0.97, lognorm_tail(m_, cvp * CAL_M, thr) * 0.97, 1 if a_ >= thr else 0, ps_))
+            tail_ = lambda m__, c__, t__: (lambda v__: lognorm_tail(m__, c__, t__) if v__ is None else v__)(shape_tail(ps_, m__, c__, t__))
+            bt_boom.append((tail_(m_, cv_ * CAL_M, thr) * 0.97, tail_(m_, cvp * CAL_M, thr) * 0.97, 1 if a_ >= thr else 0, ps_))
     boom_test = dict(n=len(bt_boom), thr={k: v for k, v in boom_thr.items()}, pos_avg=boom_pos)
     if len(bt_boom) >= 200:
         ll = lambda i: st.mean(-(o * math.log(max(r[i], 1e-4)) + (1 - o) * math.log(max(1 - r[i], 1e-4))) for r in bt_boom for o in [r[2]])
@@ -1349,6 +1516,47 @@ def main():
         for t in teams:
             xs = sorted(lineup(ids_by[t["id"]], s_, 0) for s_ in range(SIMS))
             proj_range[t["id"]] = [round(xs[int(0.1 * SIMS)], 1), round(xs[int(0.9 * SIMS)], 1)]
+
+    # ---------- managed leagues: who to start this week. Best lineup by projection, your lineup as set in Sleeper, and the
+    # closest calls on your bench, each with the win chance against your opponent's lineup (same draws as everything else).
+    lineup_adv = None
+    if MANAGED and fut:
+        try:
+            k0 = 0
+            mine_ids = ids_by[me]
+            mid_ = next((m_ for r_, m_ in sched.get(fut[0], []) if r_ == me), None)
+            opp_ = next((r_ for r_, m_ in sched.get(fut[0], []) if m_ == mid_ and r_ != me), None) if mid_ is not None else None
+            opp_ids = [p for p in cur_starters.get(opp_, []) if p in VAL] if opp_ is not None else []
+            opp_set = bool(opp_ids) and len(opp_ids) >= sum(LU_N.values()) + LU_FLEX + LU_SF - 1
+            if opp_ is not None and not opp_set:
+                opp_ids = starters(ids_by[opp_], k0)
+            def wp_of(ids):
+                if opp_ is None:
+                    return None
+                return round(sum(1 for s_ in range(SIMS) if sum(VAL[p][s_][k0] for p in ids) > sum(VAL[p][s_][k0] for p in opp_ids)) / SIMS, 3)
+            best_ids = starters(mine_ids, k0)
+            mine_cur = [p for p in cur_starters.get(me, []) if p in VAL]
+            locked = lambda p: bool(P[p].get("lk"))
+            close = []
+            keep_ = set(mine_cur or best_ids)   # starters whose games already started stay in the lineup
+            for b in mine_ids:
+                if b in best_ids or locked(b) or P[b]["pr"][k0] <= 0:
+                    continue
+                forced = lineup_split([(P[p]["p"], (9999 if (locked(p) and p in keep_) else 999 if p == b else P[p]["pr"][k0]), p) for p in mine_ids if p in VAL])[2]
+                out_ = [p for p in best_ids if p not in forced]
+                if not out_ or any(locked(p) for p in out_):
+                    continue
+                w_ = wp_of(forced)
+                close.append(dict(start=b, sit=out_[0], dproj=round(P[b]["pr"][k0] - P[out_[0]]["pr"][k0], 1), wp=w_))
+            close.sort(key=lambda x: -x["dproj"])
+            lineup_adv = dict(wk=fut[0], opp=opp_, opp_set=opp_set, best=best_ids, best_wp=wp_of(best_ids), best_proj=round(sum(P[p]["pr"][k0] for p in best_ids), 1),
+                              cur=mine_cur, cur_wp=wp_of(mine_cur) if len(mine_cur) == len(best_ids) else None,
+                              cur_proj=round(sum(P[p]["pr"][k0] for p in mine_cur), 1) if mine_cur else None,
+                              changes=[dict(start=a, sit=b) for a, b in zip([p for p in best_ids if p not in mine_cur], [p for p in mine_cur if p not in best_ids])] if mine_cur else [],
+                              close=close[:4])
+            print(f"lineup: best {lineup_adv['best_proj']} ({lineup_adv['best_wp']}), set in Sleeper {lineup_adv['cur_proj']} ({lineup_adv['cur_wp']}), {len(lineup_adv['changes'])} changes")
+        except Exception as e:  # noqa
+            print(f"WARN lineup advice skipped: {e}")
 
     # ---------- what each player adds, from simulation (counts bye/injury cover and boom weeks, which best ball rewards)
     IMP_S = min(SIMS, int(CFG.get("impact_sims", 200)))
@@ -1909,6 +2117,9 @@ def main():
                            title_nobye=round(S0[t["id"]]["title_nobye"] / max(S0[t["id"]]["playoffs"] - S0[t["id"]]["bye"], 1e-9), 3) if S0[t["id"]]["playoffs"] - S0[t["id"]]["bye"] > 0.001 else None))
     # ---------- my to-do list: things only a manager action fixes
     actions = []
+    if lineup_adv and lineup_adv["changes"] and lineup_adv["cur_wp"] is not None and (lineup_adv["best_wp"] or 0) - lineup_adv["cur_wp"] >= 0.005:
+        ch_ = "; ".join(f"start {P[c['start']]['n']} over {P[c['sit']]['n']}" for c in lineup_adv["changes"])
+        actions.append(f"Set your lineup: {ch_} (win chance {lineup_adv['cur_wp']:.0%} → {lineup_adv['best_wp']:.0%}).")
     me_t = next(t for t in teams if t["id"] == me)
     for pid in me_t["ir"]:
         if pid in P and not P[pid]["inj"]:
@@ -2019,6 +2230,11 @@ def main():
     md = []
     mt = next(x for x in tm_out if x["id"] == me)
     order_now = sorted(tm_out, key=lambda x: (-x["w"], -x["pf"]))
+    try:
+        checks["bracket"] = bracket_check(get(f"{API}/league/{lid}/winners_bracket", cache_hours=1, required=False), [x["id"] for x in order_now], n_playoff)
+        print(f"bracket check: {checks['bracket']}")
+    except Exception as e:  # noqa
+        print(f"WARN bracket check skipped: {e}")
     md.append(f"# {mt['name']} · Week {this_week or '—'} briefing\n")
     if done and done in weeks:
         rows = weeks[done]; mine = next((x for x in rows if x[0] == me), None)
@@ -2131,7 +2347,7 @@ def main():
         items = {r: future_items(ids_by[r], P, own_picks[r], j, season, rk) for r in T_}
         wins = {r: 0 for r in T_}
         for s_ in range(FS):
-            sc = {r: [best_lineup((pos, sim_points(m, cv, sid, tm, s_, 600 + j * 40 + wk, P_MISS)) for pos, m, cv, sid, tm in items[r])
+            sc = {r: [best_lineup((pos, sim_points(m, cv, sid, tm, s_, 600 + j * 40 + wk, P_MISS, pos)) for pos, m, cv, sid, tm in items[r])
                       for wk in range(FUT_WEEKS + FUT_PO)] for r in T_}
             W = {r: 0 for r in T_}; PF = {r: 0.0 for r in T_}
             for wk in range(FUT_WEEKS):
@@ -2387,7 +2603,7 @@ def main():
                     favorites=round(mean_([1 if (g[1] >= 0.5) == (g[2] == 1) else 0 for g in G_]), 3) if G_ else None, bins=bins,
                     pl_mae=round(mean_(graded["pl_err"]), 2) if graded["pl_err"] else None, pl_n=len(graded["pl_err"]),
                     team_mae=round(mean_(graded["team_err"]), 1) if graded["team_err"] else None,
-                    weeks_logged=sorted(PRED["weeks"].keys()), backtest=backtest, sources=src_rep, calib=cal, past_me=past_me, past_bias=past_bias, boom=boom_test,
+                    weeks_logged=sorted(PRED["weeks"].keys()), backtest=backtest, sources=src_rep, calib=cal, shape=shape_rep, past_me=past_me, past_bias=past_bias, boom=boom_test,
                     odds=[dict(d=o_["d"], wk=o_["wk"], po=o_["t"].get(str(me), [None, None])[0], t=o_["t"].get(str(me), [None, None])[1]) for o_ in PRED["odds"]])
 
     data = dict(meta=dict(league=league.get("name"), lid=str(lid), season=season, done=done, fut=fut, reg_end=reg_end, me=me, median=median_on,
@@ -2403,9 +2619,9 @@ def main():
                                      roster_size=sum(1 for x in league.get("roster_positions", [])), draft_rounds=int(settings.get("draft_rounds", 4) or 4),
                                      median=median_on, pick_trading=bool(settings.get("pick_trading", 1))),
                           ktc_date=ktc.get("date"), values=val_src, backtest=backtest, checks=checks, byes=bye_src, fa_checked=len(fa_pool), faab=int(settings.get("waiver_budget", 0) or 0), sims=SIMS, ledger_through=CFG.get("ledger_through"),
-                          scoring=CFG.get("scoring_label", ""), lu=dict(n=LU_N, flex=LU_FLEX, sf=LU_SF, managed=MANAGED), key=DYN, slots=" · ".join(p for p in league.get("roster_positions", []) if p != "BN")),
+                          scoring=CFG.get("scoring_label", ""), lu=dict(n=LU_N, flex=LU_FLEX, sf=LU_SF, managed=MANAGED), shape=SHAPE, key=DYN, slots=" · ".join(p for p in league.get("roster_positions", []) if p != "BN")),
                 teams=tm_out, players=P, weeks=weeks, po_actual={str(k): {str(r): v for r, v in d.items()} for k, d in po_actual.items()}, sched=sched, m26={str(k): v for k, v in my_weekly.items()}, picks=picks,
-                advice=advice, outlook=outlook, feed=feed, ledger_now=ledger_now, research=research, defense=DEF, accuracy=accuracy, past_picks=dict(used=used_picks, traded=traded_picks), profiles={str(k): v for k, v in profiles.items()}, rookies=rookies, digest=digest,
+                advice=advice, outlook=outlook, feed=feed, ledger_now=ledger_now, research=research, defense=DEF, accuracy=accuracy, past_picks=dict(used=used_picks, traded=traded_picks), profiles={str(k): v for k, v in profiles.items()}, rookies=rookies, digest=digest, lineup=lineup_adv,
                 analysis=dict(board=board, sugg={str(k): v for k, v in sugg.items()}, needs={str(k): v for k, v in needs.items()},
                               market=market, depth={str(k): v for k, v in depth.items()}, fa=fa, cut=cut,
                               counted={k: [round(v[0], 1), v[1]] for k, v in counted.items()},

@@ -505,14 +505,20 @@ const RHO=0.15,P_MISS=0.05,WI=Math.sqrt(1-RHO),WT=Math.sqrt(RHO),P_MISS_STATUS={
 function teamNum(t){let n=0;for(const ch of (t||'FA'))n=n*37+ch.charCodeAt(0);return 900000+n}
 const TZ=new Map();function teamZ(t,s,w){const k=t+'|'+s+'|'+w;let v=TZ.get(k);if(v===undefined){v=z(teamNum(t),s,w);TZ.set(k,v)}return v}
 function cvOf(p){const base=Math.max(p.ou.find(x=>x>0)||1,1);return Math.min(1.2,Math.max(0.25,p.sd/base))}
-function simPts(m,cv,sid,team,s,w,pm){if(m<=0)return 0;const a=+sid||7;if(hash(a,s*37+9,w*41+17)<pm)return 0;const sig=Math.sqrt(Math.log(1+cv*cv));const zz=WI*z(a,s,w)+WT*teamZ(team,s,w);return m*Math.exp(sig*zz-sig*sig/2)}
+// measured score shape (pipeline: SHAPE in build.py): quantiles of score/projection by position and projection level
+const CV0={QB:0.42,RB:0.55,WR:0.62,TE:0.65};
+const SHP=()=>(D&&D.meta&&D.meta.shape)||{};
+const lvl=m=>m<4?0:m<8?1:m<13?2:3;
+function phi(x){const y=Math.abs(x)/1.4142135623730951,t=1/(1+0.3275911*y),e=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-y*y);return 0.5*(1+(x>=0?e:-e))}
+function shapeRatio(c,f,zz){const q=c[0],mu=c[1],K=q.length;const x=Math.min(Math.max(phi(zz)*K-0.5,0),K-1),i=Math.floor(x);const r=i>=K-1?q[i]:q[i]+(q[i+1]-q[i])*(x-i);return Math.max(0,mu+(r-mu)*f)}
+function simPts(m,cv,sid,team,s,w,pm,pos){if(m<=0)return 0;const a=+sid||7;if(hash(a,s*37+9,w*41+17)<pm)return 0;const zz=WI*z(a,s,w)+WT*teamZ(team,s,w);const c=pos&&SHP()[pos+'|'+lvl(m)];if(c)return m*shapeRatio(c,cv/(CV0[pos]||0.6),zz);const sig=Math.sqrt(Math.log(1+cv*cv));return m*Math.exp(sig*zz-sig*sig/2)}
 const ABS_START=0.055,ABS_DUR=[[1,.31],[2,.20],[3,.10],[4,.06],[5,.04],[6,.07],[7,.06],[8,.04],[10,.04],[17,.08]];
 // multi-week absences (same as the pipeline): a new absence starts in ~5.5% of healthy weeks and lasts as long as last season's did
 function absences(a,s){const out=new Uint8Array(NW);let until=0;for(let k=1;k<NW;k++){if(k<=until){out[k]=1;continue}const w=FUT[k];
   if(hash(a,s*37+9,w*41+17)<ABS_START){const u=hash(a,s*53+3,w*59+7);let acc=0,d=ABS_DUR[ABS_DUR.length-1][0];for(const [dur,pr] of ABS_DUR){acc+=pr;if(u<acc){d=dur;break}}until=k+d-1;out[k]=1}}return out}
 const VC={};
 function draws(sid,src){const S=D.meta.sims;VC[src]=VC[src]||new Map();let a=VC[src].get(sid);if(a)return a;const p=PL[sid];a=new Float64Array(S*NW);if(p){const cv=cvOf(p);
-  for(let s=0;s<S;s++){const ab=absences(+sid||7,s);for(let k=0;k<NW;k++){if(k===0&&p.lk){a[s*NW]=p.lk[0]+(p.lk[1]>0?simPts(p.pr[0]*p.lk[1],cv,sid,p.t,s,FUT[0],0):0);continue}if(ab[k]){a[s*NW+k]=0;continue}const pm=k===0?(P_MISS_STATUS[p.inj]??P_MISS):0;a[s*NW+k]=simPts(proj(sid,k,src),cv,sid,p.t,s,FUT[k],pm)}}}
+  for(let s=0;s<S;s++){const ab=absences(+sid||7,s);for(let k=0;k<NW;k++){if(k===0&&p.lk){a[s*NW]=p.lk[0]+(p.lk[1]>0?simPts(p.pr[0]*p.lk[1],cv,sid,p.t,s,FUT[0],0,p.p):0);continue}if(ab[k]){a[s*NW+k]=0;continue}const pm=k===0?(P_MISS_STATUS[p.inj]??P_MISS):0;a[s*NW+k]=simPts(proj(sid,k,src),cv,sid,p.t,s,FUT[k],pm,p.p)}}}
   VC[src].set(sid,a);return a}
 const STC=new Map();
 function lineupAt(ids,s,k,src){if(LUC().managed){const key=src+'|'+k+'|'+ids.join(',');let st=STC.get(key);if(!st){st=bestIds(ids.filter(x=>PL[x]&&!PL[x].slot).map(x=>[PL[x].p,proj(x,k,src),x]));STC.set(key,st)}
@@ -643,7 +649,7 @@ function futureItems(ids,pickList,j){const O=D.outlook,season=D.meta.season,out=
   for(const sid of ids){const p=PL[sid];if(!p)continue;const fp=(p.fp||[0,0])[j-1];if(fp>0)out.push([p.p,fp,p.cv||0.6,sid,p.t||'FA'])}
   for(const pk of pickList){if(pk.y<=season+j){const yr=season+j-pk.y;if(yr<O.rookie.length){const m=O.rookie[yr]*Math.max(0,O.rk[0]*pk.v+O.rk[1]);if(m>0)out.push(['WR',m,0.7,rookieSid(pk.y,pk.rd,pk.o),'FA'])}}}
   return out}
-function futureStrength(items,j){const O=D.outlook;let tot=0;for(let s=0;s<O.str_s;s++)for(let wk=0;wk<O.str_w;wk++){const v=[];for(const [pos,m,cv,sid,tm] of items){const x=simPts(m,cv,sid,tm,s,200+j*20+wk,P_MISS);if(x>0)v.push([pos,x])}tot+=best(v)}return tot/(O.str_s*O.str_w)}
+function futureStrength(items,j){const O=D.outlook;let tot=0;for(let s=0;s<O.str_s;s++)for(let wk=0;wk<O.str_w;wk++){const v=[];for(const [pos,m,cv,sid,tm] of items){const x=simPts(m,cv,sid,tm,s,200+j*20+wk,P_MISS,pos);if(x>0)v.push([pos,x])}tot+=best(v)}return tot/(O.str_s*O.str_w)}
 function titleFrom(strength,j){const c=D.outlook.curve[j];if(strength<=c[0][0])return c[0][1];for(let i=1;i<c.length;i++){if(strength<=c[i][0]){const [x0,y0]=c[i-1],[x1,y1]=c[i];return y0+(y1-y0)*(strength-x0)/Math.max(x1-x0,1e-9)}}return c[c.length-1][1]}
 // my title chances in the next two seasons after a trade (players AND picks moving)
 function futureAfter(newIds,givePk,getPk){const O=D.outlook,base=O.teams[ME].title,mine=PICKS.filter(p=>p.own===ME),keyOf=p=>`pk:${p.y}:${p.rd}:${p.o}`;
