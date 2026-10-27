@@ -4,14 +4,14 @@
 Top counted: Malik Willis 30.0, Jordan Love 21.0, Amon-Ra St. Brown 19.7, Cam Skattebo 18.6
 
 **Record:** 10-4, #4 of 12 · 1265.3 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 38% · title 22% (+2 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 37% · title 21% (+1 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 30% vs without 17%
-**Best trade idea:** give Tre' Harris, Malik Willis for Parker Washington: title chance 22% → 26%
-**Waivers:** Justice Hill would add 0.6 pts/wk to your lineup.
-**Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
+**Playoff path:** most likely seed 3; title chance with a bye 27% vs without 17%
+**Best trade idea:** give Tre' Harris, Malik Willis for Parker Washington: title chance 21% → 26%
+**Waivers:** Justice Hill would add 0.5 pts/wk to your lineup.
+**Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 8:** vs MoneyMertz · projected 165.2 – 146.8 · win chance 70%
+**Week 8:** vs MoneyMertz · projected 163.3 – 146.0 · win chance 72%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Juwan Johnson, C.J. Stroud
 Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 
@@ -31,8 +31,8 @@ Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 ## Market
 - Sell-high: Michael Pittman Jr.: value 2,298 vs ~1,757 for 4.9 pts/wk of production
 - Sell-high: Jalen Nailor: value 1,785 vs ~1,309 for 3.0 pts/wk of production
-- Buy-low: Mike Evans (The True Behemoth): +6.9 counted pts/wk for you, value 3,470
-- Buy-low: Kirk Cousins (Lava Me Tender): +4.0 counted pts/wk for you, value 3,306
-- Buy-low: Ollie Gordon II (Lava Me Tender): +3.9 counted pts/wk for you, value 3,515
+- Buy-low: Mike Evans (The True Behemoth): +6.7 counted pts/wk for you, value 3,470
+- Buy-low: Kirk Cousins (Lava Me Tender): +3.7 counted pts/wk for you, value 3,306
+- Buy-low: Ollie Gordon II (Lava Me Tender): +3.8 counted pts/wk for you, value 3,515
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)

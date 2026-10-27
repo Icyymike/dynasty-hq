@@ -14,12 +14,16 @@ Top counted: Tee Higgins 27.4, Tyler Huntley 24.3, Rhamondre Stevenson 23.9, C.J
 On bye: Tyrone Tracy Jr., Cam Skattebo, Isaiah Likely, Chris Olave, Tank Dell, C.J. Stroud
 Injured: Pat Bryant (IR), Marcus Mariota (Out), DeVonta Smith (Out), Romeo Doubs (IR)
 
+## To do
+- Set your lineup: start Jayden Daniels over C.J. Stroud; start Mike Gesicki over Chris Olave; start Charlie Kolar over Isaiah Likely; start Jalen Nailor over Tyler Huntley (win chance 4% → 36%).
+
 ## Alerts this week
 - Lamar Jackson is now Out. Rest-of-season, he now adds 0.0 counted pts/wk to your lineup.
 - DeVonta Smith is now Out. Rest-of-season, he now adds 2.7 counted pts/wk to your lineup.
 - Tank Dell is back (active).
 - Cam Skattebo's value moved 3,533 → 3,991 (+13%).
 - Charlie Kolar's value moved 1,296 → 11 (-99%).
+- Set your lineup: start Jayden Daniels over C.J. Stroud; start Mike Gesicki over Chris Olave; start Charlie Kolar over Isaiah Likely; start Jalen Nailor over Tyler Huntley (win chance 4% → 36%).
 
 ## Market
 - Sell-high: Mike Gesicki: age 31: TE values usually drop after this season
