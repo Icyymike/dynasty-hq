@@ -1,17 +1,17 @@
-# mikec75 · Week 7 briefing
+# mikec75 · Week 8 briefing
 
-**Week 6:** 170.8 vs ShamirRamirez 162.7 (W)
-Top counted: C.J. Stroud 36.4, Isaiah Likely 30.9, Jayden Daniels 29.1, DeVonta Smith 20.7
+**Week 7:** 172.9 vs SCLSU Mud Dogs 106.0 (W)
+Top counted: Tee Higgins 27.4, Tyler Huntley 24.3, Rhamondre Stevenson 23.9, C.J. Stroud 23.6
 
-**Record:** 5-1, #3 of 12 · 1101.1 PF
-**Odds:** playoffs 100% · bye 0% · title 13%
+**Record:** 6-1, #2 of 12 · 1274.0 PF
+**Odds:** playoffs 100% · bye 0% · title 12%
 
 
-**Best trade idea:** give Cam Skattebo, Cade Otton for Jordan Love: title chance 13% → 17%
-**Window:** Retool: compete while getting younger. Projected rank 2026: 5, 2027: 4, 2028: 4.
+**Best trade idea:** give George Pickens, C.J. Stroud for Josh Allen: title chance 12% → 18%
+**Window:** Building: next year looks better. Projected rank 2026: 5, 2027: 3, 2028: 4.
 
-**Week 7:** vs SCLSU Mud Dogs · projected 172.9 – 109.5 · win chance 100%
-On bye: Jayden Daniels, Josh Cameron, Marcus Mariota, Charlie Kolar
+**Week 8:** vs Achane Saw Massacre · projected 137.2 – 162.5 · win chance 27%
+On bye: Tyrone Tracy Jr., Cam Skattebo, Isaiah Likely, Chris Olave, Tank Dell, C.J. Stroud
 Injured: Pat Bryant (IR), Marcus Mariota (Out), DeVonta Smith (Out), Romeo Doubs (IR)
 
 ## Alerts this week
@@ -23,8 +23,8 @@ Injured: Pat Bryant (IR), Marcus Mariota (Out), DeVonta Smith (Out), Romeo Doubs
 
 ## Market
 - Sell-high: Mike Gesicki: age 31: TE values usually drop after this season
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +5.9 counted pts/wk for you, value 2,899
-- Buy-low: Tony Pollard (D-Generation-XRated): +3.4 counted pts/wk for you, value 3,065
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +4.7 counted pts/wk for you, value 2,899
 - Buy-low: Kirk Cousins (jsous): +3.3 counted pts/wk for you, value 3,287
+- Buy-low: Ollie Gordon II (Jesus the homeless hippy): +3.0 counted pts/wk for you, value 3,487
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
