@@ -4,14 +4,14 @@
 Top counted: C.J. Stroud 29.0, Bryce Young 23.8, D'Andre Swift 21.0, Roschon Johnson 13.5
 
 **Record:** 8-4, #5 of 12 · 1082.2 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 43% · title 22% (+4 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 43% · title 22% (+2 pts this week)
 
 **Playoff path:** most likely seed 3; title chance with a bye 30% vs without 16%
-**Best trade idea:** give Jaylen Warren, C.J. Stroud for Josh Allen: title chance 22% → 24%
+**Best trade idea:** give Malik Willis for Kirk Cousins: title chance 22% → 25%
 **Waivers:** Justice Hill would add 0.7 pts/wk to your lineup.
-**Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
+**Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 7:** vs Lava Me Tender · projected 183.1 – 153.8 · win chance 100%
+**Week 7:** vs Lava Me Tender · projected 183.1 – 154.8 · win chance 100%
 On bye: Tre' Harris, Antonio Williams, Josh Cameron, Treylon Burks, Quentin Johnston
 Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 
@@ -26,13 +26,13 @@ Injured: Tre' Harris (Out), Michael Pittman Jr. (IR)
 - Jalen Nailor's value moved 1,813 → 1,506 (-17%).
 
 ## League trades
-- **The True Behemoth** get Darren Waller (Push) ⇄ **Commish in Epstein Files** get 2028 3rd (The True Behemoth) (Push)
+- **The True Behemoth** get Darren Waller (Push) ⇄ **Commish in Epstein Files** get 2028 3rd (The True Behemoth) (Loss)
 
 ## Market
-- Sell-high: Michael Pittman Jr.: value 2,344 vs ~1,711 for 4.9 pts/wk of production
-- Sell-high: Jalen Nailor: value 1,696 vs ~1,290 for 3.1 pts/wk of production
-- Buy-low: Mike Evans (The True Behemoth): +6.2 counted pts/wk for you, value 3,526
-- Buy-low: Brenton Strange (Straight Outta Hampton): +4.5 counted pts/wk for you, value 3,394
-- Buy-low: Kirk Cousins (Lava Me Tender): +4.0 counted pts/wk for you, value 3,280
+- Sell-high: Michael Pittman Jr.: value 2,298 vs ~1,723 for 4.9 pts/wk of production
+- Sell-high: Jalen Nailor: value 1,785 vs ~1,311 for 3.1 pts/wk of production
+- Buy-low: Mike Evans (The True Behemoth): +6.3 counted pts/wk for you, value 3,470
+- Buy-low: Kirk Cousins (Lava Me Tender): +3.9 counted pts/wk for you, value 3,306
+- Buy-low: Ollie Gordon II (Lava Me Tender): +3.9 counted pts/wk for you, value 3,515
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
