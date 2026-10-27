@@ -7,10 +7,10 @@ Top counted: Tee Higgins 27.4, Tyler Huntley 24.3, Rhamondre Stevenson 23.9, C.J
 **Odds:** playoffs 100% · bye 0% · title 12%
 
 
-**Best trade idea:** give George Pickens, C.J. Stroud for Josh Allen: title chance 12% → 18%
+**Best trade idea:** give DeVonta Smith, C.J. Stroud for Josh Allen: title chance 12% → 15%
 **Window:** Building: next year looks better. Projected rank 2026: 5, 2027: 3, 2028: 4.
 
-**Week 8:** vs Achane Saw Massacre · projected 137.1 – 162.3 · win chance 27%
+**Week 8:** vs Achane Saw Massacre · projected 138.2 – 164.1 · win chance 26%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Isaiah Likely, Chris Olave, Tank Dell, C.J. Stroud
 Injured: Pat Bryant (IR), Marcus Mariota (Out), DeVonta Smith (Out), Romeo Doubs (IR)
 
