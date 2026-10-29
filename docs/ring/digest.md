@@ -4,13 +4,13 @@
 Top counted: Tee Higgins 27.4, Tyler Huntley 24.3, Rhamondre Stevenson 23.9, C.J. Stroud 23.6
 
 **Record:** 6-1, #2 of 12 · 1274.0 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 15% (+2 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 14% (+0 pts this week)
 
 
-**Best trade idea:** give Jayden Daniels, George Pickens for Kenneth Walker III: title chance 15% → 20%
-**Window:** Window open: contend. Projected rank 2026: 3, 2027: 2, 2028: 3.
+**Best trade idea:** give Cam Skattebo, George Pickens for Christian McCaffrey: title chance 14% → 20%
+**Window:** Window open: contend. Projected rank 2026: 2, 2027: 1, 2028: 1.
 
-**Week 8:** vs Achane Saw Massacre · projected 146.0 – 168.6 · win chance 30%
+**Week 8:** vs Achane Saw Massacre · projected 153.7 – 167.4 · win chance 38%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Isaiah Likely, Chris Olave, Tank Dell, C.J. Stroud
 Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR)
 
@@ -25,8 +25,8 @@ Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR)
 - Set your lineup: start Jayden Daniels over C.J. Stroud; start DeVonta Smith over Chris Olave; start Mike Gesicki over Isaiah Likely; start Charlie Kolar over Tyler Huntley (win chance 1% → 23%).
 
 ## Market
-- Buy-low: Mike Evans (D-Generation-XRated): +4.7 counted pts/wk for you, value 2,070
-- Buy-low: Brenton Strange (YinzerKing): +3.8 counted pts/wk for you, value 1,830
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.1 counted pts/wk for you, value 1,496
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.3 counted pts/wk for you, value 1,496
+- Buy-low: Mike Evans (D-Generation-XRated): +3.4 counted pts/wk for you, value 2,070
+- Buy-low: Brenton Strange (YinzerKing): +2.7 counted pts/wk for you, value 1,830
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
