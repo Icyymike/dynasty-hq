@@ -4,13 +4,13 @@
 Top counted: Tee Higgins 27.4, Tyler Huntley 24.3, Rhamondre Stevenson 23.9, C.J. Stroud 23.6
 
 **Record:** 6-1, #2 of 12 · 1274.0 PF
-**Odds:** playoffs 100% · bye 0% · title 16%
+**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 16% (+3 pts this week)
 
 
-**Best trade idea:** give Jayden Daniels, George Pickens for Kenneth Walker III: title chance 16% → 19%
-**Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
+**Best trade idea:** give Jayden Daniels, George Pickens for Kenneth Walker III: title chance 16% → 20%
+**Window:** Window open: contend. Projected rank 2026: 3, 2027: 2, 2028: 2.
 
-**Week 8:** vs Achane Saw Massacre · projected 153.3 – 168.4 · win chance 37%
+**Week 8:** vs Achane Saw Massacre · projected 145.9 – 168.5 · win chance 31%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Isaiah Likely, Chris Olave, Tank Dell, C.J. Stroud
 Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR)
 
