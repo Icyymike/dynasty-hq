@@ -7,10 +7,10 @@ Top counted: Tee Higgins 27.4, Tyler Huntley 24.3, Rhamondre Stevenson 23.9, C.J
 **Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 15% (+3 pts this week)
 
 
-**Best trade idea:** give Tyrone Tracy Jr., George Pickens for Luther Burden III: title chance 15% → 18%
+**Best trade idea:** give Lamar Jackson for Kenneth Walker III: title chance 15% → 19%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 1, 2028: 1.
 
-**Week 8:** vs Achane Saw Massacre · projected 158.5 – 161.3 · win chance 47%
+**Week 8:** vs Achane Saw Massacre · projected 158.5 – 159.4 · win chance 50%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Isaiah Likely, Chris Olave, Tank Dell, C.J. Stroud
 Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR)
 
