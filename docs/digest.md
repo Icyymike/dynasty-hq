@@ -6,12 +6,12 @@ Top counted: Malik Willis 30.0, Jordan Love 21.0, Amon-Ra St. Brown 19.7, Cam Sk
 **Record:** 10-4, #4 of 12 · 1265.3 PF
 **Odds:** playoffs 100% (+0 pts this week) · bye 30% · title 19% (-4 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 26% vs without 16%
-**Best trade idea:** give C.J. Stroud for Parker Washington: title chance 19% → 24%
+**Playoff path:** most likely seed 3; title chance with a bye 27% vs without 16%
+**Best trade idea:** give Antonio Williams, Malik Willis for Parker Washington: title chance 19% → 24%
 **Waivers:** Justice Hill would add 0.5 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 3, 2027: 2, 2028: 2.
 
-**Week 8:** vs MoneyMertz · projected 164.7 – 150.3 · win chance 68%
+**Week 8:** vs MoneyMertz · projected 165.9 – 154.1 · win chance 64%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Juwan Johnson, C.J. Stroud
 Injured: Tyrone Tracy Jr. (IR), Michael Pittman Jr. (IR)
 
@@ -29,8 +29,8 @@ Injured: Tyrone Tracy Jr. (IR), Michael Pittman Jr. (IR)
 - **Fat Camp** get Rashee Rice (Win-now) ⇄ **Worthy Advisary** get 2027 2nd (Fat Camp), 2027 3rd (Fat Camp), 2027 3rd (The True Behemoth) (Push)
 
 ## Market
-- Buy-low: Mike Evans (The True Behemoth): +6.7 counted pts/wk for you, value 2,084
-- Buy-low: Chuba Hubbard (jreese15): +6.9 counted pts/wk for you, value 2,858
-- Buy-low: DJ Moore (The True Behemoth): +4.6 counted pts/wk for you, value 2,009
+- Buy-low: Mike Evans (The True Behemoth): +6.7 counted pts/wk for you, value 2,060
+- Buy-low: Chuba Hubbard (jreese15): +6.9 counted pts/wk for you, value 2,869
+- Buy-low: Noah Fant (MoneyMertz): +1.1 counted pts/wk for you, value 90
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
