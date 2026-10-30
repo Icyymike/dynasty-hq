@@ -4,14 +4,14 @@
 Top counted: Malik Willis 30.0, Jordan Love 21.0, Amon-Ra St. Brown 19.7, Cam Skattebo 18.6
 
 **Record:** 10-4, #4 of 12 · 1265.3 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 33% · title 20% (-3 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 32% · title 19% (-4 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 26% vs without 17%
-**Best trade idea:** give C.J. Stroud for Parker Washington: title chance 20% → 25%
-**Waivers:** Justice Hill would add 0.6 pts/wk to your lineup.
-**Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
+**Playoff path:** most likely seed 3; title chance with a bye 24% vs without 16%
+**Best trade idea:** give C.J. Stroud for Parker Washington: title chance 19% → 25%
+**Waivers:** Justice Hill would add 0.5 pts/wk to your lineup.
+**Window:** Window open: contend. Projected rank 2026: 3, 2027: 2, 2028: 2.
 
-**Week 8:** vs MoneyMertz · projected 170.0 – 150.2 · win chance 74%
+**Week 8:** vs MoneyMertz · projected 168.4 – 150.0 · win chance 72%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Juwan Johnson, C.J. Stroud
 Injured: Tyrone Tracy Jr. (IR), Michael Pittman Jr. (IR)
 
@@ -31,6 +31,6 @@ Injured: Tyrone Tracy Jr. (IR), Michael Pittman Jr. (IR)
 ## Market
 - Buy-low: Mike Evans (The True Behemoth): +6.7 counted pts/wk for you, value 2,084
 - Buy-low: Chuba Hubbard (jreese15): +7.0 counted pts/wk for you, value 2,858
-- Buy-low: Cade Otton (Fat Camp): +2.3 counted pts/wk for you, value 745
+- Buy-low: DJ Moore (The True Behemoth): +4.6 counted pts/wk for you, value 2,009
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
