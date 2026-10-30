@@ -10,7 +10,7 @@ Top counted: Tee Higgins 27.4, Tyler Huntley 24.3, Rhamondre Stevenson 23.9, C.J
 **Best trade idea:** give Lamar Jackson for Kenneth Walker III: title chance 15% → 19%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 1, 2028: 1.
 
-**Week 8:** vs Achane Saw Massacre · projected 158.5 – 168.2 · win chance 42%
+**Week 8:** vs Achane Saw Massacre · projected 158.5 – 168.5 · win chance 42%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Isaiah Likely, Chris Olave, Tank Dell, C.J. Stroud
 Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR)
 
@@ -26,7 +26,7 @@ Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR)
 
 ## Market
 - Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.2 counted pts/wk for you, value 1,524
-- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +4.7 counted pts/wk for you, value 2,860
+- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +4.6 counted pts/wk for you, value 2,860
 - Buy-low: Mike Evans (D-Generation-XRated): +3.2 counted pts/wk for you, value 2,099
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
