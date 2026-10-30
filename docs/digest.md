@@ -4,14 +4,14 @@
 Top counted: Malik Willis 30.0, Jordan Love 21.0, Amon-Ra St. Brown 19.7, Cam Skattebo 18.6
 
 **Record:** 10-4, #4 of 12 · 1265.3 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 30% · title 19% (-4 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 31% · title 19% (-4 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 27% vs without 16%
+**Playoff path:** most likely seed 3; title chance with a bye 27% vs without 15%
 **Best trade idea:** give Antonio Williams, Malik Willis for Parker Washington: title chance 19% → 24%
 **Waivers:** Justice Hill would add 0.5 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 3, 2027: 2, 2028: 2.
 
-**Week 8:** vs MoneyMertz · projected 165.9 – 154.1 · win chance 64%
+**Week 8:** vs MoneyMertz · projected 167.9 – 152.7 · win chance 68%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Juwan Johnson, C.J. Stroud
 Injured: Tyrone Tracy Jr. (IR), Michael Pittman Jr. (IR)
 
