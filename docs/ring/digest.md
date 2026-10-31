@@ -4,21 +4,20 @@
 Top counted: Tee Higgins 27.4, Tyler Huntley 24.3, Rhamondre Stevenson 23.9, C.J. Stroud 23.6
 
 **Record:** 6-1, #2 of 12 · 1274.0 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 14% (+1 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 14% (+2 pts this week)
 
 
-**Best trade idea:** give Cam Skattebo, George Pickens for Christian McCaffrey: title chance 14% → 18%
+**Best trade idea:** give Cade Otton, George Pickens for Matthew Golden: title chance 14% → 18%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 1, 2028: 1.
 
-**Week 8:** vs Achane Saw Massacre · projected 164.6 – 168.3 · win chance 46%
+**Week 8:** vs Achane Saw Massacre · projected 167.7 – 172.5 · win chance 45%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Isaiah Likely, Chris Olave, Tank Dell, C.J. Stroud
 Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR), DeVonta Smith (Out)
 
 ## To do
-- Set your lineup: start Efton Chism III over DeVonta Smith (win chance 39% → 48%).
+- Set your lineup: start Efton Chism III over Darius Cooper (win chance 46% → 48%).
 
 ## Alerts this week
-- Lamar Jackson is back (Questionable).
 - DeVonta Smith is back (Questionable).
 - Set your lineup: start Jayden Daniels over C.J. Stroud; start DeVonta Smith over Chris Olave; start Mike Gesicki over Isaiah Likely; start Charlie Kolar over Tyler Huntley (win chance 1% → 23%).
 - Set your lineup: start Efton Chism III over DeVonta Smith (win chance 38% → 48%).
@@ -26,6 +25,7 @@ Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR), DeVonta Smith (Out)
 - Set your lineup: start Efton Chism III over DeVonta Smith (win chance 38% → 47%).
 - Isaiah Likely's value moved 3,359 → 2,893 (-14%).
 - Set your lineup: start Efton Chism III over DeVonta Smith (win chance 39% → 48%).
+- Set your lineup: start Efton Chism III over Darius Cooper (win chance 46% → 48%).
 
 ## Market
 - Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.3 counted pts/wk for you, value 1,488
