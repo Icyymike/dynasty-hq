@@ -11,7 +11,7 @@ Top counted: Malik Willis 30.0, Jordan Love 21.0, Amon-Ra St. Brown 19.7, Cam Sk
 **Waivers:** Justice Hill would add 0.6 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 3, 2027: 2, 2028: 2.
 
-**Week 8:** vs MoneyMertz · projected 168.5 – 160.1 · win chance 59%
+**Week 8:** vs MoneyMertz · projected 168.6 – 159.9 · win chance 60%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Juwan Johnson, C.J. Stroud
 Injured: Tyrone Tracy Jr. (IR), Michael Pittman Jr. (IR)
 
@@ -29,8 +29,8 @@ Injured: Tyrone Tracy Jr. (IR), Michael Pittman Jr. (IR)
 - **Fat Camp** get Rashee Rice (Win-now) ⇄ **Worthy Advisary** get 2027 2nd (Fat Camp), 2027 3rd (Fat Camp), 2027 3rd (The True Behemoth) (Push)
 
 ## Market
-- Buy-low: Mike Evans (The True Behemoth): +6.7 counted pts/wk for you, value 2,030
-- Buy-low: Noah Fant (MoneyMertz): +1.2 counted pts/wk for you, value 76
-- Buy-low: Chuba Hubbard (jreese15): +7.0 counted pts/wk for you, value 2,863
+- Buy-low: Mike Evans (The True Behemoth): +6.7 counted pts/wk for you, value 2,025
+- Buy-low: Chuba Hubbard (jreese15): +7.0 counted pts/wk for you, value 2,880
+- Buy-low: Noah Fant (MoneyMertz): +1.2 counted pts/wk for you, value 96
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
