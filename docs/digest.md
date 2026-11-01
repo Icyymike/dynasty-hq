@@ -4,14 +4,14 @@
 Top counted: Malik Willis 30.0, Jordan Love 21.0, Amon-Ra St. Brown 19.7, Cam Skattebo 18.6
 
 **Record:** 10-4, #4 of 12 · 1265.3 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 29% · title 22% (+0 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 28% · title 21% (-1 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 31% vs without 18%
-**Best trade idea:** give C.J. Stroud for Tyler Shough: title chance 22% → 24%
+**Playoff path:** most likely seed 3; title chance with a bye 31% vs without 17%
+**Best trade idea:** give Cam Skattebo for Jaylen Waddle: title chance 21% → 24%
 **Waivers:** Justice Hill would add 0.6 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 2, 2028: 2.
 
-**Week 8:** vs MoneyMertz · projected 178.1 – 196.2 · win chance 22%
+**Week 8:** vs MoneyMertz · projected 178.9 – 195.9 · win chance 22%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Juwan Johnson, C.J. Stroud
 Injured: Tyrone Tracy Jr. (IR), Michael Pittman Jr. (IR)
 
@@ -30,7 +30,7 @@ Injured: Tyrone Tracy Jr. (IR), Michael Pittman Jr. (IR)
 
 ## Market
 - Buy-low: Mike Evans (The True Behemoth): +6.8 counted pts/wk for you, value 2,009
-- Buy-low: Kirk Cousins (Lava Me Tender): +4.8 counted pts/wk for you, value 1,547
-- Buy-low: Chuba Hubbard (jreese15): +6.7 counted pts/wk for you, value 2,909
+- Buy-low: Kirk Cousins (Lava Me Tender): +5.4 counted pts/wk for you, value 1,547
+- Buy-low: Chuba Hubbard (jreese15): +6.6 counted pts/wk for you, value 2,909
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
