@@ -11,26 +11,26 @@ Top counted: Tee Higgins 27.4, Tyler Huntley 24.3, Rhamondre Stevenson 23.9, C.J
 **Waivers:** Davis Allen would add 0.7 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 3, 2027: 1, 2028: 1.
 
-**Week 8:** vs Achane Saw Massacre · projected 164.8 – 163.8 · win chance 51%
+**Week 8:** vs Achane Saw Massacre · projected 164.4 – 161.8 · win chance 56%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Isaiah Likely, Chris Olave, Tank Dell, C.J. Stroud
 Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR), Lamar Jackson (Out), Tyler Huntley (Out), DeVonta Smith (Out)
 
 ## To do
-- Set your lineup: start Efton Chism III over Lamar Jackson (win chance 40% → 56%).
+- Set your lineup: start Efton Chism III over Lamar Jackson (win chance 44% → 60%).
 
 ## Alerts this week
-- Set your lineup: start Efton Chism III over Lamar Jackson (win chance 19% → 33%).
-- Set your lineup: start Efton Chism III over Lamar Jackson (win chance 36% → 54%).
 - Set your lineup: start Efton Chism III over Lamar Jackson (win chance 48% → 64%).
 - Set your lineup: start Efton Chism III over Lamar Jackson (win chance 49% → 65%).
 - Set your lineup: start Efton Chism III over Lamar Jackson (win chance 48% → 64%).
 - Set your lineup: start Efton Chism III over Lamar Jackson (win chance 45% → 58%).
 - Set your lineup: start Efton Chism III over Lamar Jackson (win chance 40% → 57%).
 - Set your lineup: start Efton Chism III over Lamar Jackson (win chance 40% → 56%).
+- Isaiah Likely's value moved 2,972 → 3,349 (+13%).
+- Set your lineup: start Efton Chism III over Lamar Jackson (win chance 44% → 60%).
 
 ## Market
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +4.6 counted pts/wk for you, value 1,483
 - Buy-low: Kirk Cousins (jsous): +4.8 counted pts/wk for you, value 1,546
 - Buy-low: Tony Pollard (D-Generation-XRated): +4.6 counted pts/wk for you, value 1,722
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +4.6 counted pts/wk for you, value 1,771
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
