@@ -4,14 +4,14 @@
 Top counted: Malik Willis 30.0, Jordan Love 21.0, Amon-Ra St. Brown 19.7, Cam Skattebo 18.6
 
 **Record:** 10-4, #4 of 12 · 1265.3 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 24% · title 20% (-1 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 24% · title 21% (-1 pts this week)
 
-**Playoff path:** most likely seed 4; title chance with a bye 34% vs without 16%
-**Best trade idea:** give Malik Willis for Travis Kelce: title chance 20% → 24%
+**Playoff path:** most likely seed 4; title chance with a bye 36% vs without 16%
+**Best trade idea:** give Malik Willis for Travis Kelce: title chance 21% → 24%
 **Waivers:** Demarcus Robinson would add 0.6 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
 
-**Week 8:** vs MoneyMertz · projected 182.4 – 220.0 · win chance 0%
+**Week 8:** vs MoneyMertz · projected 181.6 – 224.8 · win chance 0%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Juwan Johnson, C.J. Stroud
 Injured: Tyrone Tracy Jr. (IR), Michael Pittman Jr. (IR)
 
@@ -30,7 +30,7 @@ Injured: Tyrone Tracy Jr. (IR), Michael Pittman Jr. (IR)
 
 ## Market
 - Buy-low: Mike Evans (The True Behemoth): +6.9 counted pts/wk for you, value 2,009
-- Buy-low: Kirk Cousins (Lava Me Tender): +5.3 counted pts/wk for you, value 1,547
+- Buy-low: Kirk Cousins (Lava Me Tender): +5.4 counted pts/wk for you, value 1,547
 - Buy-low: Noah Fant (MoneyMertz): +1.3 counted pts/wk for you, value 151
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
