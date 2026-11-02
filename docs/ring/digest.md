@@ -11,15 +11,14 @@ Top counted: Tee Higgins 27.4, Tyler Huntley 24.3, Rhamondre Stevenson 23.9, C.J
 **Waivers:** Davis Allen would add 1.4 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 3, 2027: 1, 2028: 1.
 
-**Week 8:** vs Achane Saw Massacre · projected 152.7 – 164.0 · win chance 14%
+**Week 8:** vs Achane Saw Massacre · projected 151.8 – 164.0 · win chance 12%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Isaiah Likely, Chris Olave, Tank Dell, C.J. Stroud
 Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR), Hunter Henry (Out), Lamar Jackson (Out), Tyler Huntley (Out), DeVonta Smith (Out)
 
 ## To do
-- Set your lineup: start Efton Chism III over Lamar Jackson; start Charlie Kolar over Hunter Henry (win chance 20% → 27%).
+- Set your lineup: start Efton Chism III over Lamar Jackson; start Charlie Kolar over Hunter Henry (win chance 18% → 24%).
 
 ## Alerts this week
-- Set your lineup: start Efton Chism III over Lamar Jackson (win chance 28% → 49%).
 - Set your lineup: start Efton Chism III over Lamar Jackson (win chance 29% → 54%).
 - Set your lineup: start Efton Chism III over Lamar Jackson (win chance 28% → 50%).
 - Set your lineup: start Efton Chism III over Lamar Jackson (win chance 20% → 38%).
@@ -27,6 +26,7 @@ Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR), Hunter Henry (Out), Lamar Jacks
 - Set your lineup: start Efton Chism III over Lamar Jackson; start Charlie Kolar over Hunter Henry (win chance 21% → 27%).
 - Set your lineup: start Efton Chism III over Lamar Jackson; start Charlie Kolar over Hunter Henry (win chance 23% → 28%).
 - Set your lineup: start Efton Chism III over Lamar Jackson; start Charlie Kolar over Hunter Henry (win chance 20% → 27%).
+- Set your lineup: start Efton Chism III over Lamar Jackson; start Charlie Kolar over Hunter Henry (win chance 18% → 24%).
 
 ## Market
 - Buy-low: Kirk Cousins (jsous): +4.8 counted pts/wk for you, value 1,546
