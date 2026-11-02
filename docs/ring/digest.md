@@ -4,29 +4,29 @@
 Top counted: Tee Higgins 27.4, Tyler Huntley 24.3, Rhamondre Stevenson 23.9, C.J. Stroud 23.6
 
 **Record:** 6-1, #2 of 12 · 1274.0 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 16% (+5 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 16% (+6 pts this week)
 
 
-**Best trade idea:** give Lamar Jackson for Kenneth Walker III: title chance 16% → 22%
-**Waivers:** Calvin Ridley would add 0.6 pts/wk to your lineup.
+**Best trade idea:** give Lamar Jackson for Kenneth Walker III: title chance 16% → 20%
+**Waivers:** Davis Allen would add 1.4 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 3, 2027: 1, 2028: 1.
 
-**Week 8:** vs Achane Saw Massacre · projected 158.6 – 165.5 · win chance 26%
+**Week 8:** vs Achane Saw Massacre · projected 152.8 – 164.4 · win chance 16%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Isaiah Likely, Chris Olave, Tank Dell, C.J. Stroud
-Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR), Lamar Jackson (Out), Tyler Huntley (Out), DeVonta Smith (Out)
+Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR), Hunter Henry (Out), Lamar Jackson (Out), Tyler Huntley (Out), DeVonta Smith (Out)
 
 ## To do
-- Set your lineup: start Efton Chism III over Lamar Jackson (win chance 20% → 38%).
+- Set your lineup: start Efton Chism III over Lamar Jackson; start Charlie Kolar over Hunter Henry (win chance 21% → 27%).
 
 ## Alerts this week
-- Set your lineup: start Efton Chism III over Lamar Jackson (win chance 44% → 60%).
-- Set your lineup: start Efton Chism III over Lamar Jackson (win chance 23% → 40%).
 - Set your lineup: start Efton Chism III over Lamar Jackson (win chance 22% → 36%).
 - Set your lineup: start Efton Chism III over Lamar Jackson (win chance 28% → 44%).
 - Set your lineup: start Efton Chism III over Lamar Jackson (win chance 28% → 49%).
 - Set your lineup: start Efton Chism III over Lamar Jackson (win chance 29% → 54%).
 - Set your lineup: start Efton Chism III over Lamar Jackson (win chance 28% → 50%).
 - Set your lineup: start Efton Chism III over Lamar Jackson (win chance 20% → 38%).
+- Hunter Henry is now Out. Rest-of-season, he now adds 1.3 counted pts/wk to your lineup.
+- Set your lineup: start Efton Chism III over Lamar Jackson; start Charlie Kolar over Hunter Henry (win chance 21% → 27%).
 
 ## Market
 - Buy-low: Kirk Cousins (jsous): +4.8 counted pts/wk for you, value 1,546
