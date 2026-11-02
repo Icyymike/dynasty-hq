@@ -9,9 +9,9 @@ Top counted: Malik Willis 30.0, Jordan Love 21.0, Amon-Ra St. Brown 19.7, Cam Sk
 **Playoff path:** most likely seed 4; title chance with a bye 36% vs without 16%
 **Best trade idea:** give C.J. Stroud for Tyler Shough: title chance 21% → 24%
 **Waivers:** Demarcus Robinson would add 0.6 pts/wk to your lineup.
-**Window:** Window open: contend. Projected rank 2026: 1, 2027: 2, 2028: 2.
+**Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 2.
 
-**Week 8:** vs MoneyMertz · projected 179.9 – 229.1 · win chance 0%
+**Week 8:** vs MoneyMertz · projected 179.8 – 224.9 · win chance 0%
 On bye: Tyrone Tracy Jr., Cam Skattebo, Juwan Johnson, C.J. Stroud
 Injured: Tyrone Tracy Jr. (IR), Michael Pittman Jr. (IR)
 
