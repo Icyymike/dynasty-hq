@@ -31,6 +31,6 @@ Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR), Hunter Henry (Out), Lamar Jacks
 ## Market
 - Buy-low: Tony Pollard (D-Generation-XRated): +5.4 counted pts/wk for you, value 1,722
 - Buy-low: Chuba Hubbard (Jesus the homeless hippy): +6.7 counted pts/wk for you, value 2,911
-- Buy-low: Mike Evans (D-Generation-XRated): +4.7 counted pts/wk for you, value 2,023
+- Buy-low: Mike Evans (D-Generation-XRated): +4.8 counted pts/wk for you, value 2,023
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
