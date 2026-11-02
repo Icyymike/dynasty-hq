@@ -29,8 +29,8 @@ Injured: Tyrone Tracy Jr. (IR), Michael Pittman Jr. (IR)
 - **Fat Camp** get Rashee Rice (Win-now) ⇄ **Worthy Advisary** get 2027 2nd (Fat Camp), 2027 3rd (Fat Camp), 2027 3rd (The True Behemoth) (Push)
 
 ## Market
-- Buy-low: Mike Evans (The True Behemoth): +7.0 counted pts/wk for you, value 2,009
-- Buy-low: Kirk Cousins (Lava Me Tender): +4.9 counted pts/wk for you, value 1,547
-- Buy-low: Noah Fant (MoneyMertz): +1.4 counted pts/wk for you, value 152
+- Buy-low: Mike Evans (The True Behemoth): +6.9 counted pts/wk for you, value 2,061
+- Buy-low: Noah Fant (MoneyMertz): +1.4 counted pts/wk for you, value 86
+- Buy-low: Kirk Cousins (Lava Me Tender): +4.9 counted pts/wk for you, value 1,777
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
