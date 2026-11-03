@@ -11,7 +11,7 @@ Top counted: Jordan Love 27.5, D'Andre Swift 26.9, Jahmyr Gibbs 23.8, Michael Wi
 **Waivers:** Gardner Minshew II would add 2.8 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 3, 2027: 2, 2028: 2.
 
-**Week 9:** vs WavySerg · projected 169.9 – 86.5 · win chance 98%
+**Week 9:** vs WavySerg · projected 169.8 – 86.4 · win chance 98%
 On bye: Michael Pittman Jr., Pat Freiermuth, Wan'Dale Robinson, Jaylen Warren
 Injured: Tyrone Tracy Jr. (IR), Michael Pittman Jr. (IR)
 
