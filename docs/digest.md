@@ -4,19 +4,18 @@
 Top counted: Jordan Love 27.5, D'Andre Swift 26.9, Jahmyr Gibbs 23.8, Michael Wilson 22.8
 
 **Record:** 11-5, #4 of 12 · 1465.2 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 24% · title 22% (+2 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 26% · title 20% (+1 pts this week)
 
-**Playoff path:** most likely seed 4; title chance with a bye 35% vs without 17%
-**Best trade idea:** give C.J. Stroud for Dak Prescott: title chance 22% → 25%
+**Playoff path:** most likely seed 4; title chance with a bye 34% vs without 16%
+**Best trade idea:** give C.J. Stroud for Dak Prescott: title chance 20% → 24%
 **Waivers:** Gardner Minshew II would add 2.8 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 3, 2027: 2, 2028: 2.
 
-**Week 9:** vs WavySerg · projected 168.5 – 84.4 · win chance 99%
+**Week 9:** vs WavySerg · projected 169.9 – 86.5 · win chance 98%
 On bye: Michael Pittman Jr., Pat Freiermuth, Wan'Dale Robinson, Jaylen Warren
 Injured: Tyrone Tracy Jr. (IR), Michael Pittman Jr. (IR)
 
 ## Alerts this week
-- Tyrone Tracy Jr. is now Out. Rest-of-season, he now adds 1.9 counted pts/wk to your lineup.
 - Tre' Harris is back (Questionable).
 
 ## League trades
@@ -24,7 +23,7 @@ Injured: Tyrone Tracy Jr. (IR), Michael Pittman Jr. (IR)
 
 ## Market
 - Buy-low: Mike Evans (The True Behemoth): +6.8 counted pts/wk for you, value 2,113
-- Buy-low: Noah Fant (MoneyMertz): +1.5 counted pts/wk for you, value 128
-- Buy-low: Cade Otton (Fat Camp): +2.6 counted pts/wk for you, value 658
+- Buy-low: Cade Otton (Fat Camp): +2.6 counted pts/wk for you, value 655
+- Buy-low: Dalton Schultz (Trust the Process): +2.9 counted pts/wk for you, value 882
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
