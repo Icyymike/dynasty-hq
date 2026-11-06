@@ -10,14 +10,13 @@ Top counted: Tee Higgins 38.7, Jahmyr Gibbs 25.0, Mike Gesicki 22.2, Jayden Dani
 **Best trade idea:** give Mike Gesicki, Chris Olave for Christian McCaffrey: title chance 18% → 21%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 1, 2028: 2.
 
-**Week 9:** vs YinzerKing · projected 169.0 – 148.3 · win chance 72%
+**Week 9:** vs YinzerKing · projected 169.0 – 147.6 · win chance 72%
 Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR), Lamar Jackson (IR), Tyler Huntley (IR)
 
 ## To do
-- Set your lineup: start Cam Skattebo over Cade Otton (win chance 72% → 74%).
+- Set your lineup: start Cam Skattebo over Cade Otton (win chance 73% → 74%).
 
 ## Alerts this week
-- Hunter Henry is back (Questionable).
 - DeVonta Smith is back (Questionable).
 - Set your lineup: start Cam Skattebo over Rhamondre Stevenson; start Isaiah Likely over Cade Otton; start DeVonta Smith over Mike Gesicki (win chance 66% → 68%).
 - Set your lineup: start Cam Skattebo over Cade Otton (win chance 71% → 72%).
@@ -25,6 +24,7 @@ Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR), Lamar Jackson (IR), Tyler Huntl
 - Set your lineup: start Cam Skattebo over Cade Otton (win chance 72% → 73%).
 - Set your lineup: start Cam Skattebo over Cade Otton (win chance 71% → 72%).
 - Set your lineup: start Cam Skattebo over Cade Otton (win chance 72% → 74%).
+- Set your lineup: start Cam Skattebo over Cade Otton (win chance 73% → 74%).
 
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
