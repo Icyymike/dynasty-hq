@@ -4,20 +4,20 @@
 Top counted: Jordan Love 27.5, D'Andre Swift 26.9, Jahmyr Gibbs 23.8, Michael Wilson 22.8
 
 **Record:** 11-5, #4 of 12 · 1465.2 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 32% · title 21% (+3 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 33% · title 22% (+4 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 33% vs without 16%
-**Best trade idea:** give Antonio Williams, Malik Willis for Parker Washington: title chance 21% → 24%
-**Waivers:** Elijah Higgins would add 1.1 pts/wk to your lineup.
+**Playoff path:** most likely seed 3; title chance with a bye 35% vs without 16%
+**Best trade idea:** give Malik Willis for Travis Kelce: title chance 22% → 25%
+**Waivers:** Elijah Higgins would add 1.2 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 3, 2027: 2, 2028: 2.
 
-**Week 9:** vs WavySerg · projected 183.0 – 83.6 · win chance 99%
+**Week 9:** vs WavySerg · projected 180.5 – 83.2 · win chance 99%
 On bye: Michael Pittman Jr., Pat Freiermuth, Wan'Dale Robinson, Jaylen Warren
 Injured: Michael Pittman Jr. (IR)
 
 ## Market
-- Buy-low: Mike Evans (The True Behemoth): +6.8 counted pts/wk for you, value 1,994
-- Buy-low: Noah Fant (MoneyMertz): +1.5 counted pts/wk for you, value 55
-- Buy-low: Gardner Minshew II (Fat Camp): +4.2 counted pts/wk for you, value 1,117
+- Buy-low: Tyler Higbee (Lava Me Tender): +2.8 counted pts/wk for you, value 386
+- Buy-low: Gardner Minshew II (Fat Camp): +4.3 counted pts/wk for you, value 1,043
+- Buy-low: Mike Evans (The True Behemoth): +6.9 counted pts/wk for you, value 2,046
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
