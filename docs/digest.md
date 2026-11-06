@@ -6,12 +6,12 @@ Top counted: Jordan Love 27.5, D'Andre Swift 26.9, Jahmyr Gibbs 23.8, Michael Wi
 **Record:** 11-5, #4 of 12 · 1465.2 PF
 **Odds:** playoffs 100% (+0 pts this week) · bye 31% · title 20% (+2 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 30% vs without 16%
+**Playoff path:** most likely seed 3; title chance with a bye 30% vs without 15%
 **Best trade idea:** give C.J. Stroud for Tyler Shough: title chance 20% → 23%
 **Waivers:** Elijah Higgins would add 1.2 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 3, 2027: 2, 2028: 2.
 
-**Week 9:** vs WavySerg · projected 173.7 – 83.6 · win chance 99%
+**Week 9:** vs WavySerg · projected 173.5 – 83.6 · win chance 99%
 On bye: Michael Pittman Jr., Pat Freiermuth, Wan'Dale Robinson, Jaylen Warren
 Injured: Michael Pittman Jr. (IR)
 
