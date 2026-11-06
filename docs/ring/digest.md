@@ -10,7 +10,7 @@ Top counted: Tee Higgins 38.7, Jahmyr Gibbs 25.0, Mike Gesicki 22.2, Jayden Dani
 **Best trade idea:** give Mike Gesicki, Chris Olave for Christian McCaffrey: title chance 18% → 21%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 1, 2028: 2.
 
-**Week 9:** vs YinzerKing · projected 169.0 – 148.6 · win chance 71%
+**Week 9:** vs YinzerKing · projected 169.0 – 147.8 · win chance 72%
 Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR), Lamar Jackson (IR), Tyler Huntley (IR)
 
 ## To do

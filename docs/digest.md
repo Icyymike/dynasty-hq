@@ -11,13 +11,13 @@ Top counted: Jordan Love 27.5, D'Andre Swift 26.9, Jahmyr Gibbs 23.8, Michael Wi
 **Waivers:** Elijah Higgins would add 1.1 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 3, 2027: 2, 2028: 2.
 
-**Week 9:** vs WavySerg · projected 174.1 – 83.7 · win chance 99%
+**Week 9:** vs WavySerg · projected 173.9 – 83.6 · win chance 99%
 On bye: Michael Pittman Jr., Pat Freiermuth, Wan'Dale Robinson, Jaylen Warren
 Injured: Michael Pittman Jr. (IR)
 
 ## Market
 - Buy-low: Mike Evans (The True Behemoth): +6.8 counted pts/wk for you, value 1,994
-- Buy-low: Noah Fant (MoneyMertz): +1.4 counted pts/wk for you, value 55
-- Buy-low: Gardner Minshew II (Fat Camp): +4.1 counted pts/wk for you, value 1,117
+- Buy-low: Noah Fant (MoneyMertz): +1.5 counted pts/wk for you, value 55
+- Buy-low: Gardner Minshew II (Fat Camp): +4.2 counted pts/wk for you, value 1,117
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
