@@ -8,7 +8,7 @@ Top counted: Tee Higgins 38.7, Jahmyr Gibbs 25.0, Mike Gesicki 22.2, Jayden Dani
 
 
 **Best trade idea:** give Mike Gesicki, Chris Olave for Christian McCaffrey: title chance 17% → 21%
-**Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 2.
+**Window:** Window open: contend. Projected rank 2026: 2, 2027: 1, 2028: 2.
 
 **Week 9:** vs YinzerKing · projected 169.0 – 144.9 · win chance 74%
 Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR), Lamar Jackson (IR), Tyler Huntley (IR)
@@ -29,7 +29,7 @@ Injured: Tyrone Tracy Jr. (IR), Pat Bryant (IR), Lamar Jackson (IR), Tyler Huntl
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
 - Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.2 counted pts/wk for you, value 3,149
-- Buy-low: Tony Pollard (D-Generation-XRated): +3.0 counted pts/wk for you, value 1,760
 - Buy-low: Mike Evans (D-Generation-XRated): +3.3 counted pts/wk for you, value 2,008
+- Buy-low: Tony Pollard (D-Generation-XRated): +2.9 counted pts/wk for you, value 1,760
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
