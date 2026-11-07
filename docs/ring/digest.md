@@ -14,7 +14,6 @@ Top counted: Tee Higgins 38.7, Jahmyr Gibbs 25.0, Mike Gesicki 22.2, Jayden Dani
 Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Doubtful), Pat Bryant (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out)
 
 ## Alerts this week
-- Set your lineup: start Cam Skattebo over Cade Otton (win chance 72% → 73%).
 - Set your lineup: start Cam Skattebo over Cade Otton (win chance 71% → 72%).
 - Set your lineup: start Cam Skattebo over Cade Otton (win chance 72% → 74%).
 - Set your lineup: start Cam Skattebo over Cade Otton (win chance 73% → 74%).
@@ -22,10 +21,11 @@ Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Doubtful), Pat Bryant (IR), Lamar 
 - Set your lineup: start Hunter Henry over Cade Otton (win chance 74% → 75%).
 - Cam Skattebo is now Doubtful. Rest-of-season, he now adds 1.6 counted pts/wk to your lineup.
 - DeVonta Smith is now Out. Rest-of-season, he now adds 1.1 counted pts/wk to your lineup.
+- Isaiah Likely's value moved 3,315 → 2,899 (-13%).
 
 ## Market
-- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.2 counted pts/wk for you, value 3,094
-- Buy-low: Tony Pollard (D-Generation-XRated): +2.9 counted pts/wk for you, value 1,739
-- Buy-low: Mike Evans (D-Generation-XRated): +3.3 counted pts/wk for you, value 2,060
+- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.2 counted pts/wk for you, value 3,088
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +2.8 counted pts/wk for you, value 1,536
+- Buy-low: Tony Pollard (D-Generation-XRated): +2.9 counted pts/wk for you, value 1,751
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
