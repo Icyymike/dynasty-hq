@@ -10,7 +10,7 @@ Top counted: Tee Higgins 38.7, Jahmyr Gibbs 25.0, Mike Gesicki 22.2, Jayden Dani
 **Best trade idea:** give Chris Olave for Christian Watson: title chance 18% → 19%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 9:** vs YinzerKing · projected 187.8 – 160.0 · win chance 94%
+**Week 9:** vs YinzerKing · projected 186.1 – 160.0 · win chance 94%
 Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out), George Pickens (Out)
 
 ## Alerts this week
