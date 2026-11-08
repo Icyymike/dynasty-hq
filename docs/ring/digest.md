@@ -7,10 +7,10 @@ Top counted: Tee Higgins 38.7, Jahmyr Gibbs 25.0, Mike Gesicki 22.2, Jayden Dani
 **Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 18% (+2 pts this week)
 
 
-**Best trade idea:** give Mike Gesicki, Chris Olave for Christian McCaffrey: title chance 18% → 21%
-**Window:** Window open: contend. Projected rank 2026: 1, 2027: 2, 2028: 3.
+**Best trade idea:** give Mike Gesicki, Chris Olave for Christian McCaffrey: title chance 18% → 22%
+**Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 3.
 
-**Week 9:** vs YinzerKing · projected 193.1 – 159.3 · win chance 99%
+**Week 9:** vs YinzerKing · projected 202.6 – 158.1 · win chance 100%
 Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out), George Pickens (Out)
 
 ## Alerts this week
@@ -24,8 +24,8 @@ Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Hu
 - Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 8% → 20%).
 
 ## Market
-- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.3 counted pts/wk for you, value 3,086
+- Buy-low: George Kittle (Jesus the homeless hippy): +7.2 counted pts/wk for you, value 2,730
+- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.4 counted pts/wk for you, value 3,086
 - Buy-low: D'Andre Swift (ShamirRamirez): +5.5 counted pts/wk for you, value 3,216
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.1 counted pts/wk for you, value 1,755
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
