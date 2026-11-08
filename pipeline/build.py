@@ -1596,15 +1596,21 @@ def main():
                 if opp_ is None:
                     return None
                 return round(sum(1 for s_ in range(SIMS) if sum(VAL[p][s_][k0] for p in ids) > sum(VAL[p][s_][k0] for p in opp_ids)) / SIMS, 3)
-            best_ids = starters(mine_ids, k0)
             mine_cur = [p for p in cur_starters.get(me, []) if p in VAL]
             locked = lambda p: bool(P[p].get("lk"))
+            # once a game starts, Sleeper locks those players: starters stay in, benched players can't come in
+            cur_set = set(mine_cur)
+            def best_now(force=None):
+                pool = [(P[p]["p"], (9999 if (locked(p) and p in cur_set) else 999 if p == force else P[p]["pr"][k0]), p)
+                        for p in mine_ids if p in VAL and not (locked(p) and mine_cur and p not in cur_set)]
+                return lineup_split(pool)[2]
+            best_ids = best_now() if mine_cur else starters(mine_ids, k0)
             close = []
             keep_ = set(mine_cur or best_ids)   # starters whose games already started stay in the lineup
             for b in mine_ids:
                 if b in best_ids or locked(b) or P[b]["pr"][k0] <= 0:
                     continue
-                forced = lineup_split([(P[p]["p"], (9999 if (locked(p) and p in keep_) else 999 if p == b else P[p]["pr"][k0]), p) for p in mine_ids if p in VAL])[2]
+                forced = best_now(b) if mine_cur else lineup_split([(P[p]["p"], (999 if p == b else P[p]["pr"][k0]), p) for p in mine_ids if p in VAL])[2]
                 out_ = [p for p in best_ids if p not in forced]
                 if not out_ or any(locked(p) for p in out_):
                     continue
