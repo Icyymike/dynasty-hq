@@ -7,10 +7,10 @@ Top counted: Tee Higgins 38.7, Jahmyr Gibbs 25.0, Mike Gesicki 22.2, Jayden Dani
 **Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 18% (+2 pts this week)
 
 
-**Best trade idea:** give Hunter Henry, George Pickens for Tucker Kraft: title chance 18% → 18%
+**Best trade idea:** give Chris Olave for Christian Watson: title chance 18% → 19%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 9:** vs YinzerKing · projected 187.3 – 160.2 · win chance 94%
+**Week 9:** vs YinzerKing · projected 187.8 – 160.0 · win chance 94%
 Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out), George Pickens (Out)
 
 ## Alerts this week
