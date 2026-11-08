@@ -7,17 +7,16 @@ Top counted: Tee Higgins 38.7, Jahmyr Gibbs 25.0, Mike Gesicki 22.2, Jayden Dani
 **Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 18% (+2 pts this week)
 
 
-**Best trade idea:** give DeVonta Smith, George Pickens for Colston Loveland: title chance 18% → 19%
+**Best trade idea:** none that clearly raises your title chance; standing pat is fine.
 **Window:** Window open: contend. Projected rank 2026: 3, 2027: 1, 2028: 3.
 
-**Week 9:** vs YinzerKing · projected 162.7 – 160.6 · win chance 54%
+**Week 9:** vs YinzerKing · projected 161.7 – 159.7 · win chance 54%
 Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out), George Pickens (Out)
 
 ## To do
-- Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 10% → 21%).
+- Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 8% → 20%).
 
 ## Alerts this week
-- Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 28% → 35%).
 - Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 8% → 15%).
 - Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 10% → 18%).
 - Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 10% → 21%).
@@ -25,6 +24,7 @@ Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Hu
 - Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 21% → 36%).
 - Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 20% → 32%).
 - Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 10% → 21%).
+- Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 8% → 20%).
 
 ## Market
 - Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.3 counted pts/wk for you, value 3,086
