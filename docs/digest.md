@@ -4,14 +4,14 @@
 Top counted: Jordan Love 27.5, D'Andre Swift 26.9, Jahmyr Gibbs 23.8, Michael Wilson 22.8
 
 **Record:** 11-5, #4 of 12 · 1465.2 PF
-**Odds:** playoffs 100% (-0 pts this week) · bye 28% · title 21% (+1 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 28% · title 20% (+0 pts this week)
 
-**Playoff path:** most likely seed 4; title chance with a bye 33% vs without 16%
-**Best trade idea:** give Ja'Kobi Lane, Malik Willis for Parker Washington: title chance 21% → 24%
+**Playoff path:** most likely seed 4; title chance with a bye 32% vs without 16%
+**Best trade idea:** give Ja'Kobi Lane, Malik Willis for Parker Washington: title chance 20% → 24%
 **Waivers:** Elijah Higgins would add 1.1 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 3, 2027: 3, 2028: 3.
 
-**Week 9:** vs WavySerg · projected 168.5 – 76.2 · win chance 100%
+**Week 9:** vs WavySerg · projected 167.9 – 75.9 · win chance 100%
 On bye: Michael Pittman Jr., Pat Freiermuth, Wan'Dale Robinson, Jaylen Warren
 Injured: Cam Skattebo (Out), Michael Pittman Jr. (IR), Treylon Burks (Out)
 

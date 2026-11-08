@@ -10,14 +10,13 @@ Top counted: Tee Higgins 38.7, Jahmyr Gibbs 25.0, Mike Gesicki 22.2, Jayden Dani
 **Best trade idea:** give Mike Gesicki, Chris Olave for Christian McCaffrey: title chance 18% → 21%
 **Window:** Window open: contend. Projected rank 2026: 3, 2027: 1, 2028: 3.
 
-**Week 9:** vs YinzerKing · projected 155.2 – 144.2 · win chance 68%
+**Week 9:** vs YinzerKing · projected 158.6 – 148.9 · win chance 66%
 Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out), George Pickens (Out)
 
 ## To do
-- Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 41% → 43%).
+- Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 36% → 39%).
 
 ## Alerts this week
-- Set your lineup: start Hunter Henry over Darius Cooper (win chance 70% → 70%).
 - Isaiah Likely's value moved 2,899 → 3,384 (+17%).
 - Set your lineup: start Hunter Henry over Darius Cooper (win chance 69% → 70%).
 - Set your lineup: start Hunter Henry over Darius Cooper (win chance 70% → 70%).
@@ -25,10 +24,11 @@ Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Hu
 - George Pickens is now Out. Rest-of-season, he now adds 0.8 counted pts/wk to your lineup.
 - Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 55% → 56%).
 - Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 41% → 43%).
+- Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 36% → 39%).
 
 ## Market
 - Buy-low: D'Andre Swift (ShamirRamirez): +5.5 counted pts/wk for you, value 3,216
-- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.3 counted pts/wk for you, value 3,086
+- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.2 counted pts/wk for you, value 3,086
 - Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.1 counted pts/wk for you, value 1,758
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
