@@ -4,14 +4,14 @@
 Top counted: Jordan Love 27.5, D'Andre Swift 26.9, Jahmyr Gibbs 23.8, Michael Wilson 22.8
 
 **Record:** 11-5, #4 of 12 · 1465.2 PF
-**Odds:** playoffs 100% (-0 pts this week) · bye 30% · title 21% (+1 pts this week)
+**Odds:** playoffs 100% (-0 pts this week) · bye 31% · title 21% (+1 pts this week)
 
 **Playoff path:** most likely seed 3; title chance with a bye 33% vs without 16%
-**Best trade idea:** give Jaylen Warren for Josh Jacobs: title chance 21% → 23%
-**Waivers:** Elijah Higgins would add 1.2 pts/wk to your lineup.
+**Best trade idea:** give Ja'Kobi Lane, Malik Willis for Parker Washington: title chance 21% → 24%
+**Waivers:** Elijah Higgins would add 1.1 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 3, 2028: 3.
 
-**Week 9:** vs WavySerg · projected 171.3 – 68.8 · win chance 100%
+**Week 9:** vs WavySerg · projected 175.5 – 68.2 · win chance 100%
 On bye: Michael Pittman Jr., Pat Freiermuth, Wan'Dale Robinson, Jaylen Warren
 Injured: Cam Skattebo (Out), Michael Pittman Jr. (IR), Treylon Burks (Out)
 
@@ -20,8 +20,8 @@ Injured: Cam Skattebo (Out), Michael Pittman Jr. (IR), Treylon Burks (Out)
 - Treylon Burks is now Out. Rest-of-season, he now adds 0.5 counted pts/wk to your lineup.
 
 ## Market
-- Buy-low: Mike Evans (The True Behemoth): +6.6 counted pts/wk for you, value 1,889
 - Buy-low: Gardner Minshew II (Fat Camp): +4.2 counted pts/wk for you, value 1,020
-- Buy-low: Cade Otton (Fat Camp): +2.4 counted pts/wk for you, value 587
+- Buy-low: Mike Evans (The True Behemoth): +6.6 counted pts/wk for you, value 1,889
+- Buy-low: Cade Otton (Fat Camp): +2.3 counted pts/wk for you, value 587
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
