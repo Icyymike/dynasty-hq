@@ -7,10 +7,10 @@ Top counted: Tee Higgins 38.7, Jahmyr Gibbs 25.0, Mike Gesicki 22.2, Jayden Dani
 **Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 18% (+2 pts this week)
 
 
-**Best trade idea:** give Hunter Henry, George Pickens for Tucker Kraft: title chance 18% → 19%
-**Window:** Window open: contend. Projected rank 2026: 2, 2027: 1, 2028: 3.
+**Best trade idea:** give Hunter Henry, George Pickens for Tucker Kraft: title chance 18% → 18%
+**Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 9:** vs YinzerKing · projected 179.0 – 160.1 · win chance 88%
+**Week 9:** vs YinzerKing · projected 187.3 – 160.2 · win chance 94%
 Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out), George Pickens (Out)
 
 ## Alerts this week
@@ -26,6 +26,6 @@ Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Hu
 ## Market
 - Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.3 counted pts/wk for you, value 3,086
 - Buy-low: D'Andre Swift (ShamirRamirez): +5.5 counted pts/wk for you, value 3,216
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.1 counted pts/wk for you, value 1,758
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.1 counted pts/wk for you, value 1,755
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
