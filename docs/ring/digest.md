@@ -7,14 +7,11 @@ Top counted: Tee Higgins 38.7, Jahmyr Gibbs 25.0, Mike Gesicki 22.2, Jayden Dani
 **Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 18% (+2 pts this week)
 
 
-**Best trade idea:** none that clearly raises your title chance; standing pat is fine.
+**Best trade idea:** give Mike Gesicki, Chris Olave for Christian McCaffrey: title chance 18% → 20%
 **Window:** Window open: contend. Projected rank 2026: 3, 2027: 1, 2028: 3.
 
-**Week 9:** vs YinzerKing · projected 161.7 – 159.7 · win chance 54%
+**Week 9:** vs YinzerKing · projected 157.4 – 158.7 · win chance 46%
 Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out), George Pickens (Out)
-
-## To do
-- Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 8% → 20%).
 
 ## Alerts this week
 - Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 8% → 15%).
