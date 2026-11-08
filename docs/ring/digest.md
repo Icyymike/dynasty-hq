@@ -4,13 +4,13 @@
 Top counted: Tee Higgins 38.7, Jahmyr Gibbs 25.0, Mike Gesicki 22.2, Jayden Daniels 21.1
 
 **Record:** 6-2, #3 of 12 · 1413.9 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 17% (+2 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 18% (+2 pts this week)
 
 
-**Best trade idea:** give Rhamondre Stevenson, George Pickens for Nico Collins: title chance 17% → 19%
+**Best trade idea:** give Mike Gesicki, Chris Olave for Christian McCaffrey: title chance 18% → 21%
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 2, 2028: 3.
 
-**Week 9:** vs YinzerKing · projected 194.1 – 160.5 · win chance 98%
+**Week 9:** vs YinzerKing · projected 193.1 – 159.3 · win chance 99%
 Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out), George Pickens (Out)
 
 ## Alerts this week
