@@ -11,7 +11,7 @@ Top counted: Tee Higgins 38.7, Jahmyr Gibbs 25.0, Mike Gesicki 22.2, Jayden Dani
 **Waivers:** Khalil Herbert would add 0.5 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 3.
 
-**Week 9:** vs YinzerKing · projected 180.7 – 158.5 · win chance 95%
+**Week 9:** vs YinzerKing · projected 179.9 – 158.5 · win chance 94%
 Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out), Rhamondre Stevenson (Out), George Pickens (Out)
 
 ## To do
