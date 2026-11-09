@@ -20,8 +20,8 @@ Injured: Cam Skattebo (Out), Michael Pittman Jr. (IR), Treylon Burks (Out)
 - Treylon Burks is now Out. Rest-of-season, he now adds 0.5 counted pts/wk to your lineup.
 
 ## Market
-- Buy-low: Mike Evans (The True Behemoth): +6.6 counted pts/wk for you, value 1,889
-- Buy-low: Gardner Minshew II (Fat Camp): +4.0 counted pts/wk for you, value 1,020
-- Buy-low: Noah Fant (MoneyMertz): +1.2 counted pts/wk for you, value 34
+- Buy-low: Mike Evans (The True Behemoth): +6.6 counted pts/wk for you, value 1,883
+- Buy-low: Gardner Minshew II (Fat Camp): +4.0 counted pts/wk for you, value 1,071
+- Buy-low: Noah Fant (MoneyMertz): +1.2 counted pts/wk for you, value 0
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
