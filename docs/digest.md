@@ -11,7 +11,7 @@ Top counted: Jordan Love 27.5, D'Andre Swift 26.9, Jahmyr Gibbs 23.8, Michael Wi
 **Waivers:** Elijah Higgins would add 1.1 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 3, 2028: 3.
 
-**Week 9:** vs WavySerg · projected 205.4 – 61.9 · win chance 100%
+**Week 9:** vs WavySerg · projected 204.7 – 61.8 · win chance 100%
 On bye: Michael Pittman Jr., Pat Freiermuth, Wan'Dale Robinson, Jaylen Warren
 Injured: Cam Skattebo (Out), Michael Pittman Jr. (IR), Treylon Burks (Out)
 
