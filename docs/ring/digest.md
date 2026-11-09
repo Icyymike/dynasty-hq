@@ -11,7 +11,7 @@ Top counted: Tee Higgins 38.7, Jahmyr Gibbs 25.0, Mike Gesicki 22.2, Jayden Dani
 **Waivers:** Khalil Herbert would add 0.5 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 2, 2028: 3.
 
-**Week 9:** vs YinzerKing · projected 184.9 – 170.3 · win chance 94%
+**Week 9:** vs YinzerKing · projected 184.1 – 170.9 · win chance 93%
 Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out), Rhamondre Stevenson (Out), George Pickens (Out)
 
 ## To do
@@ -29,8 +29,8 @@ Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Hu
 
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
-- Buy-low: George Kittle (Jesus the homeless hippy): +6.5 counted pts/wk for you, value 2,730
+- Buy-low: George Kittle (Jesus the homeless hippy): +6.6 counted pts/wk for you, value 2,730
 - Buy-low: Chuba Hubbard (Jesus the homeless hippy): +6.4 counted pts/wk for you, value 3,086
-- Buy-low: D'Andre Swift (ShamirRamirez): +5.4 counted pts/wk for you, value 3,216
+- Buy-low: D'Andre Swift (ShamirRamirez): +5.2 counted pts/wk for you, value 3,216
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
