@@ -4,14 +4,14 @@
 Top counted: Tee Higgins 38.7, Jahmyr Gibbs 25.0, Mike Gesicki 22.2, Jayden Daniels 21.1
 
 **Record:** 6-2, #3 of 12 · 1413.9 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 15% (-5 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 16% (-1 pts this week)
 
 
-**Best trade idea:** give Hunter Henry, Chris Olave for Christian McCaffrey: title chance 15% → 20%
+**Best trade idea:** give Mike Gesicki, George Pickens for Harold Fannin Jr.: title chance 16% → 19%
 **Waivers:** Khalil Herbert would add 0.5 pts/wk to your lineup.
-**Window:** Window open: contend. Projected rank 2026: 3, 2027: 2, 2028: 3.
+**Window:** Window open: contend. Projected rank 2026: 3, 2027: 2, 2028: 4.
 
-**Week 9:** vs YinzerKing · projected 181.5 – 166.8 · win chance 94%
+**Week 9:** vs YinzerKing · projected 181.5 – 165.1 · win chance 100%
 Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out), Rhamondre Stevenson (Out), George Pickens (Out)
 
 ## To do
@@ -29,8 +29,8 @@ Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Hu
 
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
-- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +6.5 counted pts/wk for you, value 3,103
-- Buy-low: Jonah Coleman (SCLSU Mud Dogs): +4.8 counted pts/wk for you, value 2,658
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.2 counted pts/wk for you, value 1,828
+- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +6.4 counted pts/wk for you, value 3,102
+- Buy-low: Jonah Coleman (SCLSU Mud Dogs): +4.8 counted pts/wk for you, value 2,701
+- Buy-low: Chig Okonkwo (ShamirRamirez): +2.2 counted pts/wk for you, value 1,313
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)

@@ -4,14 +4,14 @@
 Top counted: Jordan Love 27.5, D'Andre Swift 26.9, Jahmyr Gibbs 23.8, Michael Wilson 22.8
 
 **Record:** 11-5, #4 of 12 · 1465.2 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 31% · title 23% (+2 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 29% · title 20% (+3 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 34% vs without 18%
-**Best trade idea:** give Cam Skattebo, Ja'Kobi Lane for Carnell Tate: title chance 23% → 24%
-**Waivers:** Elijah Higgins would add 1.1 pts/wk to your lineup.
-**Window:** Window open: contend. Projected rank 2026: 1, 2027: 3, 2028: 3.
+**Playoff path:** most likely seed 3; title chance with a bye 30% vs without 16%
+**Best trade idea:** give Michael Wilson, Malik Willis for Parker Washington: title chance 20% → 23%
+**Waivers:** Elijah Higgins would add 1.6 pts/wk to your lineup.
+**Window:** Window open: contend. Projected rank 2026: 1, 2027: 3, 2028: 2.
 
-**Week 9:** vs WavySerg · projected 201.5 – 68.3 · win chance 100%
+**Week 9:** vs WavySerg · projected 201.5 – 63.2 · win chance 100%
 On bye: Michael Pittman Jr., Pat Freiermuth, Wan'Dale Robinson, Jaylen Warren
 Injured: Michael Wilson (Out), Cam Skattebo (Out), Michael Pittman Jr. (IR), Treylon Burks (Out)
 
@@ -21,8 +21,8 @@ Injured: Michael Wilson (Out), Cam Skattebo (Out), Michael Pittman Jr. (IR), Tre
 - Michael Wilson is now Out. Rest-of-season, he now adds 4.3 counted pts/wk to your lineup.
 
 ## Market
-- Buy-low: Mike Evans (The True Behemoth): +6.6 counted pts/wk for you, value 1,883
-- Buy-low: Gardner Minshew II (Fat Camp): +4.0 counted pts/wk for you, value 1,071
-- Buy-low: Noah Fant (MoneyMertz): +1.2 counted pts/wk for you, value 0
+- Buy-low: Mike Evans (The True Behemoth): +6.5 counted pts/wk for you, value 1,896
+- Buy-low: Dalton Schultz (Trust the Process): +2.4 counted pts/wk for you, value 793
+- Buy-low: Jalen Coker (Lava Me Tender): +4.9 counted pts/wk for you, value 2,133
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
