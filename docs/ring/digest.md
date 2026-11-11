@@ -7,31 +7,30 @@ Top counted: C.J. Stroud 59.2, Jayden Daniels 23.5, Tank Dell 23.4, Isaiah Likel
 **Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 16% (-1 pts this week)
 
 
-**Best trade idea:** give Hunter Henry, George Pickens for Kyren Williams: title chance 16% → 20%
-**Waivers:** Pierre Strong Jr. would add 0.7 pts/wk to your lineup.
-**Window:** Window open: contend. Projected rank 2026: 3, 2027: 1, 2028: 2.
+**Best trade idea:** give Hunter Henry, George Pickens for Kyren Williams: title chance 16% → 21%
+**Window:** Window open: contend. Projected rank 2026: 2, 2027: 1, 2028: 2.
 
-**Week 10:** vs THE FINAL BOSS · projected 149.4 – 168.2 · win chance 32%
+**Week 10:** vs THE FINAL BOSS · projected 164.8 – 168.7 · win chance 47%
 On bye: Troy Franklin, Pat Bryant, Darius Cooper, DeVonta Smith, Cade Otton
-Injured: Tyrone Tracy Jr. (IR), Cam Skattebo (Out), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out), Rhamondre Stevenson (Out), George Pickens (Out)
+Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out), Rhamondre Stevenson (Doubtful)
 
 ## To do
-- Set your lineup: start Tyrone Tracy Jr. over Rhamondre Stevenson; start Hunter Henry over Darius Cooper (win chance 26% → 39%).
+- Set your lineup: start Cam Skattebo over Rhamondre Stevenson; start George Pickens over Efton Chism III; start Hunter Henry over Darius Cooper (win chance 26% → 54%).
 
 ## Alerts this week
-- Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 10% → 21%).
-- Set your lineup: start Hunter Henry over Efton Chism III; start Cade Otton over Darius Cooper (win chance 8% → 20%).
-- Rhamondre Stevenson is now Out. Rest-of-season, he now adds 1.1 counted pts/wk to your lineup.
-- Kaelon Black is on your taxi squad but would add 1.1 pts/wk to your lineup. Promote him (you'll need an open roster spot).
 - Set your lineup: start Tyrone Tracy Jr. over Rhamondre Stevenson; start Hunter Henry over Efton Chism III; start Tank Dell over Darius Cooper (win chance 27% → 40%).
 - Set your lineup: start Tyrone Tracy Jr. over Rhamondre Stevenson; start Hunter Henry over Efton Chism III; start Tank Dell over Darius Cooper (win chance 27% → 39%).
 - Set your lineup: start Tyrone Tracy Jr. over Rhamondre Stevenson; start Hunter Henry over Efton Chism III; start Tank Dell over Darius Cooper (win chance 26% → 40%).
 - Set your lineup: start Tyrone Tracy Jr. over Rhamondre Stevenson; start Hunter Henry over Darius Cooper (win chance 26% → 39%).
+- Cam Skattebo is back (active).
+- Justin Joly is back (active).
+- George Pickens is back (Questionable).
+- Set your lineup: start Cam Skattebo over Rhamondre Stevenson; start George Pickens over Efton Chism III; start Hunter Henry over Darius Cooper (win chance 26% → 54%).
 
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +4.8 counted pts/wk for you, value 1,846
-- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +6.5 counted pts/wk for you, value 3,006
-- Buy-low: Tony Pollard (D-Generation-XRated): +4.4 counted pts/wk for you, value 1,953
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +4.2 counted pts/wk for you, value 1,846
+- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.2 counted pts/wk for you, value 3,006
+- Buy-low: Tony Pollard (D-Generation-XRated): +3.0 counted pts/wk for you, value 1,953
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
