@@ -4,14 +4,14 @@
 Top counted: C.J. Stroud 45.4, Jordan Love 42.2, Justice Hill 16.7, Tommy Tremble 14.4
 
 **Record:** 13-5, #4 of 12 · 1666.8 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 38% · title 28% (+9 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 39% · title 28% (+6 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 42% vs without 20%
-**Best trade idea:** give Cam Skattebo, Malik Willis for Parker Washington: title chance 28% → 31%
+**Playoff path:** most likely seed 3; title chance with a bye 41% vs without 20%
+**Best trade idea:** give Cam Skattebo, Malik Willis for Parker Washington: title chance 28% → 30%
 **Waivers:** Elijah Higgins would add 1.4 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 2, 2028: 2.
 
-**Week 10:** vs Trust the Process · projected 174.6 – 84.9 · win chance 100%
+**Week 10:** vs Trust the Process · projected 172.7 – 85.2 · win chance 99%
 On bye: Courtland Sutton, D'Andre Swift
 Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 
@@ -28,8 +28,8 @@ Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 - **Gibb Me My Trophy** get Kimani Vidal, Caleb Douglas (Push) ⇄ **WavySerg** get Michael Wilson (Loss)
 
 ## Market
-- Buy-low: Mike Evans (The True Behemoth): +6.1 counted pts/wk for you, value 1,983
-- Buy-low: Dalton Schultz (Trust the Process): +2.7 counted pts/wk for you, value 855
-- Buy-low: Dallas Goedert (Commish in Epstein Files): +3.4 counted pts/wk for you, value 1,350
+- Buy-low: Mike Evans (The True Behemoth): +6.1 counted pts/wk for you, value 1,934
+- Buy-low: Dalton Schultz (Trust the Process): +2.7 counted pts/wk for you, value 848
+- Buy-low: Dallas Goedert (Commish in Epstein Files): +3.4 counted pts/wk for you, value 1,324
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
