@@ -7,15 +7,12 @@ Top counted: C.J. Stroud 59.2, Jayden Daniels 23.5, Tank Dell 23.4, Isaiah Likel
 **Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 16% (-2 pts this week)
 
 
-**Best trade idea:** give Mike Gesicki, Chris Olave for Christian McCaffrey: title chance 16% → 20%
-**Window:** Window open: contend. Projected rank 2026: 2, 2027: 1, 2028: 2.
+**Best trade idea:** give DeVonta Smith for Josh Jacobs: title chance 16% → 18%
+**Window:** Window open: contend. Projected rank 2026: 3, 2027: 2, 2028: 3.
 
-**Week 10:** vs THE FINAL BOSS · projected 162.7 – 170.0 · win chance 43%
+**Week 10:** vs THE FINAL BOSS · projected 162.8 – 175.2 · win chance 38%
 On bye: Troy Franklin, Pat Bryant, Darius Cooper, DeVonta Smith, Cade Otton
 Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out), Rhamondre Stevenson (Doubtful)
-
-## To do
-- Set your lineup: start Cam Skattebo over Rhamondre Stevenson; start George Pickens over Efton Chism III; start Hunter Henry over Darius Cooper (win chance 26% → 50%).
 
 ## Alerts this week
 - Set your lineup: start Tyrone Tracy Jr. over Rhamondre Stevenson; start Hunter Henry over Efton Chism III; start Tank Dell over Darius Cooper (win chance 27% → 39%).
@@ -26,6 +23,9 @@ Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta 
 - George Pickens is back (Questionable).
 - Set your lineup: start Cam Skattebo over Rhamondre Stevenson; start George Pickens over Efton Chism III; start Hunter Henry over Darius Cooper (win chance 26% → 54%).
 - Set your lineup: start Cam Skattebo over Rhamondre Stevenson; start George Pickens over Efton Chism III; start Hunter Henry over Darius Cooper (win chance 26% → 50%).
+
+## League trades
+- **THE FINAL BOSS** get Bo Nix, Chase Brown (Win) ⇄ **All For The Nookie** get Justin Herbert, 2028 1st (THE FINAL BOSS) (Loss)
 
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
