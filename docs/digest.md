@@ -6,12 +6,12 @@ Top counted: C.J. Stroud 45.4, Jordan Love 42.2, Justice Hill 16.7, Tommy Trembl
 **Record:** 13-5, #4 of 12 · 1666.8 PF
 **Odds:** playoffs 100% (+0 pts this week) · bye 41% · title 26% (+5 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 36% vs without 20%
-**Best trade idea:** give Ja'Kobi Lane, Antonio Williams for Emeka Egbuka: title chance 26% → 30%
+**Playoff path:** most likely seed 3; title chance with a bye 36% vs without 19%
+**Best trade idea:** give Ja'Kobi Lane, Antonio Williams for Emeka Egbuka: title chance 26% → 29%
 **Waivers:** Elijah Higgins would add 1.3 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 2, 2028: 2.
 
-**Week 10:** vs Trust the Process · projected 187.7 – 83.9 · win chance 100%
+**Week 10:** vs Trust the Process · projected 187.8 – 83.8 · win chance 100%
 On bye: Courtland Sutton, D'Andre Swift
 Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 
@@ -28,8 +28,8 @@ Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 - **Gibb Me My Trophy** get Kimani Vidal, Caleb Douglas (Push) ⇄ **WavySerg** get Michael Wilson (Loss)
 
 ## Market
-- Buy-low: Kirk Cousins (Lava Me Tender): +5.2 counted pts/wk for you, value 2,061
-- Buy-low: Mike Evans (The True Behemoth): +4.7 counted pts/wk for you, value 1,911
-- Buy-low: T.J. Hockenson (jreese15): +4.9 counted pts/wk for you, value 2,145
+- Buy-low: Mike Evans (The True Behemoth): +4.7 counted pts/wk for you, value 1,871
+- Buy-low: Kirk Cousins (Lava Me Tender): +5.2 counted pts/wk for you, value 2,164
+- Buy-low: Stefon Diggs (Fat Camp): +3.5 counted pts/wk for you, value 1,341
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
