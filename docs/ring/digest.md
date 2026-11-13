@@ -10,7 +10,7 @@ Top counted: C.J. Stroud 59.2, Jayden Daniels 23.5, Tank Dell 23.4, Isaiah Likel
 **Best trade idea:** give Mike Gesicki, Chris Olave for Christian McCaffrey: title chance 13% → 16%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 10:** vs THE FINAL BOSS · projected 180.2 – 174.7 · win chance 57%
+**Week 10:** vs THE FINAL BOSS · projected 179.5 – 174.7 · win chance 56%
 On bye: Troy Franklin, Pat Bryant, Darius Cooper, DeVonta Smith, Cade Otton
 Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out)
 
