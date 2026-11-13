@@ -10,7 +10,7 @@ Top counted: C.J. Stroud 59.2, Jayden Daniels 23.5, Tank Dell 23.4, Isaiah Likel
 **Best trade idea:** give Tyrone Tracy Jr., George Pickens for Harold Fannin Jr.: title chance 13% → 15%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 10:** vs THE FINAL BOSS · projected 207.6 – 174.7 · win chance 80%
+**Week 10:** vs THE FINAL BOSS · projected 205.6 – 174.8 · win chance 79%
 On bye: Troy Franklin, Pat Bryant, Darius Cooper, DeVonta Smith, Cade Otton
 Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out)
 
