@@ -4,13 +4,13 @@
 Top counted: C.J. Stroud 59.2, Jayden Daniels 23.5, Tank Dell 23.4, Isaiah Likely 21.6
 
 **Record:** 7-2, #3 of 12 · 1612.2 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 14% (-3 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 13% (-4 pts this week)
 
 
-**Best trade idea:** give Jayden Daniels, DeVonta Smith for Brock Purdy: title chance 14% → 16%
+**Best trade idea:** give Mike Gesicki, Chris Olave for Christian McCaffrey: title chance 13% → 16%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 10:** vs THE FINAL BOSS · projected 166.3 – 174.8 · win chance 41%
+**Week 10:** vs THE FINAL BOSS · projected 180.2 – 174.7 · win chance 57%
 On bye: Troy Franklin, Pat Bryant, Darius Cooper, DeVonta Smith, Cade Otton
 Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out)
 
@@ -32,6 +32,6 @@ Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta 
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
 - Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +4.0 counted pts/wk for you, value 1,642
 - Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.1 counted pts/wk for you, value 3,134
-- Buy-low: Chig Okonkwo (ShamirRamirez): +2.0 counted pts/wk for you, value 1,266
+- Buy-low: Tony Pollard (D-Generation-XRated): +2.6 counted pts/wk for you, value 1,888
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
