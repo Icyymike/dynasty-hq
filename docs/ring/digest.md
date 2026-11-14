@@ -7,10 +7,10 @@ Top counted: C.J. Stroud 59.2, Jayden Daniels 23.5, Tank Dell 23.4, Isaiah Likel
 **Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 12% (-6 pts this week)
 
 
-**Best trade idea:** give Mike Gesicki, Chris Olave for Christian McCaffrey: title chance 12% → 15%
+**Best trade idea:** give Mike Gesicki, Chris Olave for Christian McCaffrey: title chance 12% → 16%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 10:** vs THE FINAL BOSS · projected 214.8 – 174.8 · win chance 84%
+**Week 10:** vs THE FINAL BOSS · projected 214.8 – 177.1 · win chance 82%
 On bye: Troy Franklin, Pat Bryant, Darius Cooper, DeVonta Smith, Cade Otton
 Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out)
 
@@ -30,9 +30,9 @@ Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta 
 
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
-- Sell-high: Tank Dell: value 1,534 vs ~854 for 7.2 pts/wk of production
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.9 counted pts/wk for you, value 2,082
-- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.2 counted pts/wk for you, value 3,061
-- Buy-low: Tony Pollard (D-Generation-XRated): +3.0 counted pts/wk for you, value 1,885
+- Sell-high: Tank Dell: value 1,517 vs ~943 for 7.4 pts/wk of production
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.9 counted pts/wk for you, value 2,088
+- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.2 counted pts/wk for you, value 3,130
+- Buy-low: Tony Pollard (D-Generation-XRated): +3.0 counted pts/wk for you, value 1,900
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
