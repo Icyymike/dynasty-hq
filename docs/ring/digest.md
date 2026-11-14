@@ -31,7 +31,7 @@ Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta 
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
 - Sell-high: Tank Dell: value 1,534 vs ~854 for 7.2 pts/wk of production
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.9 counted pts/wk for you, value 2,078
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.9 counted pts/wk for you, value 2,082
 - Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.2 counted pts/wk for you, value 3,061
 - Buy-low: Tony Pollard (D-Generation-XRated): +3.0 counted pts/wk for you, value 1,885
 
