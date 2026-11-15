@@ -4,13 +4,13 @@
 Top counted: C.J. Stroud 59.2, Jayden Daniels 23.5, Tank Dell 23.4, Isaiah Likely 21.6
 
 **Record:** 7-2, #3 of 12 · 1612.2 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 16% (+2 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 17% (+2 pts this week)
 
 
-**Best trade idea:** give DeVonta Smith, George Pickens for Luther Burden III: title chance 16% → 19%
+**Best trade idea:** give DeVonta Smith, George Pickens for Luther Burden III: title chance 17% → 20%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 10:** vs THE FINAL BOSS · projected 215.1 – 176.1 · win chance 83%
+**Week 10:** vs THE FINAL BOSS · projected 228.6 – 187.3 · win chance 88%
 On bye: Troy Franklin, Pat Bryant, Darius Cooper, DeVonta Smith, Cade Otton
 Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out)
 
@@ -29,9 +29,9 @@ Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta 
 - **THE FINAL BOSS** get Bo Nix, Chase Brown (Win) ⇄ **All For The Nookie** get Justin Herbert, 2028 1st (THE FINAL BOSS) (Loss)
 
 ## Market
-- Sell-high: Tank Dell: value 1,513 vs ~889 for 7.2 pts/wk of production
+- Sell-high: Tank Dell: value 1,513 vs ~892 for 7.2 pts/wk of production
 - Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.8 counted pts/wk for you, value 1,758
-- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.5 counted pts/wk for you, value 3,068
-- Buy-low: Tony Pollard (D-Generation-XRated): +3.1 counted pts/wk for you, value 1,994
+- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +3.3 counted pts/wk for you, value 3,068
+- Buy-low: Mike Evans (D-Generation-XRated): +2.1 counted pts/wk for you, value 1,749
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
