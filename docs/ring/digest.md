@@ -4,13 +4,13 @@
 Top counted: C.J. Stroud 59.2, Jayden Daniels 23.5, Tank Dell 23.4, Isaiah Likely 21.6
 
 **Record:** 7-2, #3 of 12 · 1612.2 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 16% (+1 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 15% (+0 pts this week)
 
 
-**Best trade idea:** give George Pickens, C.J. Stroud for Trevor Lawrence: title chance 16% → 20%
+**Best trade idea:** give George Pickens, C.J. Stroud for Trevor Lawrence: title chance 15% → 18%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 10:** vs THE FINAL BOSS · projected 217.5 – 196.0 · win chance 87%
+**Week 10:** vs THE FINAL BOSS · projected 217.4 – 193.9 · win chance 90%
 On bye: Troy Franklin, Pat Bryant, Darius Cooper, DeVonta Smith, Cade Otton
 Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out)
 
