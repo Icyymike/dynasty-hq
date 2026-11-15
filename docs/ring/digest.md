@@ -10,7 +10,7 @@ Top counted: C.J. Stroud 59.2, Jayden Daniels 23.5, Tank Dell 23.4, Isaiah Likel
 **Best trade idea:** give Hunter Henry, George Pickens for Kyren Williams: title chance 15% → 18%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 10:** vs THE FINAL BOSS · projected 230.1 – 186.0 · win chance 100%
+**Week 10:** vs THE FINAL BOSS · projected 228.5 – 182.6 · win chance 100%
 On bye: Troy Franklin, Pat Bryant, Darius Cooper, DeVonta Smith, Cade Otton
 Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out)
 
