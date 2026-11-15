@@ -4,14 +4,14 @@
 Top counted: C.J. Stroud 45.4, Jordan Love 42.2, Justice Hill 16.7, Tommy Tremble 14.4
 
 **Record:** 13-5, #4 of 12 · 1666.8 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 44% · title 27% (+6 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 44% · title 27% (+4 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 37% vs without 20%
-**Best trade idea:** give Ja'Kobi Lane, C.J. Stroud for Brock Purdy: title chance 27% → 30%
+**Playoff path:** most likely seed 3; title chance with a bye 36% vs without 20%
+**Best trade idea:** give Ja'Kobi Lane, C.J. Stroud for Brock Purdy: title chance 27% → 29%
 **Waivers:** Elijah Higgins would add 1.2 pts/wk to your lineup.
-**Window:** Window open: contend. Projected rank 2026: 1, 2027: 2, 2028: 2.
+**Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 1.
 
-**Week 10:** vs Trust the Process · projected 188.1 – 83.8 · win chance 100%
+**Week 10:** vs Trust the Process · projected 188.6 – 84.0 · win chance 100%
 On bye: Courtland Sutton, D'Andre Swift
 Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 
@@ -23,11 +23,11 @@ Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 - Treylon Burks is back (Questionable).
 
 ## League trades
-- **Gibb Me My Trophy** get Kimani Vidal, Caleb Douglas (Push) ⇄ **WavySerg** get Michael Wilson (Loss)
+- **Gibb Me My Trophy** get Kimani Vidal, Caleb Douglas (Win) ⇄ **WavySerg** get Michael Wilson (Loss)
 
 ## Market
-- Buy-low: Mike Evans (The True Behemoth): +4.7 counted pts/wk for you, value 1,783
-- Buy-low: Dalton Schultz (Trust the Process): +2.6 counted pts/wk for you, value 813
-- Buy-low: Kirk Cousins (Lava Me Tender): +5.2 counted pts/wk for you, value 2,170
+- Buy-low: Mike Evans (The True Behemoth): +4.6 counted pts/wk for you, value 1,724
+- Buy-low: Kirk Cousins (Lava Me Tender): +5.2 counted pts/wk for you, value 2,104
+- Buy-low: Dalton Schultz (Trust the Process): +2.6 counted pts/wk for you, value 832
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
