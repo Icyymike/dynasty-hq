@@ -11,7 +11,7 @@ Top counted: C.J. Stroud 45.4, Jordan Love 42.2, Justice Hill 16.7, Tommy Trembl
 **Waivers:** Elijah Higgins would add 1.2 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 1.
 
-**Week 10:** vs Trust the Process · projected 203.9 – 110.9 · win chance 100%
+**Week 10:** vs Trust the Process · projected 202.7 – 110.9 · win chance 100%
 On bye: Courtland Sutton, D'Andre Swift
 Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 
