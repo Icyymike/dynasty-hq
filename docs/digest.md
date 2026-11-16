@@ -4,7 +4,7 @@
 Top counted: C.J. Stroud 45.4, Jordan Love 42.2, Justice Hill 16.7, Tommy Tremble 14.4
 
 **Record:** 13-5, #4 of 12 · 1666.8 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 35% · title 28% (-1 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 35% · title 28% (-0 pts this week)
 
 **Playoff path:** most likely seed 3; title chance with a bye 38% vs without 22%
 **Best trade idea:** give Kimani Vidal, Ja'Kobi Lane for Jaylen Waddle: title chance 28% → 30%
