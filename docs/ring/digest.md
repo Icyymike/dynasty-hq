@@ -7,10 +7,10 @@ Top counted: C.J. Stroud 59.2, Jayden Daniels 23.5, Tank Dell 23.4, Isaiah Likel
 **Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 14% (-3 pts this week)
 
 
-**Best trade idea:** give Jayden Daniels, Chris Olave for Joe Burrow: title chance 14% → 17%
+**Best trade idea:** give Lamar Jackson, Chris Olave for Puka Nacua: title chance 14% → 17%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 10:** vs THE FINAL BOSS · projected 249.0 – 213.9 · win chance 100%
+**Week 10:** vs THE FINAL BOSS · projected 250.6 – 221.5 · win chance 99%
 On bye: Troy Franklin, Pat Bryant, Darius Cooper, DeVonta Smith, Cade Otton
 Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out)
 
@@ -29,7 +29,6 @@ Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta 
 - **THE FINAL BOSS** get Bo Nix, Chase Brown (Win) ⇄ **All For The Nookie** get Justin Herbert, 2028 1st (THE FINAL BOSS) (Loss)
 
 ## Market
-- Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
 - Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.8 counted pts/wk for you, value 1,708
 - Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.3 counted pts/wk for you, value 3,153
 - Buy-low: Tony Pollard (D-Generation-XRated): +2.4 counted pts/wk for you, value 1,817
