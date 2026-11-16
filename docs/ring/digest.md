@@ -10,7 +10,7 @@ Top counted: C.J. Stroud 59.2, Jayden Daniels 23.5, Tank Dell 23.4, Isaiah Likel
 **Best trade idea:** give Chris Olave for Jonathan Taylor: title chance 13% → 17%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 10:** vs THE FINAL BOSS · projected 246.3 – 226.0 · win chance 97%
+**Week 10:** vs THE FINAL BOSS · projected 245.5 – 225.3 · win chance 97%
 On bye: Troy Franklin, Pat Bryant, Darius Cooper, DeVonta Smith, Cade Otton
 Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out)
 
