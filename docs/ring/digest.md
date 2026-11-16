@@ -4,18 +4,17 @@
 Top counted: C.J. Stroud 59.2, Jayden Daniels 23.5, Tank Dell 23.4, Isaiah Likely 21.6
 
 **Record:** 7-2, #3 of 12 · 1612.2 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 13% (-4 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 16% (-1 pts this week)
 
 
-**Best trade idea:** give Chris Olave for Jonathan Taylor: title chance 13% → 17%
+**Best trade idea:** give Tank Dell for Geno Smith: title chance 16% → 19%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 10:** vs THE FINAL BOSS · projected 245.5 – 225.3 · win chance 97%
+**Week 10:** vs THE FINAL BOSS · projected 245.5 – 225.5 · win chance 97%
 On bye: Troy Franklin, Pat Bryant, Darius Cooper, DeVonta Smith, Cade Otton
 Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out)
 
 ## Alerts this week
-- Cam Skattebo is back (active).
 - Justin Joly is back (active).
 - George Pickens is back (Questionable).
 - Set your lineup: start Cam Skattebo over Rhamondre Stevenson; start George Pickens over Efton Chism III; start Hunter Henry over Darius Cooper (win chance 26% → 54%).
@@ -23,14 +22,17 @@ Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta 
 - Rhamondre Stevenson is back (Questionable).
 - Isaiah Likely's value moved 3,135 → 3,549 (+13%).
 - Justin Joly is now Out. Rest-of-season, he now adds 0.0 counted pts/wk to your lineup.
+- Cam Skattebo's value moved 2,453 → 2,835 (+16%).
 
 ## League trades
 - **Achane Saw Massacre** get Kirk Cousins, Darnell Washington (Win) ⇄ **jsous** get 2027 2nd (Achane Saw Massacre) (Loss)
 - **THE FINAL BOSS** get Bo Nix, Chase Brown (Win) ⇄ **All For The Nookie** get Justin Herbert, 2028 1st (THE FINAL BOSS) (Loss)
 
 ## Market
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.8 counted pts/wk for you, value 1,708
-- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.3 counted pts/wk for you, value 3,153
-- Buy-low: Tony Pollard (D-Generation-XRated): +2.4 counted pts/wk for you, value 1,817
+- Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
+- Sell-high: Tank Dell: value 1,534 vs ~868 for 7.0 pts/wk of production
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +2.8 counted pts/wk for you, value 1,681
+- Buy-low: Tony Pollard (D-Generation-XRated): +2.1 counted pts/wk for you, value 2,025
+- Buy-low: Jonah Coleman (SCLSU Mud Dogs): +2.7 counted pts/wk for you, value 2,877
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
