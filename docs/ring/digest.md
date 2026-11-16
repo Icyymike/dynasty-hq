@@ -10,7 +10,7 @@ Top counted: C.J. Stroud 59.2, Jayden Daniels 23.5, Tank Dell 23.4, Isaiah Likel
 **Best trade idea:** give Lamar Jackson, Rhamondre Stevenson for Jordan Love: title chance 15% → 19%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 10:** vs THE FINAL BOSS · projected 245.8 – 204.1 · win chance 100%
+**Week 10:** vs THE FINAL BOSS · projected 249.3 – 203.2 · win chance 100%
 On bye: Troy Franklin, Pat Bryant, Darius Cooper, DeVonta Smith, Cade Otton
 Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out)
 
@@ -31,7 +31,7 @@ Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta 
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
 - Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.8 counted pts/wk for you, value 1,708
-- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.2 counted pts/wk for you, value 3,153
+- Buy-low: Chuba Hubbard (Jesus the homeless hippy): +5.3 counted pts/wk for you, value 3,153
 - Buy-low: Tony Pollard (D-Generation-XRated): +2.4 counted pts/wk for you, value 1,817
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
