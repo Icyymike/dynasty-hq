@@ -4,14 +4,14 @@
 Top counted: C.J. Stroud 45.4, Jordan Love 42.2, Justice Hill 16.7, Tommy Tremble 14.4
 
 **Record:** 13-5, #4 of 12 · 1666.8 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 36% · title 26% (-2 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 36% · title 27% (-1 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 37% vs without 21%
-**Best trade idea:** give C.J. Stroud for Jared Goff: title chance 26% → 31%
+**Playoff path:** most likely seed 3; title chance with a bye 38% vs without 21%
+**Best trade idea:** give Kimani Vidal, Ja'Kobi Lane for Jaylen Waddle: title chance 27% → 30%
 **Waivers:** Elijah Higgins would add 1.2 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 1.
 
-**Week 10:** vs Trust the Process · projected 208.3 – 110.9 · win chance 100%
+**Week 10:** vs Trust the Process · projected 207.7 – 110.9 · win chance 100%
 On bye: Courtland Sutton, D'Andre Swift
 Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 
