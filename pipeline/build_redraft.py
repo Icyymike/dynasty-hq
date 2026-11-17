@@ -435,7 +435,11 @@ def main():
     BF_MISS = round(_miss / _n, 3) if _n >= 200 else 0.03
     print(f"replay: {_miss}/{_n} projected starters didn't play -> miss chance {BF_MISS}")
 
-    def backfill(mult, sims=300, shape=None, wk_from=1):
+    def tnoise(rid, s_, w):
+        """A whole fantasy team's good or bad week beyond its players' own swings (same formula on the page)."""
+        return B.znorm(10007 + int(rid), s_, w)
+
+    def backfill(mult, sims=300, shape=None, wk_from=1, tsd=0.0):
         out_ = []
         keep = B.SHAPE
         try:
@@ -446,7 +450,7 @@ def main():
                 for rid, mid, _ in rows:
                     means[rid] = [(p, (proj.get(p, {}).get(wk) or 0), CV.get((players_db.get(p) or {}).get("position"), 0.6) * mult,
                                    (players_db.get(p) or {}).get("team") or p, (players_db.get(p) or {}).get("position")) for p in starters_wk[wk].get(rid, []) if p and p != "0"]
-                draws = {rid: [sum(sim(m, cv, p, tm, s_, 900 + wk, BF_MISS if ps in SK4 else 0.03, ps) for p, m, cv, tm, ps in ms) for s_ in range(sims)] for rid, ms in means.items()}
+                draws = {rid: [sum(sim(m, cv, p, tm, s_, 900 + wk, BF_MISS if ps in SK4 else 0.03, ps) for p, m, cv, tm, ps in ms) + tsd * tnoise(rid, s_, 900 + wk) for s_ in range(sims)] for rid, ms in means.items()}
                 for rid, mid, sc_ in rows:
                     o = next((r for r in rows if r[1] == mid and r[0] != rid), None)
                     if not o or rid > o[0]:
@@ -482,7 +486,32 @@ def main():
         print(f"WARN shape test skipped: {e}")
     cal = SRC.calibrate(lambda m_: [(g_["wk"], g_["wp"], 1 if g_["sa"] > g_["sb"] else 0) for g_ in backfill(m_, 200, shape=shape_rep["mode"])]) if done else dict(m=1.0, n=0)
     CAL_M = cal["m"]
-    back = backfill(CAL_M, shape=shape_rep["mode"])
+    # Team-week noise: in this league, projected team totals predict winners only weakly (whole lineups have good and bad
+    # weeks together: game scripts, kickers, defenses). Add a shared team swing of size TSD and pick it the honest way:
+    # each week scored with the size chosen from earlier weeks only; used only if that beats no extra swing.
+    TSD, tsd_rep = 0.0, dict(used=False)
+    try:
+        if done >= 4:
+            grid_ = [0.0, 8.0, 12.0, 16.0, 20.0, 25.0, 30.0]
+            llf = lambda p_, o: -(o * math.log(max(p_, 1e-4)) + (1 - o) * math.log(max(1 - p_, 1e-4)))
+            G_ = {t: [(g["wk"], g["wp"], 1 if g["sa"] > g["sb"] else 0) for g in backfill(CAL_M, 200, shape=shape_rep["mode"], tsd=t)] for t in grid_}
+            wks_ = sorted({g[0] for g in G_[0.0]})
+            oos0, oos1 = [], []
+            for wk in wks_[3:]:
+                tr = [i for i, g in enumerate(G_[0.0]) if g[0] < wk]; te = [i for i, g in enumerate(G_[0.0]) if g[0] == wk]
+                t_ = min(grid_, key=lambda t: st.mean(llf(G_[t][i][1], G_[t][i][2]) for i in tr))
+                oos0 += [llf(G_[0.0][i][1], G_[0.0][i][2]) for i in te]
+                oos1 += [llf(G_[t_][i][1], G_[t_][i][2]) for i in te]
+            fit_ = {t: round(st.mean(llf(p_, o) for _, p_, o in G_[t]), 4) for t in grid_}
+            best_ = min(grid_, key=lambda t: fit_[t])
+            used_ = bool(oos0) and st.mean(oos1) < st.mean(oos0) - 0.002
+            TSD = best_ if used_ else 0.0
+            tsd_rep = dict(used=used_, tsd=TSD, fit=fit_, oos_without=round(st.mean(oos0), 4) if oos0 else None,
+                           oos_with=round(st.mean(oos1), 4) if oos1 else None, coin=round(math.log(2), 4), n=len(G_[0.0]))
+            print(f"team swing test: {tsd_rep}")
+    except Exception as e:  # noqa
+        print(f"WARN team swing test skipped: {e}")
+    back = backfill(CAL_M, shape=shape_rep["mode"], tsd=TSD)
     print(f"calibration: {cal}")
 
     # ---------- per-player record
@@ -633,7 +662,14 @@ def main():
     this_week = fut[0] if fut else None
 
     def week_scores(lus, s_, k):
-        return {r: sum(VAL[p][s_][k] for p in lus[r][k] if p) + fill(lus[r][k], k) for r in lus}
+        return {r: sum(VAL[p][s_][k] for p in lus[r][k] if p) + fill(lus[r][k], k) + (TSD * left_share(lus[r][k], k) * tnoise(r, s_, fut[k]) if TSD else 0.0) for r in lus}
+
+    def left_share(lu, k):
+        """Share of a lineup's projected points still to be played (1 before kickoff); the team swing shrinks with it."""
+        if k != 0:
+            return 1.0
+        tot = sum(P[p]["pr"][0] for p in lu if p and p in P) or 1.0
+        return sum(P[p]["pr"][0] * (P[p]["lk"][1] if P[p].get("lk") else 1.0) for p in lu if p and p in P) / tot
 
     def run_season(lus):
         T = list(lus)
@@ -662,6 +698,15 @@ def main():
                 res[r]["playoffs"] += 1
                 if i < 2 and n_playoff == 6:
                     res[r]["bye"] += 1
+            if me in seeds and n_playoff == 6:   # your first playoff opponent (after a bye: whoever wins the game feeding you)
+                i_ = seeds.index(me); po_ = res[me].setdefault("opp1", {})
+                if i_ >= 2:
+                    o_ = seeds[{2: 5, 5: 2, 3: 4, 4: 3}[i_]]
+                else:
+                    a1, b1 = (seeds[3], seeds[4]) if i_ == 0 else (seeds[2], seeds[5])
+                    k1 = fut.index(reg_end + 1) if (reg_end + 1) in fut else None
+                    o_ = (a1 if k1 is None or sc[k1][a1] >= sc[k1][b1] else b1)
+                po_[o_] = po_.get(o_, 0) + 1
             psc = lambda r, i: sc[fut.index(reg_end + 1 + i)][r] if (reg_end + 1 + i) in fut else 0.0
             if n_playoff == 6 and len(po_k) >= 3:
                 gg = lambda x, y, i: x if psc(x, i) >= psc(y, i) else y
@@ -676,6 +721,8 @@ def main():
                 res[r][k2] = round(res[r][k2] / SIMS, 3)
             res[r]["xw"] = round(res[r]["xw"] / SIMS, 2)
             res[r]["seed"] = [round(x / SIMS, 3) for x in res[r]["seed"]]
+            if "opp1" in res[r]:
+                res[r]["opp1"] = {str(k_): round(v_ / SIMS, 3) for k_, v_ in sorted(res[r]["opp1"].items(), key=lambda x: -x[1])}
         return res
 
     try:
@@ -809,6 +856,16 @@ def main():
             fas = sorted((p for p in fa_pool if p in P and P[p]["p"] == ps), key=lambda p: -exp_k(p, k))[:3]
             stream.append(dict(p=ps, wk=fut[k], mine=cur_best, mine_v=round(exp_k(cur_best, k), 1) if cur_best else 0,
                                fa=[[p, round(exp_k(p, k), 1)] for p in fas]))
+    # for the playoff weeks: which kicker/defense to stash now (best total over the playoff weeks, week by week)
+    stream_po = []
+    if po_k:
+        for ps in ("DEF", "K"):
+            mine_ps = [p for p in my_ids if P[p]["p"] == ps]
+            tot = lambda p: sum(exp_k(p, k) for k in po_k)
+            fas = sorted((p for p in fa_pool if p in P and P[p]["p"] == ps), key=lambda p: -tot(p))[:4]
+            stream_po.append(dict(p=ps, wks=[fut[k] for k in po_k],
+                                  mine=[[p, [round(exp_k(p, k), 1) for k in po_k]] for p in sorted(mine_ps, key=lambda p: -tot(p))],
+                                  fa=[[p, [round(exp_k(p, k), 1) for k in po_k]] for p in fas]))
 
     # ---------- trades: rest-of-season swaps that help both lineups (deterministic projections; odds for the best)
     by_id = {t["id"]: t for t in teams}
@@ -979,13 +1036,13 @@ def main():
                   generated=gen, started=week_started, slots=slots, n_playoff=n_playoff, deadline=deadline, median=median_on,
                   waiver=dict(type=S.get("waiver_type"), mine=wpos.get(me), order=wpos), scoring=dict(ppr=league["scoring_settings"].get("rec", 0),
                   pass_td=league["scoring_settings"].get("pass_td", 4)), checks=dict(lineups=checks["lineups"], lineup_bad=checks["lineup_bad"][:20],
-                  scored=checks["scored"], score_bad=checks["score_bad"][:20], bracket=checks.get("bracket")), backtest=backtest, sources=src_rep, calib=cal, shape=B.SHAPE, shape_test=shape_rep, value_src="FantasyCalc redraft values (12-team, 1QB, full PPR)"),
+                  scored=checks["scored"], score_bad=checks["score_bad"][:20], bracket=checks.get("bracket")), backtest=backtest, sources=src_rep, calib=cal, shape=B.SHAPE, shape_test=shape_rep, tsd=TSD, tsd_test=tsd_rep, value_src="FantasyCalc redraft values (12-team, 1QB, full PPR)"),
         teams=[dict(id=t["id"], name=t["name"], user=t["user"], w=rec[t["id"]][0], l=rec[t["id"]][1], pf=round(rec[t["id"]][2], 2), pa=round(rec[t["id"]][3], 2),
                     wpos=t["wpos"], moves=t["moves"], ppts=round(t["ppts"], 2)) for t in teams],
         odds={str(r): v for r, v in S0.items()}, repl={f"{ps}|{k}": v for (ps, k), v in repl.items()}, wk_mean={str(r): [round(x, 1) for x in v] for r, v in wk_mean.items()}, rng={str(r): v for r, v in rng.items()},
         lineups={str(r): v for r, v in LU.items()}, cur_starters={str(r): v for r, v in cur_starters.items()}, live={str(r): v for r, v in live.items()},
         weeks={str(k): v for k, v in weeks.items()}, sched={str(k): v for k, v in sched.items()},
-        players=P, startsit=startsit, waivers=waivers[:25], stream=stream, trade_ideas=trade_ideas, trades=trades[:30],
+        players=P, startsit=startsit, waivers=waivers[:25], stream=stream, stream_po=stream_po, trade_ideas=trade_ideas, trades=trades[:30],
         research=research, defense=DEFF, eff={str(r): v for r, v in eff.items()}, back=back,
         accuracy=dict(graded=graded, odds=[dict(d=o_["d"], wk=o_["wk"], po=o_["t"].get(str(me), [None, None])[0], t=o_["t"].get(str(me), [None, None])[1]) for o_ in PRED["odds"]],
                       logged=sorted(PRED["weeks"])),

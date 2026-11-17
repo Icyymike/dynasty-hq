@@ -1245,6 +1245,13 @@ def main():
         dbp = players_db.get(pid) or {}
         if info["inj"]:
             P[pid]["injd"] = {k_: dbp.get(k_) for k_ in ("injury_body_part", "injury_notes", "practice_participation", "injury_start_date") if dbp.get(k_)}
+        # out for the season: hurt in Sleeper and no projected points in any week left (FantasyCalc's value can lag the news)
+        if info["inj"] in ("IR", "Out", "PUP", "Sus", "NFI") and len(pr) >= 2 and not any(v > 0 for v in pr):
+            P[pid]["soe"] = 1
+            tr_ = (fc_meta.get(pid) or (0, None))[0] or 0
+            f_ = fc_vals.get(pid, 0)
+            if f_ and tr_ > -0.10 * f_:   # value hasn't dropped yet
+                P[pid]["stale"] = 1
         if pid not in rostered:
             P[pid]["gone"] = 1
             if pid in fa_pool:
@@ -1703,6 +1710,8 @@ def main():
         for give in [(x,) for x in mk] + list(itertools.combinations(mk, 2)):
             gv = sum(v_of(x) for x in give); ge = pkg([v_of(x) for x in give], VAL_K) or gv
             for got in tids:
+                if (P.get(got) or {}).get("soe"):
+                    continue   # don't suggest trading for a player who is out for the season
                 rv = v_of(got)
                 # fair the way this league's managers add up packages (see VAL_K), without overpaying in raw value
                 if not rv or ge < 0.95 * rv or gv > 1.45 * rv or ge > 1.30 * rv:

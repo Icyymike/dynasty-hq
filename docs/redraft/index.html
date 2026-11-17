@@ -547,10 +547,13 @@ const luPts=(lu,k)=>lu.reduce((t,p)=>t+(p?expK(p,k):0),0)+fill(lu,k);
 const active=r=>Object.keys(PL).filter(s=>PL[s].r===r&&!PL[s].ir);
 const lineupsFor=(ids,rid)=>FUT.map((_,k)=>choose(ids,k,k===0?lockedOf(rid):null));
 const detTot=(lus,ks)=>(ks||FUT.map((_,k)=>k)).reduce((t,k)=>t+luPts(lus[k],k),0);
+// whole-team good/bad weeks (pipeline: tnoise / left_share in build_redraft.py), sized by D.meta.tsd
+const TSD=()=>(D.meta&&D.meta.tsd)||0,tn=(r,s,w)=>zn(10007+(+r),s,w);
+const leftShare=(lu,k)=>{if(k!==0)return 1;let t=0,l=0;for(const p of lu){if(!p||!PL[p])continue;const x=PL[p];t+=x.pr[0];l+=x.pr[0]*(x.lk?x.lk[1]:1)}return t?l/t:1};
 function seasonOdds(over){const S=D.meta.sims,T=TEAMS.map(t=>t.id),reg=D.meta.reg_end,nP=D.meta.n_playoff;
   const lus={};T.forEach(r=>lus[r]=over[r]||D.lineups[r]);const fills={};T.forEach(r=>fills[r]=lus[r].map((lu,k)=>fill(lu,k)));
   const kReg=FUT.map((w,k)=>w<=reg?k:-1).filter(k=>k>=0),out={};T.forEach(r=>out[r]={po:0,title:0,wp:0});
-  for(let s=0;s<S;s++){const sc={};for(let k=0;k<NW;k++){sc[k]={};for(const r of T){let v=fills[r][k];for(const p of lus[r][k])if(p)v+=draws(p)[s*NW+k];sc[k][r]=v}}
+  for(let s=0;s<S;s++){const sc={};for(let k=0;k<NW;k++){sc[k]={};for(const r of T){let v=fills[r][k];for(const p of lus[r][k])if(p)v+=draws(p)[s*NW+k];if(TSD())v+=TSD()*leftShare(lus[r][k],k)*tn(r,s,FUT[k]);sc[k][r]=v}}
     const W={},PF={};TEAMS.forEach(t=>{W[t.id]=t.w;PF[t.id]=t.pf});
     for(const k of kReg){const pr=D.sched[FUT[k]]||[];for(const [r,m] of pr){const o=pr.find(x=>x[1]===m&&x[0]!==r);if(o&&sc[k][r]>sc[k][o[0]]){W[r]++;if(k===0)out[r].wp++}PF[r]+=sc[k][r]}}
     const seeds=T.slice().sort((a,b)=>W[b]-W[a]||PF[b]-PF[a]).slice(0,nP);seeds.forEach(r=>out[r].po++);
@@ -609,7 +612,7 @@ async function liveTick(){const m=D.meta,wk=m.cur;if(!m.lid||!FUT.length)return;
   if(!started){liveSchedule(f);return}
   const S=D.meta.sims,pr=D.sched[FUT[0]]||[];
   // the lineups actually set in Sleeper right now (empty slots count as zero once the week is under way)
-  const lu=r=>(f.starters[r]||[]).filter(x=>PL[x]);const score=(r,s)=>lu(r).reduce((t,x)=>t+draws(x)[s*NW],0);
+  const lu=r=>(f.starters[r]||[]).filter(x=>PL[x]);const score=(r,s)=>lu(r).reduce((t,x)=>t+draws(x)[s*NW],0)+(TSD()?TSD()*leftShare(lu(r),0)*tn(r,s,FUT[0]):0);
   const seen=new Set();
   for(const [r,mid] of pr){if(seen.has(mid))continue;seen.add(mid);const o=(pr.find(x=>x[1]===mid&&x[0]!==r)||[])[0];if(o==null)continue;
     let w=0,sa=0,sb=0;for(let s=0;s<S;s++){const x=score(r,s),y=score(o,s);if(x>y)w++;sa+=x;sb+=y}
@@ -627,7 +630,7 @@ function weekTab(){const m=D.meta,ss=D.startsit,wk=m.cur,o=D.odds[ME]||{},me=TEA
   const vs=`<div class="vsrow"><div><div class="nm">${esc(me.name)} (you)</div><div class="sc">${live?fx(D.wk_mean[ME][0]):fx(ss.proj_best)}</div><div class="sub">${live?'projected final · <b>'+fx(D.live[ME])+'</b> scored so far':'projected · likely '+(D.rng[ME]?D.rng[ME].join('–'):'')}</div></div>
     <div class="vsx" style="font-family:var(--f-display);color:var(--muted);font-size:18px;padding-bottom:6px">vs</div>
     <div style="text-align:right"><div class="nm">${esc(tname(opp))}</div><div class="sc">${live?fx(D.wk_mean[opp][0]):fx(ss.opp_proj)}</div><div class="sub">${live?'projected final · <b>'+fx(D.live[opp])+'</b> scored so far':'projected · likely '+(D.rng[opp]?D.rng[opp].join('–'):'')}</div></div></div>`;
-  const word=wpB>=0.65?['w-good','Favored']:wpB>=0.5?['w-info','Slight edge']:wpB>=0.35?['w-mid','Underdog']:['w-bad','Big underdog'];
+  const word=wpB>=0.65?['w-good','Favored']:wpB>=0.55?['w-info','Slight edge']:wpB>0.45?['w-plain','Toss-up']:wpB>=0.35?['w-mid','Underdog']:['w-bad','Big underdog'];
   h+=`<div class="card"><div class="row" style="justify-content:space-between"><h2>Week ${wk}: ${pct(wpB)} to win${liveStamp()}</h2><span class="word ${word[0]}">${word[1]}</span></div>${vs}
     ${wpBar(wpB,'You',tname(opp))}
     <p class="sub">${ss.wp_now!=null&&Math.abs(ss.wp_best-ss.wp_now)>=0.005?`With your current lineup: <b>${pct(ss.wp_now)}</b>. With the changes below: <b>${pct(ss.wp_best)}</b>. `:'Your lineup is already the best one by the projections. '}Record ${me.w}-${me.l} · playoffs ${pct(o.playoffs)} · title ${pct(o.title)}.</p></div>`;
@@ -696,6 +699,11 @@ function waiverTab(){const m=D.meta,mine=m.waiver.mine;let h='';
   ${['DEF','K'].map(ps=>`<div><h3 style="margin-bottom:6px">${ps==='DEF'?'Defenses':'Kickers'}</h3><table><thead><tr><th>Week</th><th>Yours</th><th>Best available</th></tr></thead><tbody>${(by[ps]||[]).map(s=>{const top=s.fa[0];const up=top&&top[1]-s.mine_v>=2;
     return `<tr${up?' class="chg"':''}><td class="num">${s.wk}</td><td>${s.mine?nm(s.mine)+' <span class="num sub">'+fx(s.mine_v)+'</span>':'<span class="hole">none</span>'}${s.mine&&s.mine_v===0?' <span class="word w-bad">bye</span>':''}</td><td>${s.fa.map(f=>`${nm(f[0])} <span class="num sub">${fx(f[1])}${PL[f[0]].opp[FUT.indexOf(s.wk)]?' vs '+esc(PL[f[0]].opp[FUT.indexOf(s.wk)]):''}</span>`).join('<br>')}</td></tr>`}).join('')}</tbody></table></div>`).join('')}</div>
   <p class="sub">Green weeks: a free agent projects 2+ points better than yours.</p></div>`;
+  if((D.stream_po||[]).length){const P2=D.stream_po,wks=P2[0].wks,cell=v=>v.map(x=>`<td class="r num">${x?fx(x):'<span class="muted">bye</span>'}</td>`).join(''),sum=v=>v.reduce((a,b)=>a+b,0);
+    h+=`<div class="card"><h2>Kicker and defense for the playoffs (weeks ${wks.join(', ')})</h2><p class="sub">Matchups in the playoff weeks, week by week. If a free agent beats yours across those weeks by a few points, stash him before someone else does. Projections this far out are rough, so recheck in Week 14.</p><div class="grid2">
+    ${P2.map(g=>`<div><h3 style="margin-bottom:6px">${g.p==='DEF'?'Defenses':'Kickers'}</h3><table><thead><tr><th></th>${wks.map(w=>`<th class="r">Wk ${w}</th>`).join('')}<th class="r">Total</th></tr></thead><tbody>
+      ${g.mine.map(([id,v])=>`<tr class="hl"><td>${nm(id)} <span class="sub">yours</span></td>${cell(v)}<td class="r num"><b>${fx(sum(v))}</b></td></tr>`).join('')}
+      ${g.fa.map(([id,v])=>{const better=g.mine.length&&sum(v)-sum(g.mine[0][1])>=3;return `<tr${better?' class="chg"':''}><td>${nm(id)}</td>${cell(v)}<td class="r num">${fx(sum(v))}</td></tr>`}).join('')}</tbody></table></div>`).join('')}</div><p class="sub">Green: projects 3+ points better than yours over the playoff weeks.</p></div>`}
   // waiver order
   const ord=TEAMS.slice().sort((a,b)=>(a.wpos||99)-(b.wpos||99));
   h+=`<div class="card"><h2>Waiver order</h2><div class="tbl-wrap"><table><thead><tr><th>#</th><th>Team</th><th class="r">Moves this season</th></tr></thead><tbody>${ord.map(t=>`<tr${t.id===ME?' class="hl"':''}><td class="num">${t.wpos??''}</td><td>${esc(t.name)}</td><td class="r num">${t.moves??''}</td></tr>`).join('')}</tbody></table></div></div>`;
@@ -819,6 +827,12 @@ function sourcesHTML(S,C){let h='';const r2=v=>v==null?'—':(+v).toFixed(2);
 
 // ---------- LEAGUE
 function leagueTab(){const m=D.meta;let h='';const T=TEAMS.slice().sort((a,b)=>b.w-a.w||b.pf-a.pf);
+  {const o=D.odds[ME]||{},op=o.opp1||{},seeds=(o.seed||[]).slice(0,m.n_playoff),nm_=id=>esc((TEAMS.find(t=>t.id===+id)||{}).name||'?');
+   if(o.playoffs!=null&&FUT.some(w=>w>m.reg_end)){const top=Object.entries(op).slice(0,4),ps=FUT.filter(w=>w>m.reg_end);
+    const best=seeds.map((v,i)=>[i+1,v]).sort((a,b)=>b[1]-a[1]).slice(0,2);
+    h+=`<div class="card" data-fold-default="0"><h2>Your playoff path</h2><p class="answer">You make the playoffs in <b>${pct(o.playoffs)}</b> of replays${m.n_playoff===6?`, with a first-round bye in ${pct(o.bye)}`:''}. ${best.length&&best[0][1]>0?`Most likely seed: <b>#${best[0][0]}</b> (${pct(best[0][1])})${best[1]&&best[1][1]>0.05?`, then #${best[1][0]} (${pct(best[1][1])})`:''}.`:''}</p>
+    ${top.length?`<div><h3>Most likely first playoff opponent</h3><div class="list">${top.map(([id,v])=>`<div class="li"><div class="main"><span>${nm_(id)}</span><span class="why">${pct(v)} of all replays${o.playoffs?` (${pct(v/o.playoffs)} of the ones where you make it)`:''}</span></div></div>`).join('')}</div></div>`:''}
+    <p class="sub">Playoff weeks: ${ps.join(', ')}. Your waivers tab shows pickups and kicker/defense stashes ranked for those weeks.</p></div>`}}
   const benchLeft=r=>(D.eff[r]||[]).reduce((t,x)=>t+x[2]-x[1],0),ros=r=>{const v=D.wk_mean[r]||[];return v.length?v.reduce((a,b)=>a+b,0)/v.length:0};
   const left=r=>{const ws=FUT.filter(w=>w<=m.reg_end);const opps=ws.map(w=>{const pr=D.sched[w]||[];const mid=(pr.find(x=>x[0]===r)||[])[1];const o=pr.find(x=>x[1]===mid&&x[0]!==r);return o?D.wk_mean[o[0]][FUT.indexOf(w)]:null}).filter(v=>v!=null);return opps.length?opps.reduce((a,b)=>a+b,0)/opps.length:null};
   h+=`<div class="card"><h2>Standings and odds</h2><p class="sub">Odds replay the rest of the season 600 times with every team starting its best projected lineup each week. Top ${m.n_playoff} make the playoffs${m.n_playoff===6?', top 2 get a bye':''}.</p><div class="tbl-wrap"><table class="sortable-tbl" id="stTbl"><thead><tr><th>Team</th><th class="r">W-L</th><th class="r">Points for</th><th class="r">Against</th><th class="r" title="Projected points per week, rest of season">Proj/wk</th><th class="r" title="Average projected score of remaining regular-season opponents">Sched left</th><th class="r">Playoffs</th>${m.n_playoff===6?'<th class="r">Bye</th>':''}<th class="r">Title</th><th class="r" title="Points left on the bench this season (best possible lineup minus actual)">Bench pts</th></tr></thead><tbody>
@@ -832,6 +846,7 @@ function leagueTab(){const m=D.meta;let h='';const T=TEAMS.slice().sort((a,b)=>b
   const B=D.back||[];if(B.length){const fav=B.filter(b=>Math.abs(b.wp-0.5)>0.02),hit=fav.filter(b=>(b.wp>0.5)===(b.sa>b.sb)).length,mae=mean(B.flatMap(b=>[Math.abs(b.pa-b.sa),Math.abs(b.pb-b.sb)]));
     const bt=m.backtest||{};h+=`<div class="card"><h2>How much to trust the numbers</h2><p class="answer">Team scores missed the projection by <b>${mae.toFixed(1)} points</b> on average. Football is noisy: a 60% favorite loses 4 times in 10.</p>
     ${sourcesHTML(m.sources,m.calib)}
+    ${(()=>{const t=m.tsd_test;if(!t||t.oos_without==null)return'';return `<div><h3>Close games are closer than they look</h3><p class="sub">In this league, projected team totals pick winners only a bit better than a coin flip: whole lineups have good and bad weeks together. The app tested adding a shared team swing on past weeks, choosing its size from earlier weeks only. ${t.used?`It helped (score ${t.oos_with} vs ${t.oos_without} without; a coin flip scores ${t.coin}; lower is better), so win chances now include a swing of about ${t.tsd} points per team and sit closer to 50%.`:`It didn't help yet (${t.oos_with} vs ${t.oos_without}; a coin flip scores ${t.coin}), so it isn't used.`} Games between 45% and 55% are labeled toss-ups.</p></div>`})()}
     <p class="sub" style="margin:0">The app's usage model still powers the Players tab (role growing or shrinking, running hot or cold), where it's tested separately.</p>
     <h3>Injury news</h3><p class="sub" style="margin:0">Last checked ${upd()}. Besides the regular updates, the app refreshes when teams announce inactives, about 90 minutes before kickoff (Sunday mornings, and before Monday and Thursday night games), so a player ruled out drops out of your lineup advice. GitHub can start these runs 5–20 minutes late, so check Sleeper yourself for anyone questionable right before lock.</p>
     <p class="sub" style="margin:0">From now on, each week's win chances are saved before kickoff and graded here as games finish.${(D.accuracy.graded||[]).length?` Graded so far: ${D.accuracy.graded.length} games.`:''}</p></div>`}
