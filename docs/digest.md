@@ -6,12 +6,12 @@ Top counted: C.J. Stroud 45.4, Jordan Love 42.2, Justice Hill 16.7, Tommy Trembl
 **Record:** 13-5, #4 of 12 · 1666.8 PF
 **Odds:** playoffs 100% (+0 pts this week) · bye 33% · title 25% (-4 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 34% vs without 20%
-**Best trade idea:** give Ja'Kobi Lane, Antonio Williams for Emeka Egbuka: title chance 25% → 27%
+**Playoff path:** most likely seed 3; title chance with a bye 33% vs without 21%
+**Best trade idea:** give Ja'Kobi Lane, Eli Raridon for Rome Odunze: title chance 25% → 28%
 **Waivers:** Elijah Higgins would add 1.2 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 1.
 
-**Week 10:** vs Trust the Process · projected 214.4 – 110.9 · win chance 100%
+**Week 10:** vs Trust the Process · projected 213.5 – 110.9 · win chance 100%
 On bye: Courtland Sutton, D'Andre Swift
 Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 
