@@ -203,6 +203,8 @@ def main():
             if pos not in POS or (pid not in rostered and not (players_db.get(pid) or {}).get("team") and pos != "DEF"):
                 continue
             v = score(proj_stats(s, pos), pos)
+            if pos in ("K", "DEF") and v > 25:   # a broken projection (e.g. a kicker at 60+): no kicker or defense averages that
+                continue
             if v > 0 or (pos == "DEF" and s.get("gp")):
                 proj.setdefault(pid, {})[wk] = max(v, 0.1)
 
