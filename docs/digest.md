@@ -1,18 +1,18 @@
-# Gibb Me My Trophy · Week 10 briefing
+# Gibb Me My Trophy · Week 11 briefing
 
-**Week 9:** 201.5 vs WavySerg 64.5 (W/W, median 155.8)
-Top counted: C.J. Stroud 45.4, Jordan Love 42.2, Justice Hill 16.7, Tommy Tremble 14.4
+**Week 10:** 213.5 vs Trust the Process 110.9 (W/W, median 151.4)
+Top counted: Jahmyr Gibbs 40.7, C.J. Stroud 26.4, Cam Skattebo 25.7, Chase Brown 24.3
 
-**Record:** 13-5, #4 of 12 · 1666.8 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 33% · title 25% (-4 pts this week)
+**Record:** 15-5, #4 of 12 · 1880.3 PF
+**Odds:** playoffs 100% (+0 pts this week) · bye 33% · title 27% (-1 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 32% vs without 21%
-**Best trade idea:** give Ja'Kobi Lane, Eli Raridon for Rome Odunze: title chance 25% → 28%
-**Waivers:** Elijah Higgins would add 1.2 pts/wk to your lineup.
+**Playoff path:** most likely seed 3; title chance with a bye 36% vs without 23%
+**Best trade idea:** give C.J. Stroud for Jared Goff: title chance 27% → 31%
+**Waivers:** Elijah Higgins would add 1.4 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 1.
 
-**Week 10:** vs Trust the Process · projected 213.5 – 110.9 · win chance 100%
-On bye: Courtland Sutton, D'Andre Swift
+**Week 11:** vs Fat Camp · projected 176.8 – 163.9 · win chance 62%
+On bye: Eli Raridon, Jordan Love
 Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 
 ## Alerts this week
@@ -23,11 +23,11 @@ Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 - Cam Skattebo's value moved 2,451 → 2,833 (+16%).
 
 ## League trades
-- **Gibb Me My Trophy** get Kimani Vidal, Caleb Douglas (Push) ⇄ **WavySerg** get Michael Wilson (Loss)
+- **Gibb Me My Trophy** get Kimani Vidal, Caleb Douglas (Win) ⇄ **WavySerg** get Michael Wilson (Loss)
 
 ## Market
-- Buy-low: Kirk Cousins (Lava Me Tender): +5.8 counted pts/wk for you, value 2,140
-- Buy-low: Mike Evans (The True Behemoth): +4.7 counted pts/wk for you, value 1,850
-- Buy-low: Dalton Schultz (Trust the Process): +2.1 counted pts/wk for you, value 773
+- Buy-low: Kirk Cousins (Lava Me Tender): +5.8 counted pts/wk for you, value 2,101
+- Buy-low: Dalton Schultz (Trust the Process): +2.6 counted pts/wk for you, value 671
+- Buy-low: Mike Evans (The True Behemoth): +4.8 counted pts/wk for you, value 1,837
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)

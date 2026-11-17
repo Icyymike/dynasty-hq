@@ -1,24 +1,24 @@
-# mikec75 · Week 10 briefing
+# mikec75 · Week 11 briefing
 
-**Week 9:** 198.3 vs YinzerKing 184.6 (W)
-Top counted: C.J. Stroud 59.2, Jayden Daniels 23.5, Tank Dell 23.4, Isaiah Likely 21.6
+**Week 10:** 246.9 vs THE FINAL BOSS 224.5 (W)
+Top counted: Jahmyr Gibbs 45.0, George Pickens 44.5, Isaiah Likely 39.4, Jayden Daniels 31.9
 
-**Record:** 7-2, #3 of 12 · 1612.2 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 16% (+1 pts this week)
+**Record:** 8-2, #2 of 12 · 1859.1 PF
+**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 17% (+2 pts this week)
 
 
-**Best trade idea:** give Pat Bryant, George Pickens for Dak Prescott: title chance 16% → 21%
+**Best trade idea:** give Hunter Henry, George Pickens for Kyren Williams: title chance 17% → 20%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 10:** vs THE FINAL BOSS · projected 245.5 – 224.5 · win chance 100%
-On bye: Troy Franklin, Pat Bryant, Darius Cooper, DeVonta Smith, Cade Otton
+**Week 11:** vs jsous · projected 177.6 – 99.7 · win chance 97%
+On bye: Efton Chism III, Hunter Henry, Rhamondre Stevenson
 Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out)
 
 ## To do
+- Set your lineup: start Cade Otton over Hunter Henry (win chance 99% → 100%).
 - David Njoku is healthy but still on IR. He can't score until you move him back to your roster.
 
 ## Alerts this week
-- Set your lineup: start Cam Skattebo over Rhamondre Stevenson; start George Pickens over Efton Chism III; start Hunter Henry over Darius Cooper (win chance 26% → 54%).
 - Set your lineup: start Cam Skattebo over Rhamondre Stevenson; start George Pickens over Efton Chism III; start Hunter Henry over Darius Cooper (win chance 26% → 50%).
 - Rhamondre Stevenson is back (Questionable).
 - Isaiah Likely's value moved 3,135 → 3,549 (+13%).
@@ -26,6 +26,7 @@ Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta 
 - Cam Skattebo's value moved 2,453 → 2,835 (+16%).
 - David Njoku is back (active).
 - David Njoku is healthy but still on IR. He can't score until you move him back to your roster.
+- Set your lineup: start Cade Otton over Hunter Henry (win chance 99% → 100%).
 
 ## League trades
 - **Achane Saw Massacre** get Kirk Cousins, Darnell Washington (Win) ⇄ **jsous** get 2027 2nd (Achane Saw Massacre) (Loss)
@@ -33,9 +34,9 @@ Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta 
 
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
-- Sell-high: Tank Dell: value 1,534 vs ~847 for 7.0 pts/wk of production
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +2.9 counted pts/wk for you, value 1,681
-- Buy-low: Tony Pollard (D-Generation-XRated): +2.1 counted pts/wk for you, value 2,025
-- Buy-low: Jonah Coleman (SCLSU Mud Dogs): +2.7 counted pts/wk for you, value 2,877
+- Sell-high: Tank Dell: value 1,526 vs ~1,006 for 7.4 pts/wk of production
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.4 counted pts/wk for you, value 1,670
+- Buy-low: Chig Okonkwo (ShamirRamirez): +2.6 counted pts/wk for you, value 1,280
+- Buy-low: Tony Pollard (D-Generation-XRated): +3.0 counted pts/wk for you, value 1,911
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
