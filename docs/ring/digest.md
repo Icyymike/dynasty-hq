@@ -7,26 +7,25 @@ Top counted: Jahmyr Gibbs 45.0, George Pickens 44.5, Isaiah Likely 39.4, Jayden 
 **Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 18% (+4 pts this week)
 
 
-**Best trade idea:** give Cade Otton, George Pickens for Kyren Williams: title chance 18% → 21%
+**Best trade idea:** give Cade Otton, George Pickens for Kyren Williams: title chance 18% → 22%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 11:** vs jsous · projected 177.1 – 103.1 · win chance 97%
+**Week 11:** vs jsous · projected 175.8 – 105.3 · win chance 96%
 On bye: Efton Chism III, Hunter Henry, Rhamondre Stevenson
-Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta Smith (Out)
+Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR)
 
 ## To do
-- Set your lineup: start Tank Dell over Hunter Henry (win chance 99% → 99%).
 - David Njoku is healthy but still on IR. He can't score until you move him back to your roster.
 
 ## Alerts this week
-- Cam Skattebo's value moved 2,453 → 2,835 (+16%).
-- David Njoku is back (active).
 - David Njoku is healthy but still on IR. He can't score until you move him back to your roster.
 - Set your lineup: start Cade Otton over Hunter Henry (win chance 99% → 100%).
 - Set your lineup: start Cade Otton over Hunter Henry (win chance 98% → 100%).
 - Isaiah Likely's value moved 3,579 → 4,040 (+13%).
 - Set your lineup: start Cade Otton over Hunter Henry (win chance 99% → 100%).
 - Set your lineup: start Tank Dell over Hunter Henry (win chance 99% → 99%).
+- Justin Joly is back (active).
+- DeVonta Smith is back (Questionable).
 
 ## League trades
 - **Achane Saw Massacre** get Kirk Cousins, Darnell Washington (Win) ⇄ **jsous** get 2027 2nd (Achane Saw Massacre) (Loss)
@@ -34,9 +33,8 @@ Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR), DeVonta 
 
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
-- Sell-high: Tank Dell: value 1,519 vs ~1,113 for 7.8 pts/wk of production
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.5 counted pts/wk for you, value 1,972
-- Buy-low: Tony Pollard (D-Generation-XRated): +3.1 counted pts/wk for you, value 1,930
-- Buy-low: Chig Okonkwo (ShamirRamirez): +2.8 counted pts/wk for you, value 1,652
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.7 counted pts/wk for you, value 1,648
+- Buy-low: Chig Okonkwo (ShamirRamirez): +3.0 counted pts/wk for you, value 1,308
+- Buy-low: Jonah Coleman (SCLSU Mud Dogs): +4.1 counted pts/wk for you, value 2,957
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
