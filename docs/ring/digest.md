@@ -10,7 +10,7 @@ Top counted: Jahmyr Gibbs 45.0, George Pickens 44.5, Isaiah Likely 39.4, Jayden 
 **Best trade idea:** give Jayden Daniels for Patrick Mahomes: title chance 19% → 23%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 11:** vs jsous · projected 175.0 – 104.4 · win chance 96%
+**Week 11:** vs jsous · projected 174.7 – 104.3 · win chance 96%
 On bye: Efton Chism III, Hunter Henry, Rhamondre Stevenson
 Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR)
 
@@ -34,8 +34,8 @@ Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR)
 
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.5 counted pts/wk for you, value 1,987
-- Buy-low: Chig Okonkwo (ShamirRamirez): +3.1 counted pts/wk for you, value 1,688
+- Buy-low: Chig Okonkwo (ShamirRamirez): +3.1 counted pts/wk for you, value 1,671
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.5 counted pts/wk for you, value 1,977
 - Buy-low: Tony Pollard (D-Generation-XRated): +3.4 counted pts/wk for you, value 2,033
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
