@@ -4,19 +4,15 @@
 Top counted: Jahmyr Gibbs 45.0, George Pickens 44.5, Isaiah Likely 39.4, Jayden Daniels 31.9
 
 **Record:** 8-2, #2 of 12 · 1859.1 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 19% (+6 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 19% (+7 pts this week)
 
 
-**Best trade idea:** give Jayden Daniels, DeVonta Smith for Trevor Lawrence: title chance 19% → 24%
+**Best trade idea:** give Jayden Daniels, DeVonta Smith for Trevor Lawrence: title chance 19% → 23%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 11:** vs jsous · projected 175.2 – 105.1 · win chance 96%
+**Week 11:** vs jsous · projected 185.3 – 104.6 · win chance 98%
 On bye: Efton Chism III, Hunter Henry, Rhamondre Stevenson
-Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR)
-
-## To do
-- Set your lineup: start DeVonta Smith over Hunter Henry (win chance 95% → 96%).
-- David Njoku is healthy but still on IR. He can't score until you move him back to your roster.
+Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 
 ## Alerts this week
 - Set your lineup: start Cade Otton over Hunter Henry (win chance 98% → 100%).
@@ -28,14 +24,10 @@ Injured: Tyrone Tracy Jr. (IR), Lamar Jackson (IR), Tyler Huntley (IR)
 - Isaiah Likely's value moved 3,562 → 4,073 (+14%).
 - Set your lineup: start DeVonta Smith over Hunter Henry (win chance 95% → 96%).
 
-## League trades
-- **Achane Saw Massacre** get Kirk Cousins, Darnell Washington (Win) ⇄ **jsous** get 2027 2nd (Achane Saw Massacre) (Loss)
-- **THE FINAL BOSS** get Bo Nix, Chase Brown (Win) ⇄ **All For The Nookie** get Justin Herbert, 2028 1st (THE FINAL BOSS) (Loss)
-
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.5 counted pts/wk for you, value 2,007
-- Buy-low: Chig Okonkwo (ShamirRamirez): +3.1 counted pts/wk for you, value 1,734
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.5 counted pts/wk for you, value 2,002
+- Buy-low: Chig Okonkwo (ShamirRamirez): +3.1 counted pts/wk for you, value 1,725
 - Buy-low: Tony Pollard (D-Generation-XRated): +3.4 counted pts/wk for you, value 2,055
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
