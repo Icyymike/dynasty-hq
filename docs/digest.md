@@ -4,25 +4,29 @@
 Top counted: Jahmyr Gibbs 40.7, C.J. Stroud 26.4, Cam Skattebo 25.7, Chase Brown 24.3
 
 **Record:** 15-5, #4 of 12 · 1880.3 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 37% · title 25% (-3 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 44% · title 30% (+2 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 32% vs without 20%
-**Best trade idea:** give Tre' Harris, Ja'Kobi Lane for Davante Adams: title chance 25% → 26%
-**Waivers:** Elijah Higgins would add 1.5 pts/wk to your lineup.
+**Playoff path:** most likely seed 3; title chance with a bye 38% vs without 23%
+**Best trade idea:** give Tre' Harris, Antonio Williams for Jaylen Waddle: title chance 30% → 33%
+**Waivers:** Elijah Higgins would add 1.3 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 1.
 
-**Week 11:** vs Fat Camp · projected 178.1 – 153.8 · win chance 74%
+**Week 11:** vs Fat Camp · projected 182.3 – 151.6 · win chance 78%
 On bye: Eli Raridon, Jordan Love
-Injured: Michael Pittman Jr. (IR), Wan'Dale Robinson (IR), Malik Willis (IR)
+Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 
 ## Alerts this week
 - Cam Skattebo's value moved 2,451 → 2,833 (+16%).
 - Wan'Dale Robinson is now IR. Rest-of-season, he now adds 1.1 counted pts/wk to your lineup.
 - Caleb Douglas's value moved 1,662 → 2,062 (+24%).
+- Trade: Gibb Me My Trophy get Chris Godwin Jr., Dallas Goedert; Commish in Epstein Files get Wan'Dale Robinson, Quentin Johnston.
+
+## League trades
+- **Gibb Me My Trophy** get Chris Godwin Jr., Dallas Goedert (Win) ⇄ **Commish in Epstein Files** get Wan'Dale Robinson, Quentin Johnston (Loss)
 
 ## Market
-- Buy-low: Mike Evans (The True Behemoth): +5.5 counted pts/wk for you, value 1,716
+- Buy-low: Mike Evans (The True Behemoth): +5.3 counted pts/wk for you, value 1,716
 - Buy-low: Kirk Cousins (Lava Me Tender): +5.8 counted pts/wk for you, value 2,107
-- Buy-low: Hunter Henry (Lava Me Tender): +2.6 counted pts/wk for you, value 1,009
+- Buy-low: Jalen Coker (Lava Me Tender): +3.7 counted pts/wk for you, value 1,844
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
