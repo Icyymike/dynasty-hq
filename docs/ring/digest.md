@@ -10,7 +10,7 @@ Top counted: Jahmyr Gibbs 45.0, George Pickens 44.5, Isaiah Likely 39.4, Jayden 
 **Best trade idea:** give Jayden Daniels, DeVonta Smith for Trevor Lawrence: title chance 19% → 24%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 11:** vs jsous · projected 186.7 – 101.9 · win chance 98%
+**Week 11:** vs jsous · projected 184.4 – 101.2 · win chance 98%
 On bye: Efton Chism III, Hunter Henry, Rhamondre Stevenson
 Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 
