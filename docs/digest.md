@@ -4,14 +4,14 @@
 Top counted: Jahmyr Gibbs 40.7, C.J. Stroud 26.4, Cam Skattebo 25.7, Chase Brown 24.3
 
 **Record:** 15-5, #4 of 12 · 1880.3 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 37% · title 24% (-3 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 37% · title 25% (-3 pts this week)
 
 **Playoff path:** most likely seed 3; title chance with a bye 32% vs without 20%
-**Best trade idea:** give C.J. Stroud for Jared Goff: title chance 24% → 27%
+**Best trade idea:** give Tre' Harris, Ja'Kobi Lane for Davante Adams: title chance 25% → 26%
 **Waivers:** Elijah Higgins would add 1.5 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 1.
 
-**Week 11:** vs Fat Camp · projected 178.0 – 153.8 · win chance 74%
+**Week 11:** vs Fat Camp · projected 178.1 – 153.8 · win chance 74%
 On bye: Eli Raridon, Jordan Love
 Injured: Michael Pittman Jr. (IR), Wan'Dale Robinson (IR), Malik Willis (IR)
 
@@ -21,8 +21,8 @@ Injured: Michael Pittman Jr. (IR), Wan'Dale Robinson (IR), Malik Willis (IR)
 - Caleb Douglas's value moved 1,662 → 2,062 (+24%).
 
 ## Market
-- Buy-low: Mike Evans (The True Behemoth): +5.5 counted pts/wk for you, value 1,746
-- Buy-low: Kirk Cousins (Lava Me Tender): +5.8 counted pts/wk for you, value 2,199
-- Buy-low: Jalen Coker (Lava Me Tender): +3.8 counted pts/wk for you, value 1,821
+- Buy-low: Mike Evans (The True Behemoth): +5.5 counted pts/wk for you, value 1,716
+- Buy-low: Kirk Cousins (Lava Me Tender): +5.8 counted pts/wk for you, value 2,107
+- Buy-low: Hunter Henry (Lava Me Tender): +2.6 counted pts/wk for you, value 1,009
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
