@@ -7,7 +7,7 @@ Top counted: Jahmyr Gibbs 40.7, C.J. Stroud 26.4, Cam Skattebo 25.7, Chase Brown
 **Odds:** playoffs 100% (+0 pts this week) · bye 37% · title 24% (-3 pts this week)
 
 **Playoff path:** most likely seed 3; title chance with a bye 32% vs without 20%
-**Best trade idea:** give Tre' Harris, C.J. Stroud for Patrick Mahomes: title chance 24% → 27%
+**Best trade idea:** give C.J. Stroud for Jared Goff: title chance 24% → 27%
 **Waivers:** Elijah Higgins would add 1.5 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 1.
 
