@@ -4,14 +4,14 @@
 Top counted: Jahmyr Gibbs 40.7, C.J. Stroud 26.4, Cam Skattebo 25.7, Chase Brown 24.3
 
 **Record:** 15-5, #4 of 12 · 1880.3 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 44% · title 30% (+2 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 45% · title 30% (+1 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 38% vs without 23%
-**Best trade idea:** give Tre' Harris, Antonio Williams for Jaylen Waddle: title chance 30% → 33%
-**Waivers:** Elijah Higgins would add 1.3 pts/wk to your lineup.
+**Playoff path:** most likely seed 3; title chance with a bye 40% vs without 23%
+**Best trade idea:** give Chase Brown, C.J. Stroud for Trevor Lawrence: title chance 30% → 34%
+**Waivers:** Elijah Higgins would add 1.4 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 1.
 
-**Week 11:** vs Fat Camp · projected 182.3 – 151.6 · win chance 78%
+**Week 11:** vs Fat Camp · projected 182.0 – 152.6 · win chance 77%
 On bye: Eli Raridon, Jordan Love
 Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 
@@ -25,8 +25,8 @@ Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 - **Gibb Me My Trophy** get Chris Godwin Jr., Dallas Goedert (Win) ⇄ **Commish in Epstein Files** get Wan'Dale Robinson, Quentin Johnston (Loss)
 
 ## Market
-- Buy-low: Mike Evans (The True Behemoth): +5.3 counted pts/wk for you, value 1,716
-- Buy-low: Kirk Cousins (Lava Me Tender): +5.8 counted pts/wk for you, value 2,107
-- Buy-low: Jalen Coker (Lava Me Tender): +3.7 counted pts/wk for you, value 1,844
+- Buy-low: Mike Evans (The True Behemoth): +5.3 counted pts/wk for you, value 1,813
+- Buy-low: Kirk Cousins (Lava Me Tender): +5.8 counted pts/wk for you, value 2,179
+- Buy-low: Jalen Coker (Lava Me Tender): +3.8 counted pts/wk for you, value 1,925
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
