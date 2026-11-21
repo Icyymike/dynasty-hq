@@ -4,18 +4,17 @@
 Top counted: Jahmyr Gibbs 45.0, George Pickens 44.5, Isaiah Likely 39.4, Jayden Daniels 31.9
 
 **Record:** 8-2, #2 of 12 · 1859.1 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 19% (+4 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 20% (+4 pts this week)
 
 
-**Best trade idea:** give Jayden Daniels, DeVonta Smith for Trevor Lawrence: title chance 19% → 26%
-**Window:** Window open: contend. Projected rank 2026: 2, 2027: 3, 2028: 3.
+**Best trade idea:** give Jayden Daniels, DeVonta Smith for Trevor Lawrence: title chance 20% → 26%
+**Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 11:** vs jsous · projected 180.3 – 99.5 · win chance 98%
+**Week 11:** vs jsous · projected 180.5 – 99.4 · win chance 98%
 On bye: Efton Chism III, Hunter Henry, Rhamondre Stevenson
 Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 
 ## Alerts this week
-- Isaiah Likely's value moved 3,579 → 4,040 (+13%).
 - Set your lineup: start Cade Otton over Hunter Henry (win chance 99% → 100%).
 - Set your lineup: start Tank Dell over Hunter Henry (win chance 99% → 99%).
 - Justin Joly is back (active).
@@ -23,11 +22,12 @@ Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 - Isaiah Likely's value moved 3,562 → 4,073 (+14%).
 - Set your lineup: start DeVonta Smith over Hunter Henry (win chance 95% → 96%).
 - Isaiah Likely's value moved 4,398 → 3,835 (-13%).
+- Isaiah Likely's value moved 3,824 → 4,327 (+13%).
 
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.9 counted pts/wk for you, value 1,622
-- Buy-low: Chig Okonkwo (ShamirRamirez): +3.1 counted pts/wk for you, value 1,393
-- Buy-low: Tony Pollard (D-Generation-XRated): +3.4 counted pts/wk for you, value 2,086
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.9 counted pts/wk for you, value 1,975
+- Buy-low: Chig Okonkwo (ShamirRamirez): +3.1 counted pts/wk for you, value 1,686
+- Buy-low: Tony Pollard (D-Generation-XRated): +3.4 counted pts/wk for you, value 2,034
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
