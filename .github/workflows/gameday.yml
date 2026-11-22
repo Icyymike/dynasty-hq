@@ -16,7 +16,7 @@ permissions:
   issues: write
   actions: write
 concurrency:
-  group: refresh
+  group: gameday
   cancel-in-progress: false
 jobs:
   loop:
