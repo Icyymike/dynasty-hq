@@ -7,15 +7,14 @@ Top counted: Jahmyr Gibbs 45.0, George Pickens 44.5, Isaiah Likely 39.4, Jayden 
 **Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 17% (+1 pts this week)
 
 
-**Best trade idea:** give Jayden Daniels for Patrick Mahomes: title chance 17% → 22%
+**Best trade idea:** give Jayden Daniels for Patrick Mahomes: title chance 17% → 23%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 11:** vs jsous · projected 199.7 – 85.5 · win chance 100%
+**Week 11:** vs jsous · projected 187.8 – 91.6 · win chance 100%
 On bye: Efton Chism III, Hunter Henry, Rhamondre Stevenson
 Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 
 ## Alerts this week
-- Set your lineup: start Tank Dell over Hunter Henry (win chance 99% → 99%).
 - Justin Joly is back (active).
 - DeVonta Smith is back (Questionable).
 - Isaiah Likely's value moved 3,562 → 4,073 (+14%).
@@ -23,10 +22,12 @@ Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 - Isaiah Likely's value moved 4,398 → 3,835 (-13%).
 - Isaiah Likely's value moved 3,824 → 4,327 (+13%).
 - Justin Joly is now Out. Rest-of-season, he now adds 0.0 counted pts/wk to your lineup.
+- Isaiah Likely's value moved 4,300 → 3,674 (-15%).
 
 ## Market
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.9 counted pts/wk for you, value 2,031
-- Buy-low: Chig Okonkwo (ShamirRamirez): +2.9 counted pts/wk for you, value 1,617
-- Buy-low: DJ Moore (Jesus the homeless hippy): +3.2 counted pts/wk for you, value 2,170
+- Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +4.0 counted pts/wk for you, value 1,666
+- Buy-low: Chig Okonkwo (ShamirRamirez): +3.0 counted pts/wk for you, value 1,324
+- Buy-low: DJ Moore (Jesus the homeless hippy): +3.3 counted pts/wk for you, value 2,192
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
