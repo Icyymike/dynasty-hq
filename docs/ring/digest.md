@@ -7,10 +7,10 @@ Top counted: Jahmyr Gibbs 45.0, George Pickens 44.5, Isaiah Likely 39.4, Jayden 
 **Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 18% (+2 pts this week)
 
 
-**Best trade idea:** give Jayden Daniels for Patrick Mahomes: title chance 18% → 25%
+**Best trade idea:** give Pat Bryant, DeVonta Smith for Kyren Williams: title chance 18% → 22%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 11:** vs jsous · projected 180.8 – 105.8 · win chance 100%
+**Week 11:** vs jsous · projected 198.8 – 86.4 · win chance 100%
 On bye: Efton Chism III, Hunter Henry, Rhamondre Stevenson
 Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 
@@ -25,8 +25,8 @@ Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 - Justin Joly is now Out. Rest-of-season, he now adds 0.0 counted pts/wk to your lineup.
 
 ## Market
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.9 counted pts/wk for you, value 2,029
-- Buy-low: DJ Moore (Jesus the homeless hippy): +3.8 counted pts/wk for you, value 2,170
-- Buy-low: Tony Pollard (D-Generation-XRated): +3.6 counted pts/wk for you, value 2,114
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.9 counted pts/wk for you, value 2,031
+- Buy-low: Chig Okonkwo (ShamirRamirez): +2.9 counted pts/wk for you, value 1,617
+- Buy-low: DJ Moore (Jesus the homeless hippy): +3.2 counted pts/wk for you, value 2,170
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
