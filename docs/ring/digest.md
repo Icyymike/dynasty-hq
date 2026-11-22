@@ -7,10 +7,10 @@ Top counted: Jahmyr Gibbs 45.0, George Pickens 44.5, Isaiah Likely 39.4, Jayden 
 **Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 18% (+2 pts this week)
 
 
-**Best trade idea:** give Pat Bryant, DeVonta Smith for Kyren Williams: title chance 18% → 22%
+**Best trade idea:** give Jayden Daniels for Patrick Mahomes: title chance 18% → 22%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 11:** vs jsous · projected 198.8 – 86.4 · win chance 100%
+**Week 11:** vs jsous · projected 200.1 – 85.9 · win chance 100%
 On bye: Efton Chism III, Hunter Henry, Rhamondre Stevenson
 Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 
