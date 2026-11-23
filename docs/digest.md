@@ -7,11 +7,11 @@ Top counted: Jahmyr Gibbs 40.7, C.J. Stroud 26.4, Cam Skattebo 25.7, Chase Brown
 **Odds:** playoffs 100% (+0 pts this week) · bye 5% · title 28% (-0 pts this week)
 
 **Playoff path:** most likely seed 3; title chance with a bye 30% vs without 27%
-**Best trade idea:** give Kimani Vidal, Bryce Young for Dak Prescott: title chance 28% → 32%
+**Best trade idea:** give Ja'Kobi Lane, Jordan Love for CeeDee Lamb: title chance 28% → 33%
 **Waivers:** Elijah Higgins would add 1.5 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 1.
 
-**Week 11:** vs Fat Camp · projected 145.8 – 166.7 · win chance 2%
+**Week 11:** vs Fat Camp · projected 145.7 – 166.7 · win chance 2%
 On bye: Eli Raridon, Jordan Love
 Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 
@@ -25,8 +25,8 @@ Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 - **Gibb Me My Trophy** get Chris Godwin Jr., Dallas Goedert (Win) ⇄ **Commish in Epstein Files** get Wan'Dale Robinson, Quentin Johnston (Loss)
 
 ## Market
-- Buy-low: Mike Evans (The True Behemoth): +7.0 counted pts/wk for you, value 1,785
-- Buy-low: Dalton Schultz (Trust the Process): +2.1 counted pts/wk for you, value 556
-- Buy-low: Kirk Cousins (Lava Me Tender): +5.0 counted pts/wk for you, value 2,275
+- Buy-low: Mike Evans (The True Behemoth): +7.1 counted pts/wk for you, value 1,888
+- Buy-low: DJ Moore (The True Behemoth): +5.5 counted pts/wk for you, value 2,121
+- Buy-low: Dalton Schultz (Trust the Process): +2.1 counted pts/wk for you, value 759
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
