@@ -4,7 +4,7 @@
 Top counted: Jahmyr Gibbs 45.0, George Pickens 44.5, Isaiah Likely 39.4, Jayden Daniels 31.9
 
 **Record:** 8-2, #2 of 12 · 1859.1 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 18% (-1 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 18% (-0 pts this week)
 
 
 **Best trade idea:** give Jayden Daniels for Patrick Mahomes: title chance 18% → 24%
@@ -26,7 +26,7 @@ Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.9 counted pts/wk for you, value 1,666
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +4.4 counted pts/wk for you, value 1,666
 - Buy-low: Chig Okonkwo (ShamirRamirez): +3.0 counted pts/wk for you, value 1,324
 - Buy-low: DJ Moore (Jesus the homeless hippy): +3.3 counted pts/wk for you, value 2,192
 
