@@ -7,7 +7,7 @@ Top counted: Jahmyr Gibbs 45.0, George Pickens 44.5, Isaiah Likely 39.4, Jayden 
 **Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 18% (-0 pts this week)
 
 
-**Best trade idea:** give Jayden Daniels for Patrick Mahomes: title chance 18% → 23%
+**Best trade idea:** give Jayden Daniels for Patrick Mahomes: title chance 18% → 24%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
 **Week 11:** vs jsous · projected 181.4 – 89.7 · win chance 100%
