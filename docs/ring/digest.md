@@ -15,7 +15,6 @@ On bye: Efton Chism III, Hunter Henry, Rhamondre Stevenson
 Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 
 ## Alerts this week
-- Justin Joly is back (active).
 - DeVonta Smith is back (Questionable).
 - Isaiah Likely's value moved 3,562 → 4,073 (+14%).
 - Set your lineup: start DeVonta Smith over Hunter Henry (win chance 95% → 96%).
@@ -23,11 +22,12 @@ Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 - Isaiah Likely's value moved 3,824 → 4,327 (+13%).
 - Justin Joly is now Out. Rest-of-season, he now adds 0.0 counted pts/wk to your lineup.
 - Isaiah Likely's value moved 4,300 → 3,674 (-15%).
+- Isaiah Likely's value moved 3,674 → 4,221 (+15%).
 
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +4.8 counted pts/wk for you, value 1,666
-- Buy-low: Mike Evans (D-Generation-XRated): +4.0 counted pts/wk for you, value 1,798
-- Buy-low: Chig Okonkwo (ShamirRamirez): +3.0 counted pts/wk for you, value 1,324
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +4.8 counted pts/wk for you, value 1,991
+- Buy-low: Mike Evans (D-Generation-XRated): +4.2 counted pts/wk for you, value 1,798
+- Buy-low: Chig Okonkwo (ShamirRamirez): +3.0 counted pts/wk for you, value 1,631
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
