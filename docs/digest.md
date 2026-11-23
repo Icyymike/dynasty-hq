@@ -4,14 +4,14 @@
 Top counted: Jahmyr Gibbs 40.7, C.J. Stroud 26.4, Cam Skattebo 25.7, Chase Brown 24.3
 
 **Record:** 15-5, #4 of 12 · 1880.3 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 8% · title 26% (-0 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 8% · title 28% (-0 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 33% vs without 26%
-**Best trade idea:** give Tre' Harris, Chase Brown for Isaiah Likely: title chance 26% → 31%
+**Playoff path:** most likely seed 3; title chance with a bye 37% vs without 27%
+**Best trade idea:** give Kimani Vidal, Bryce Young for Dak Prescott: title chance 28% → 31%
 **Waivers:** Elijah Higgins would add 1.5 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 1.
 
-**Week 11:** vs Fat Camp · projected 145.9 – 172.3 · win chance 2%
+**Week 11:** vs Fat Camp · projected 145.4 – 171.2 · win chance 2%
 On bye: Eli Raridon, Jordan Love
 Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 
