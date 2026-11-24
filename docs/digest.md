@@ -11,7 +11,7 @@ Top counted: C.J. Stroud 26.5, Jahmyr Gibbs 25.8, Bryce Young 20.0, Antonio Will
 **Waivers:** Elijah Higgins would add 1.3 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 1.
 
-**Week 12:** vs SergioRamirez · projected 184.3 – 152.4 · win chance 82%
+**Week 12:** vs SergioRamirez · projected 184.3 – 152.3 · win chance 82%
 Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 
 ## Alerts this week
@@ -21,7 +21,7 @@ Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 
 ## League trades
 - **JET$ LYF3** get Zavion Thomas, 2027 3rd (Commish in Epstein Files) (Loss) ⇄ **Commish in Epstein Files** get Dalton Schultz, 2027 4th (JET$ LYF3) (Win)
-- **Gibb Me My Trophy** get Chris Godwin Jr., Dallas Goedert (Push) ⇄ **Commish in Epstein Files** get Wan'Dale Robinson, Quentin Johnston (Push)
+- **Gibb Me My Trophy** get Chris Godwin Jr., Dallas Goedert (Win) ⇄ **Commish in Epstein Files** get Wan'Dale Robinson, Quentin Johnston (Push)
 
 ## Market
 - Buy-low: Mike Evans (The True Behemoth): +5.9 counted pts/wk for you, value 1,985
