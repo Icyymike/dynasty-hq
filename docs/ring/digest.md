@@ -10,7 +10,7 @@ Top counted: C.J. Stroud 32.3, Jahmyr Gibbs 28.1, George Pickens 24.8, Jayden Da
 **Best trade idea:** give George Pickens for Ashton Jeanty: title chance 20% → 23%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 12:** vs Keep Trade Cut  · projected 193.2 – 77.8 · win chance 100%
+**Week 12:** vs Keep Trade Cut  · projected 193.6 – 78.0 · win chance 100%
 Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 
 ## Alerts this week
