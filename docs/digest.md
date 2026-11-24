@@ -1,18 +1,17 @@
-# Gibb Me My Trophy · Week 11 briefing
+# Gibb Me My Trophy · Week 12 briefing
 
-**Week 10:** 213.5 vs JET$ LYF3 110.9 (W/W, median 151.4)
-Top counted: Jahmyr Gibbs 40.7, C.J. Stroud 26.4, Cam Skattebo 25.7, Chase Brown 24.3
+**Week 11:** 147.2 vs Fat Camp 162.8 (L/L, median 149.0)
+Top counted: C.J. Stroud 26.5, Jahmyr Gibbs 25.8, Bryce Young 20.0, Antonio Williams 16.7
 
-**Record:** 15-5, #4 of 12 · 1880.3 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 1% · title 25% (+1 pts this week)
+**Record:** 15-7, #4 of 12 · 2027.5 PF
+**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 24% (+0 pts this week)
 
-**Playoff path:** most likely seed 4; title chance with a bye 12% vs without 25%
-**Best trade idea:** give Tre' Harris, Jordan Love for CeeDee Lamb: title chance 25% → 33%
-**Waivers:** Elijah Higgins would add 1.5 pts/wk to your lineup.
+**Playoff path:** most likely seed 3; title chance with a bye 67% vs without 23%
+**Best trade idea:** give Kimani Vidal, Ja'Kobi Lane for A.J. Brown: title chance 24% → 26%
+**Waivers:** Elijah Higgins would add 1.3 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 1.
 
-**Week 11:** vs Fat Camp · projected 142.4 – 163.5 · win chance 0%
-On bye: Eli Raridon, Jordan Love
+**Week 12:** vs SergioRamirez · projected 184.3 – 152.4 · win chance 82%
 Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 
 ## Alerts this week
@@ -21,11 +20,12 @@ Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 - Trade: Gibb Me My Trophy get Chris Godwin Jr., Dallas Goedert; Commish in Epstein Files get Wan'Dale Robinson, Quentin Johnston.
 
 ## League trades
-- **Gibb Me My Trophy** get Chris Godwin Jr., Dallas Goedert (Win) ⇄ **Commish in Epstein Files** get Wan'Dale Robinson, Quentin Johnston (Loss)
+- **JET$ LYF3** get Zavion Thomas, 2027 3rd (Commish in Epstein Files) (Loss) ⇄ **Commish in Epstein Files** get Dalton Schultz, 2027 4th (JET$ LYF3) (Win)
+- **Gibb Me My Trophy** get Chris Godwin Jr., Dallas Goedert (Push) ⇄ **Commish in Epstein Files** get Wan'Dale Robinson, Quentin Johnston (Push)
 
 ## Market
-- Buy-low: Mike Evans (The True Behemoth): +7.2 counted pts/wk for you, value 1,985
-- Buy-low: Tony Pollard (MoneyMertz): +5.1 counted pts/wk for you, value 2,123
-- Buy-low: Kirk Cousins (Lava Me Tender): +4.9 counted pts/wk for you, value 2,336
+- Buy-low: Mike Evans (The True Behemoth): +5.9 counted pts/wk for you, value 1,985
+- Buy-low: Kirk Cousins (Lava Me Tender): +5.3 counted pts/wk for you, value 2,336
+- Buy-low: Tony Pollard (MoneyMertz): +4.9 counted pts/wk for you, value 2,123
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)

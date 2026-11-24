@@ -1,18 +1,16 @@
-# mikec75 · Week 11 briefing
+# mikec75 · Week 12 briefing
 
-**Week 10:** 246.9 vs THE FINAL BOSS 224.5 (W)
-Top counted: Jahmyr Gibbs 45.0, George Pickens 44.5, Isaiah Likely 39.4, Jayden Daniels 31.9
+**Week 11:** 181.9 vs jsous 85.0 (W)
+Top counted: C.J. Stroud 32.3, Jahmyr Gibbs 28.1, George Pickens 24.8, Jayden Daniels 23.2
 
-**Record:** 8-2, #2 of 12 · 1859.1 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 18% (-1 pts this week)
+**Record:** 9-2, #2 of 12 · 2041.0 PF
+**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 20% (+1 pts this week)
 
 
-**Best trade idea:** give Mike Gesicki, DeVonta Smith for Jaylen Warren: title chance 18% → 22%
-**Waivers:** Davis Allen would add 1.1 pts/wk to your lineup.
+**Best trade idea:** give George Pickens for Ashton Jeanty: title chance 20% → 23%
 **Window:** Window open: contend. Projected rank 2026: 2, 2027: 2, 2028: 3.
 
-**Week 11:** vs jsous · projected 154.9 – 89.7 · win chance 100%
-On bye: Efton Chism III, Hunter Henry, Rhamondre Stevenson
+**Week 12:** vs Keep Trade Cut  · projected 193.1 – 77.9 · win chance 100%
 Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 
 ## Alerts this week
@@ -26,8 +24,8 @@ Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 - Isaiah Likely's value moved 3,778 → 4,321 (+14%).
 
 ## Market
-- Buy-low: Mike Evans (D-Generation-XRated): +7.1 counted pts/wk for you, value 1,999
-- Buy-low: Jonah Coleman (SCLSU Mud Dogs): +9.6 counted pts/wk for you, value 3,674
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +5.2 counted pts/wk for you, value 1,989
+- Buy-low: Mike Evans (D-Generation-XRated): +4.7 counted pts/wk for you, value 1,999
+- Buy-low: Tony Pollard (D-Generation-XRated): +4.3 counted pts/wk for you, value 2,125
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.5 counted pts/wk for you, value 1,994
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
