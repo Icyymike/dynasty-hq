@@ -11,7 +11,7 @@ Top counted: C.J. Stroud 26.5, Jahmyr Gibbs 25.8, Bryce Young 20.0, Antonio Will
 **Waivers:** Elijah Higgins would add 1.3 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 1.
 
-**Week 12:** vs SergioRamirez · projected 184.4 – 152.0 · win chance 82%
+**Week 12:** vs SergioRamirez · projected 184.6 – 151.9 · win chance 82%
 Injured: Michael Pittman Jr. (IR), Malik Willis (IR)
 
 ## Alerts this week
