@@ -24,8 +24,8 @@ Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 - Isaiah Likely's value moved 4,261 → 3,741 (-12%).
 
 ## Market
-- Buy-low: Tony Pollard (D-Generation-XRated): +4.2 counted pts/wk for you, value 2,143
-- Buy-low: Mike Evans (D-Generation-XRated): +4.0 counted pts/wk for you, value 2,107
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.4 counted pts/wk for you, value 1,780
+- Buy-low: Tony Pollard (D-Generation-XRated): +4.4 counted pts/wk for you, value 2,095
+- Buy-low: Mike Evans (D-Generation-XRated): +4.2 counted pts/wk for you, value 2,026
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.6 counted pts/wk for you, value 1,798
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
