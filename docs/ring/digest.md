@@ -7,10 +7,10 @@ Top counted: C.J. Stroud 32.3, Jahmyr Gibbs 28.1, George Pickens 24.8, Jayden Da
 **Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 18% (-2 pts this week)
 
 
-**Best trade idea:** give Jayden Daniels for Patrick Mahomes: title chance 18% → 22%
+**Best trade idea:** give Jayden Daniels for Patrick Mahomes: title chance 18% → 23%
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 3, 2028: 4.
 
-**Week 12:** vs Keep Trade Cut  · projected 247.3 – 74.6 · win chance 100%
+**Week 12:** vs Keep Trade Cut  · projected 247.3 – 74.7 · win chance 100%
 Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 
 ## Alerts this week
@@ -24,8 +24,8 @@ Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 - Isaiah Likely's value moved 4,261 → 3,741 (-12%).
 
 ## Market
-- Buy-low: Tony Pollard (D-Generation-XRated): +4.4 counted pts/wk for you, value 2,143
-- Buy-low: Mike Evans (D-Generation-XRated): +4.2 counted pts/wk for you, value 2,107
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.6 counted pts/wk for you, value 1,780
+- Buy-low: Tony Pollard (D-Generation-XRated): +4.2 counted pts/wk for you, value 2,143
+- Buy-low: Mike Evans (D-Generation-XRated): +4.0 counted pts/wk for you, value 2,107
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.4 counted pts/wk for you, value 1,780
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)
