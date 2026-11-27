@@ -6,12 +6,12 @@ Top counted: C.J. Stroud 26.5, Jahmyr Gibbs 25.8, Bryce Young 20.0, Antonio Will
 **Record:** 15-7, #4 of 12 · 2027.5 PF
 **Odds:** playoffs 100% (+0 pts this week) · bye 2% · title 24% (-7 pts this week)
 
-**Playoff path:** most likely seed 3; title chance with a bye 50% vs without 23%
-**Best trade idea:** give Pat Freiermuth, C.J. Stroud for Trevor Lawrence: title chance 24% → 25%
+**Playoff path:** most likely seed 3; title chance with a bye 46% vs without 23%
+**Best trade idea:** give Tre' Harris, Antonio Williams for Ladd McConkey: title chance 24% → 25%
 **Waivers:** Elijah Higgins would add 1.5 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 1.
 
-**Week 12:** vs SergioRamirez · projected 213.3 – 169.2 · win chance 90%
+**Week 12:** vs SergioRamirez · projected 213.5 – 169.3 · win chance 90%
 Injured: Dallas Goedert (Out), Malik Willis (IR)
 
 ## Alerts this week
@@ -25,7 +25,7 @@ Injured: Dallas Goedert (Out), Malik Willis (IR)
 
 ## Market
 - Buy-low: Kirk Cousins (Lava Me Tender): +6.0 counted pts/wk for you, value 2,025
-- Buy-low: Mike Evans (The True Behemoth): +5.8 counted pts/wk for you, value 2,012
+- Buy-low: Mike Evans (The True Behemoth): +5.7 counted pts/wk for you, value 2,012
 - Buy-low: Tony Pollard (MoneyMertz): +5.3 counted pts/wk for you, value 2,093
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
