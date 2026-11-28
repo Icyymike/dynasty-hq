@@ -7,7 +7,7 @@ Top counted: C.J. Stroud 26.5, Jahmyr Gibbs 25.8, Bryce Young 20.0, Antonio Will
 **Odds:** playoffs 100% (+0 pts this week) · bye 2% · title 23% (-3 pts this week)
 
 **Playoff path:** most likely seed 3; title chance with a bye 55% vs without 23%
-**Best trade idea:** give Tre' Harris, Malik Willis for Jaylen Waddle: title chance 23% → 25%
+**Best trade idea:** give Tre' Harris, Malik Willis for Jaylen Waddle: title chance 23% → 26%
 **Waivers:** Elijah Higgins would add 1.8 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 1.
 
