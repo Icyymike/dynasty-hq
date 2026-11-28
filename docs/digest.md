@@ -7,7 +7,7 @@ Top counted: C.J. Stroud 26.5, Jahmyr Gibbs 25.8, Bryce Young 20.0, Antonio Will
 **Odds:** playoffs 100% (+0 pts this week) · bye 2% · title 23% (-3 pts this week)
 
 **Playoff path:** most likely seed 3; title chance with a bye 55% vs without 23%
-**Best trade idea:** give Tre' Harris, Dallas Goedert for DJ Moore: title chance 23% → 25%
+**Best trade idea:** give Tre' Harris, Malik Willis for Jaylen Waddle: title chance 23% → 25%
 **Waivers:** Elijah Higgins would add 1.8 pts/wk to your lineup.
 **Window:** Window open: contend. Projected rank 2026: 1, 2027: 1, 2028: 1.
 
@@ -23,8 +23,8 @@ Injured: Dallas Goedert (Out), Juwan Johnson (Out), Malik Willis (IR)
 - **JET$ LYF3** get Zavion Thomas, 2027 3rd (Commish in Epstein Files) (Loss) ⇄ **Commish in Epstein Files** get Dalton Schultz, 2027 4th (JET$ LYF3) (Win)
 
 ## Market
-- Buy-low: Kirk Cousins (Lava Me Tender): +6.0 counted pts/wk for you, value 2,032
-- Buy-low: Tony Pollard (MoneyMertz): +5.6 counted pts/wk for you, value 2,112
-- Buy-low: Dalton Schultz (Commish in Epstein Files): +2.6 counted pts/wk for you, value 739
+- Buy-low: Kirk Cousins (Lava Me Tender): +6.0 counted pts/wk for you, value 2,067
+- Buy-low: Tony Pollard (MoneyMertz): +5.6 counted pts/wk for you, value 2,028
+- Buy-low: Dalton Schultz (Commish in Epstein Files): +2.6 counted pts/wk for you, value 861
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/)
