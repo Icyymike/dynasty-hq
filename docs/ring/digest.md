@@ -4,7 +4,7 @@
 Top counted: C.J. Stroud 32.3, Jahmyr Gibbs 28.1, George Pickens 24.8, Jayden Daniels 23.2
 
 **Record:** 9-2, #2 of 12 · 2041.0 PF
-**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 17% (-2 pts this week)
+**Odds:** playoffs 100% (+0 pts this week) · bye 0% · title 17% (+0 pts this week)
 
 
 **Best trade idea:** give Mike Gesicki, Chris Olave for Christian McCaffrey: title chance 17% → 21%
@@ -25,8 +25,8 @@ Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
-- Buy-low: Tony Pollard (D-Generation-XRated): +4.4 counted pts/wk for you, value 2,030
-- Buy-low: Mike Evans (D-Generation-XRated): +3.7 counted pts/wk for you, value 2,124
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.6 counted pts/wk for you, value 2,037
+- Buy-low: Tony Pollard (D-Generation-XRated): +4.4 counted pts/wk for you, value 2,114
+- Buy-low: Mike Evans (D-Generation-XRated): +3.7 counted pts/wk for you, value 2,164
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.6 counted pts/wk for you, value 2,085
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)

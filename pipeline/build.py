@@ -783,7 +783,7 @@ def main():
             r_tep = sorted((x[1] for x in tes), reverse=True)[k_]; r_base = sorted((x[2] for x in tes), reverse=True)[k_]
             for pid_, a_, b_ in tes:
                 if b_ - r_base > 0.5:
-                    te_mult[pid_] = round(min(1.35, max(1.0, math.sqrt((a_ - r_tep) / (b_ - r_base)))), 3)
+                    te_mult[pid_] = round(min(1.35, max(1.0, math.sqrt(max(0.0, (a_ - r_tep) / (b_ - r_base))))), 3)
             avg_ = st.mean(te_mult.values()) if te_mult else 1.0
             te_default = round(1 + (avg_ - 1) / 2, 3)   # TEs without a useful projection (rookies, stashes): half the typical premium
         else:
@@ -1957,6 +1957,7 @@ def main():
         mom = max(-0.5, min(0.5, math.log(f_ / max(f_ - tr_, 100)))) if tr_ else 0.0
         vo_rows.append(dict(id=pid, pos=d["p"], age=float(d["age"]), v=f_, ppg=st.mean(played_), gp=len(played_),
                             form=((st.mean(l3) if l3 else 0) - (st.mean(early) if early else st.mean(played_))) / 10, miss3=miss3, mom=mom))
+    FU, fu_ok, n_fu = {}, False, 0
     if len(vo_rows) >= 60:
         X_ = [[1.0, r["pos"] == "RB", r["pos"] == "WR", r["pos"] == "TE", r["age"] - 26, (r["age"] - 26) ** 2, math.log(r["ppg"] + 1), r["gp"]] for r in vo_rows]
         b_ = lstsq([[float(x) for x in xx] for xx in X_], [math.log(r["v"]) for r in vo_rows])
@@ -1966,9 +1967,24 @@ def main():
             parts = [c * x for c, x in zip(VO_COEF, fx)]
             r["pred"] = max(-0.25, min(0.25, sum(parts)))
             r["parts"] = parts
+        # the futures model (pipeline/futures.py: 7 seasons of weekly values, usage, contracts; beat no-change, momentum and
+        # age-curve baselines walk-forward) replaces this quick model for every player it covers, when its file is fresh
+        try:
+            FU = json.load(open(os.path.join(ROOT, "docs", "futures.json")))
+            fu_ok = FU.get("values_date") and (datetime.date.today() - datetime.date.fromisoformat(FU["values_date"])).days <= 4
+        except Exception:  # noqa
+            FU, fu_ok = {}, False
+        n_fu = 0
+        for r in vo_rows:
+            fp_ = (FU.get("players") or {}).get(r["id"]) if fu_ok else None
+            if fp_ and fp_.get("p4") is not None:
+                r["pred"] = math.log1p(fp_["p4"] / 100); r["fu"] = fp_; n_fu += 1
         avg_ = st.mean(r["pred"] for r in vo_rows)
         for r in vo_rows:
             parts = r["parts"]; why = []
+            if r.get("fu"):
+                P[r["id"]]["vo"] = [round((r["pred"] - avg_) * 100, 1), r["fu"].get("why") or []]
+                continue
             if abs(parts[1]) >= 0.008: why.append((abs(parts[1]), "producing more than his price suggests" if parts[1] > 0 else "priced above his production"))
             if abs(parts[4]) >= 0.008: why.append((abs(parts[4]), f"value up {r['mom'] * 100:.0f}% in 30 days; climbs like that tend to cool off" if parts[4] < 0
                                                  else f"value down {-r['mom'] * 100:.0f}% in 30 days; drops like that tend to bounce back a little"))
@@ -1987,25 +2003,39 @@ def main():
     today_ = time.strftime("%Y-%m-%d", time.gmtime())
     if vo_rows and "pred" in vo_rows[0] and not FIX:
         VW.setdefault(today_, {r["id"]: [r["v"], round(r["pred"], 4)] for r in vo_rows if "pred" in r})
-        for k_ in sorted(VW)[:-120]:
+        for k_ in sorted(k for k in VW if not k.startswith("_"))[:-120]:
             VW.pop(k_, None)
         json.dump(VW, open(vw_path, "w"), separators=(",", ":"))
-    graded = []
-    for d_, rows_ in VW.items():
-        try:
-            age_d = (datetime.date.fromisoformat(today_) - datetime.date.fromisoformat(d_)).days
-        except Exception:  # noqa
-            continue
-        if 28 <= age_d <= 35:
-            for pid_, (v0, pr_) in rows_.items():
-                if fc_vals.get(pid_, 0) > 0:
-                    graded.append((pr_, math.log(fc_vals[pid_] / v0)))
-    vo_track = dict(n=len(graded), since=min(VW) if VW else None)
-    if len(graded) >= 50:
-        o_ = sorted(graded); q = len(o_) // 5
-        vo_track.update(top=round(st.mean(x[1] for x in o_[-q:]) * 100, 1), bottom=round(st.mean(x[1] for x in o_[:q]) * 100, 1), all=round(st.mean(x[1] for x in o_) * 100, 1))
+    # graded once per week (the first logged day of each week), 28-35 days later: daily calls overlap, weekly ones don't
+    G_ = VW.setdefault("_g", {})
+    wk_first = {}
+    for d_ in sorted(k for k in VW if not k.startswith("_")):
+        wk_first.setdefault(datetime.date.fromisoformat(d_).isocalendar()[:2], d_)
+    for d_ in wk_first.values():
+        age_d = (datetime.date.fromisoformat(today_) - datetime.date.fromisoformat(d_)).days
+        if 28 <= age_d <= 35 and d_ not in G_:
+            pr = [(pr_, math.log(fc_vals[pid_] / v0)) for pid_, (v0, pr_) in VW[d_].items() if fc_vals.get(pid_, 0) > 0 and v0 > 0]
+            if len(pr) >= 50:
+                o_ = sorted(pr); q = len(o_) // 5
+                xs = [x for x, _ in pr]; ys = [y for _, y in pr]
+                rk = lambda a: {i: r for r, i in enumerate(sorted(range(len(a)), key=lambda i: a[i]))}
+                rx, ry = rk(xs), rk(ys); n_ = len(xs)
+                sp_ = 1 - 6 * sum((rx[i] - ry[i]) ** 2 for i in range(n_)) / (n_ * (n_ * n_ - 1))
+                G_[d_] = dict(n=n_, sp=round(sp_, 3), top=round(st.mean(x[1] for x in o_[-q:]) * 100, 1),
+                              bottom=round(st.mean(x[1] for x in o_[:q]) * 100, 1), all=round(st.mean(ys) * 100, 1))
+    if not FIX:
+        json.dump(VW, open(vw_path, "w"), separators=(",", ":"))
+    gl = list(G_.values())
+    vo_track = dict(snaps=len(gl), n=sum(g["n"] for g in gl), since=min((k for k in VW if not k.startswith("_")), default=None))
+    if gl:
+        vo_track.update(top=round(st.mean(g["top"] for g in gl), 1), bottom=round(st.mean(g["bottom"] for g in gl), 1),
+                        all=round(st.mean(g["all"] for g in gl), 1), sp=round(st.mean(g["sp"] for g in gl), 3))
     vo_list = sorted((r for r in vo_rows if "pred" in r), key=lambda r: -r["pred"])
-    value_watch = dict(model=dict(top=2.5, bottom=-6.5, all=-2.3, weeks=6, season=2025, src="DynastyProcess weekly values"), track=vo_track,
+    fu_rep = ((FU.get("model") or {}).get("report") or {}).get("p4") if vo_rows and "pred" in vo_rows[0] and fu_ok else None
+    value_watch = dict(model=dict(top=2.5, bottom=-6.5, all=-2.3, weeks=6, season=2025, src="DynastyProcess weekly values") if not fu_rep else
+                       dict(futures=True, covered=n_fu, sp=fu_rep["avg"]["model"]["sp"], spread=fu_rep["avg"]["model"]["spread"],
+                            base_sp=max(fu_rep["avg"]["momentum"]["sp"], fu_rep["avg"]["age"]["sp"]), seasons=fu_rep["seasons"], won=fu_rep["seasons_won"]),
+                       track=vo_track,
                        buy=[r["id"] for r in vo_list if P[r["id"]]["r"] not in (0, me) and r["v"] >= 1500][:15],
                        sell=[r["id"] for r in reversed(vo_list) if P[r["id"]]["r"] == me][:10],
                        rise=[r["id"] for r in vo_list][:25], fall=[r["id"] for r in reversed(vo_list)][:25])

@@ -536,6 +536,7 @@ document.getElementById('lgSwitch').innerHTML=L.map(function(x){return '<a href=
       <button role="tab" aria-selected="false" data-tab="players">Players</button>
       <button role="tab" aria-selected="false" data-tab="draft">Picks</button>
       <button role="tab" aria-selected="false" data-tab="research">Research</button>
+      <button role="tab" aria-selected="false" data-tab="futures">Futures</button>
       <button role="tab" aria-selected="false" data-tab="teams">Other teams</button>
     </nav>
   </div>
@@ -692,6 +693,10 @@ document.getElementById('lgSwitch').innerHTML=L.map(function(x){return '<a href=
       <input type="search" id="rsQ" placeholder="Search a name" aria-label="Search"></div>
     <p class="sub" style="margin:0">Tap a column header to sort (tap again to flip). Arrows compare the last games with the earlier ones.</p>
     <div class="tbl-wrap"><table id="rsTbl" class="sortable-tbl"></table></div></div>
+</section>
+
+<section data-panel="futures" hidden>
+  <div id="fuBox" style="display:flex;flex-direction:column;gap:16px"><div class="card"><p class="sub">Loading…</p></div></div>
 </section>
 
 <section data-panel="teams" hidden>
@@ -871,7 +876,7 @@ const standOrder=()=>[...TEAMS].sort((a,b)=>b.w-a.w||b.pf-a.pf);
 // ---------- tabs ----------
 document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
 function showTab(t){document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));document.querySelectorAll('main section').forEach(s=>s.hidden=s.dataset.panel!==t);store.set('hq-tab3',t);
-  if(t==='team')renderTeam();if(t==='players')renderPlayers();if(t==='trades')showSub(store.get('hq-sub2')||'lab');if(t==='draft')renderDraft();if(t==='teams')renderTeams();if(t==='research')renderResearch();window.scrollTo({top:0})}
+  if(t==='team')renderTeam();if(t==='players')renderPlayers();if(t==='trades')showSub(store.get('hq-sub2')||'lab');if(t==='draft')renderDraft();if(t==='teams')renderTeams();if(t==='research')renderResearch();if(t==='futures')renderFutures();window.scrollTo({top:0})}
 document.querySelectorAll('.tabsub button').forEach(b=>b.addEventListener('click',()=>showSub(b.dataset.sub)));
 function showSub(s){document.querySelectorAll('.tabsub button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.sub===s));document.querySelectorAll('[data-sub-panel]').forEach(p=>p.hidden=p.dataset.subPanel!==s);store.set('hq-sub2',s);
   if(s==='lab'&&!$('#giveList').innerHTML)renderLists();if(s==='ideas')renderIdeas();if(s==='watch')renderWatch();if(s==='feed')renderFeed();if(s==='ledger')renderLedger()}
@@ -990,13 +995,52 @@ function renderLineup(){const L=D.lineup,box=$('#lineupCard');if(!L||!LUC().mana
 function renderWatch(){const W=D.value_watch,box=$('#watchBox');if(!W){box.innerHTML='<div class="card"><p class="answer">Not available yet.</p></div>';return}
   const M=W.model||{},T=W.track||{};
   const row=s=>{const p=PL[s];if(!p||!p.vo)return'';const v=p.vo[0];return `<div class="li"><div class="main"><span>${posTag(p.p)} ${pl(s)} <span class="muted small">${esc(p.t||'')}${p.age?` · ${p.age}`:''}${p.r&&p.r!==ME?` · ${esc(teamName(p.r))}`:''}</span></span><span class="why">${esc((p.vo[1]||[]).join('; '))}</span></div><div class="right"><span class="num" style="font-weight:700;color:var(--${v>=0?'good':'bad'})">${v>=0?'+':'−'}${Math.abs(v).toFixed(1)}%</span><span class="sub num">${fk(value(s))}</span>${p.r&&p.r!==ME?`<button class="btn ghost" data-lab="${p.r}||${s}" style="padding:4px 10px;font-size:12.5px">Build an offer</button>`:''}</div></div>`};
-  const track=T.n>=50?`So far in your league: the top fifth of picks moved <b>${T.top>=0?'+':''}${T.top}%</b> and the bottom fifth <b>${T.bottom>=0?'+':''}${T.bottom}%</b> four weeks later (everyone: ${T.all>=0?'+':''}${T.all}%), from ${T.n} graded calls.`:`Graded calls start appearing four weeks after ${T.since?esc(T.since):'today'}.`;
+  const track=T.snaps?`So far in your league: graded once a week, four weeks later (${T.snaps} week${T.snaps>1?'s':''}, ${T.n} players): the top fifth moved <b>${T.top>=0?'+':''}${T.top}%</b> and the bottom fifth <b>${T.bottom>=0?'+':''}${T.bottom}%</b> (everyone: ${T.all>=0?'+':''}${T.all}%).`:`Graded weekly, starting four weeks after ${T.since?esc(T.since):'today'}.`;
+  const how=M.futures?`How it decides: the Futures model (usage, snaps, production vs price, age, contract, recent value moves), trained on seven seasons of weekly values. Predicting each season with only earlier seasons, its ranking skill is ${M.sp.toFixed(2)} (simple rules: ${M.base_sp.toFixed(2)}) and its top fifth beat its bottom fifth by ${M.spread.toFixed(0)} points; it won ${M.won} of ${M.seasons} seasons. Covers ${M.covered} players here; the rest use the quick model. See the Futures tab for the full record.`
+    :`How it decides: players producing more than their price usually catch up; big recent jumps or drops partly reverse; a hot or cold streak carries on a little; missed games keep dragging; older players drift down. Tested on the 2025 season week by week: its top fifth moved ${M.top>=0?'+':''}${M.top}% and its bottom fifth ${M.bottom}% over the next 4 weeks (everyone: ${M.all}%).`;
   box.innerHTML=`<div class="card"><h2>Whose value is about to move?</h2>
-    <p class="answer">Each number is how much a player's trade value is expected to move over the next 4 weeks compared with the rest of the market. Buy the ones going up before they do; sell the ones going down while you still can.</p>
-    <p class="sub">How it decides: players producing more than their price usually catch up; big recent jumps or drops partly reverse; a hot or cold streak carries on a little; missed games keep dragging; older players drift down. Tested on the 2025 season week by week, using only what was known each week: its top fifth moved ${M.top>=0?'+':''}${M.top}% and its bottom fifth ${M.bottom}% over the next 4 weeks (everyone: ${M.all}%). ${track}</p></div>
+    <p class="answer">Each number is how much a player's trade value is expected to move over the next 4 weeks compared with players at a similar value. Buy the ones going up before they do; sell the ones going down while you still can.</p>
+    <p class="sub">${how} ${track}</p></div>
     <div class="grid2"><div class="card"><h2>Buy low</h2><p class="sub">On other teams, likely to rise.</p><div class="list">${(W.buy||[]).slice(0,10).map(row).join('')||'<p class="sub">Nobody stands out.</p>'}</div></div>
     <div class="card"><h2>Sell high</h2><p class="sub">On your team, likely to fall. Selling only makes sense if your lineup can spare him: check the trade first.</p><div class="list">${(W.sell||[]).slice(0,8).map(row).join('')||'<p class="sub">None of your players look likely to drop.</p>'}</div></div></div>
     <details class="card more" style="padding:14px 18px"><summary>Biggest expected moves across the league</summary><div class="grid2"><div><h3>Rising</h3><div class="list">${(W.rise||[]).slice(0,12).map(row).join('')}</div></div><div><h3>Falling</h3><div class="list">${(W.fall||[]).slice(0,12).map(row).join('')}</div></div></div></details>`}
+
+// ---------- FUTURES: value outlook (4 weeks, 8 weeks, next August), sleeper screens, contract watch ----------
+// docs/futures.json is built daily by pipeline/futures.py from open data; every number here comes with its test record.
+let FUTS=null;
+const sgn=v=>v==null?'—':`${v>=0?'+':'−'}${Math.abs(v).toFixed(Math.abs(v)<10?1:0)}%`;
+const sgnC=v=>v==null?'—':`<span class="num" style="font-weight:700;color:var(--${v>=0?'good':'bad'})">${sgn(v)}</span>`;
+function fuName(s,f){return PL[s]?pl(s):esc((f&&f.n)||'?')}
+function fuOwner(s){const p=PL[s];if(!p||!p.r)return '<span class="word w-good">Free agent</span>';if(p.r===ME)return '<span class="word">Yours</span>';return `<span class="muted small">${esc(teamName(p.r))}</span>`}
+async function renderFutures(){const box=$('#fuBox');
+  if(!FUTS){try{FUTS=await fetch((location.pathname.includes('/ring/')?'../':'')+'futures.json',{cache:'no-store'}).then(r=>r.json())}catch(e){box.innerHTML='<div class="card"><p class="answer">The futures file isn\'t built yet. It updates once a day.</p></div>';return}}
+  const F=FUTS,M=F.model||{},R=M.report||{},SC=M.screens||{},PP=F.players||{},C=F.contracts||{},season=F.season;
+  const HZ=[['p4','4 weeks'],['p8','8 weeks'],['aug','Next August']];
+  const rc=HZ.filter(([h])=>R[h]).map(([h,lab])=>{const a=R[h].avg,b=Math.max(a.momentum.sp,a.age.sp);return `<tr><td>${lab}</td><td class="num"><b>${a.model.sp.toFixed(2)}</b></td><td class="num">${b.toFixed(2)}</td><td class="num">${a.model.spread>=0?'+':''}${a.model.spread.toFixed(0)} pts</td><td class="num">${R[h].seasons_won} of ${R[h].seasons}</td><td>${R[h].adopted?'<span class="word w-good">In use</span>':'<span class="word w-bad">Age curve instead</span>'}</td></tr>`}).join('');
+  const L=F.live||{};const liveTxt=L.p4?`Live since the app started logging: ${L.p4.snaps} weekly snapshot${L.p4.snaps>1?'s':''} graded at 4 weeks, ranking skill ${L.p4.sp.toFixed(2)}, top fifth ${sgn(L.p4.top)} vs bottom fifth ${sgn(L.p4.bottom)}.`:`Live grading: this week's calls are logged and get graded 4 and 8 weeks later (${F.logged_weeks||0} week${F.logged_weeks===1?'':'s'} logged so far).`;
+  const mine=Object.entries(PP).filter(([s])=>PL[s]&&PL[s].r===ME).sort((a,b)=>(b[1].aug??0)-(a[1].aug??0));
+  const myRow=([s,f])=>`<tr><td>${posTag(f.pos)} ${fuName(s,f)}</td><td class="num">${f.age??''}</td><td>${sgnC(f.p8)}</td><td>${sgnC(f.aug)}</td><td class="num">${f.c_end??(C[s]?C[s][0]:'—')}</td><td class="small">${esc((f.why||[]).join('; '))}</td></tr>`;
+  const scr=Object.entries(SC).map(([k,o])=>{const sell=k==='contract_year'||k==='aging_rb';const h8=o.p8||{},ha=o.aug||{};
+    const hits=Object.entries(PP).filter(([s,f])=>(f.screens||[]).includes(k)).filter(([s])=>!sell||(PL[s]&&PL[s].r)).sort((a,b)=>sell?((PL[b[0]]?.r===ME)-(PL[a[0]]?.r===ME)||(a[1].aug??0)-(b[1].aug??0)):((b[1].aug??0)-(a[1].aug??0)));
+    const hist=ha.n?`Since 2019, by next August players like this moved <b>${sgn(ha.avg)}</b> vs players at a similar value; ${ha.hit}% gained 25%+ (all players: ${ha.base_hit}%). ${sell?`Did worse than similar-value players in ${ha.seasons-ha.seasons_better} of ${ha.seasons} seasons.`:`Beat similar-value players in ${ha.seasons_better} of ${ha.seasons} seasons.`}${h8.n?` Over 8 weeks: ${sgn(h8.avg)}.`:''}`:'';
+    return `<div class="card"><h2>${esc(o.name)} <span class="word ${sell?'w-bad':'w-good'}">${sell?'Sell signal':'Buy signal'}</span></h2><p class="sub">${esc(o.rule)}. ${hist}</p><div class="list">${hits.slice(0,10).map(([s,f])=>`<div class="li"><div class="main"><span>${posTag(f.pos)} ${fuName(s,f)} <span class="muted small">${esc(f.team||'')} · ${f.age??''}</span> ${fuOwner(s)}</span><span class="why">${esc((f.why||[]).join('; '))}</span></div><div class="right">${sgnC(f.aug)}<span class="sub">by Aug</span></div></div>`).join('')||'<p class="sub">Nobody fits right now.</p>'}</div></div>`}).join('');
+  // contract watch: every player in this league with a contract ending this season or next
+  const rost=Object.keys(PL).filter(s=>PL[s].r&&C[s]&&C[s][0]<=season+1);
+  const myC=rost.filter(s=>PL[s].r===ME).sort((a,b)=>C[a][0]-C[b][0]||value(b)-value(a));
+  const othC=rost.filter(s=>PL[s].r!==ME&&C[s][0]===season).sort((a,b)=>value(b)-value(a)).slice(0,12);
+  const cRow=s=>`<div class="li"><div class="main"><span>${posTag(PL[s].p)} ${pl(s)} <span class="muted small">${esc(PL[s].t||'')}${PL[s].age?` · ${PL[s].age}`:''}</span> ${PL[s].r!==ME?fuOwner(s):''}</span><span class="why">Contract ends after ${C[s][0]}${C[s][1]?` · ${C[s][1]}% of the cap`:''}${PP[s]&&PP[s].aug!=null?` · next-August outlook ${sgn(PP[s].aug)}`:''}</span></div><div class="right"><span class="sub num">${fk(value(s))}</span></div></div>`;
+  const ce=SC.contract_year&&SC.contract_year.aug;
+  box.innerHTML=`<div class="card"><h2>Where values are headed, and how much to trust it</h2>
+    <p class="answer">A model trained on ${M.rows?M.rows.toLocaleString():'—'} player-weeks of dynasty values (${M.seasons?M.seasons.join('–'):''}) predicts each player's value change <b>compared with players at a similar value</b> (so a call is a real buy or sell, not just stars vs bench). It's tested the honest way: train on earlier seasons, predict the next one, compare with simple rules.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Looking ahead</th><th>Ranking skill</th><th>Best simple rule</th><th>Top vs bottom fifth</th><th>Seasons it won</th><th></th></tr></thead><tbody>${rc}</tbody></table></div>
+    <p class="sub">Ranking skill: 0 = a coin flip, 1 = a perfect order (rank correlation, averaged over weekly snapshots, each season predicted with only earlier seasons). "Best simple rule" is the better of momentum (recent risers keep rising) and an age curve. Top vs bottom fifth: how much more the model's top fifth gained than its bottom fifth, in value-percent points. It is a tilt, not a crystal ball: most of a single player's move is news no model sees coming. ${liveTxt} ${R.p8&&R.p8.calib?`Calibrated per value tier (the most valuable players move least, so their calls are shrunk): split into fifths from most negative to most positive call, the 8-week calls averaged ${R.p8.calib.map(c=>sgn(c[0])).join(', ')} and players actually moved ${R.p8.calib.map(c=>sgn(c[1])).join(', ')}. `:''}Retrained weekly; a horizon only uses the model if it beats the simple rules out of sample. Values: DynastyProcess superflex values (a market blend), so its moves are relative and apply to any league's values.</p></div>
+    <div class="card"><h2>Your roster: where it's headed</h2><p class="sub">Expected value change compared with players at a similar value. Contract: last season under his current deal.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Player</th><th>Age</th><th>8 weeks</th><th>Next Aug</th><th>Contract</th><th>Why</th></tr></thead><tbody>${mine.map(myRow).join('')||'<tr><td colspan="6" class="sub">None of your players are in the model\'s pool yet (it covers about the top 200 by value).</td></tr>'}</tbody></table></div></div>
+    <h2 style="margin:6px 2px 0">Sleepers and screens</h2><p class="sub" style="margin:0 2px">Simple rules with their record since 2019. The thresholds were picked by hand, not fit to the data, but they were checked on every season, so treat the record as a good guide rather than a promise. Each week's matches are logged and graded too.</p>
+    <div class="grid2">${scr}</div>
+    <div class="grid2"><div class="card"><h2>Contract watch: yours</h2><p class="sub">Your players whose deals end after this season or next.${ce?` Starters 26+ in a contract year have moved ${sgn(ce.avg)} vs similar-value players by the next August.`:''} A new deal on the same team usually helps; free agency is the risk.</p><div class="list">${myC.map(cRow).join('')||'<p class="sub">None of your players are near the end of a deal.</p>'}</div></div>
+    <div class="card"><h2>Contract year around the league</h2><p class="sub">The most valuable rostered players on other teams in the last year of their deals.</p><div class="list">${othC.map(cRow).join('')||'<p class="sub">None.</p>'}</div></div></div>
+    <p class="sub">${esc(F.attribution||'')} Updated ${esc(F.updated||'')}.</p>`}
 // ---------- LEAGUE ----------
 // ---------- live mode: while games are on, this page reads Sleeper's live scores and ESPN's game clock every minute
 // and re-plays this week's matchups itself (same model as the update), so it doesn't wait for the next refresh.

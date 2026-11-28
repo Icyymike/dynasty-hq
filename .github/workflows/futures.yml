@@ -1,0 +1,44 @@
+name: Futures (value outlook, screens, contracts)
+on:
+  schedule:
+    - cron: "41 10 * * *"   # daily; retrains itself when the model is a week old
+  push:
+    branches: [main]
+    paths: ["pipeline/futures.py", ".github/workflows/futures.yml"]
+  workflow_dispatch:
+    inputs:
+      train:
+        description: "Retrain now"
+        type: boolean
+        default: false
+permissions:
+  contents: write
+concurrency:
+  group: futures
+  cancel-in-progress: false
+jobs:
+  futures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/cache@v4
+        with:
+          path: cache/futures
+          key: futures-cache-${{ github.run_id }}
+          restore-keys: futures-cache-
+      - run: pip install -q pandas numpy pyarrow
+      - name: Build futures
+        run: python pipeline/futures.py ${{ (inputs.train || github.event_name == 'push') && '--train' || '' }}
+      - name: Commit
+        run: |
+          git config user.name "dynasty-hq-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/futures.json docs/futures_model.json docs/futures_log.json
+          if ! git diff --cached --quiet; then
+            git commit -q -m "Futures $(date -u +%Y-%m-%d)"
+            for i in 1 2 3; do git pull -q --rebase --autostash origin main && git push -q && break; sleep 5; done
+          fi
