@@ -25,8 +25,8 @@ Injured: Tyrone Tracy Jr. (IR), Tyler Huntley (IR)
 
 ## Market
 - Sell-high: Rhamondre Stevenson: age 28: RB values usually drop after this season
-- Buy-low: Tony Pollard (D-Generation-XRated): +4.4 counted pts/wk for you, value 2,030
-- Buy-low: Mike Evans (D-Generation-XRated): +3.7 counted pts/wk for you, value 2,124
-- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.6 counted pts/wk for you, value 2,037
+- Buy-low: Tony Pollard (D-Generation-XRated): +4.4 counted pts/wk for you, value 2,114
+- Buy-low: Mike Evans (D-Generation-XRated): +3.7 counted pts/wk for you, value 2,164
+- Buy-low: T.J. Hockenson (SCLSU Mud Dogs): +3.6 counted pts/wk for you, value 2,085
 
 [Open Dynasty HQ](https://icyymike.github.io/dynasty-hq/ring/)

@@ -30,7 +30,7 @@ jobs:
           path: cache/futures
           key: futures-cache-${{ github.run_id }}
           restore-keys: futures-cache-
-      - run: pip install -q pandas numpy pyarrow
+      - run: pip install -q pandas numpy pyarrow scikit-learn
       - name: Build futures
         run: python pipeline/futures.py ${{ (inputs.train || github.event_name == 'push') && '--train' || '' }}
       - name: Commit

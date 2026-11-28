@@ -751,6 +751,34 @@ def main():
         elif sid:
             fc_vals[str(sid)] = e.get("value", 0)
             fc_meta[str(sid)] = (e.get("trend30Day") or 0, e.get("maybeRosterPercent"))
+    # ---------- archive: data with no free history, saved once a day so future models can learn from it
+    # (FantasyCalc values in this league's exact format; on the main run also Sleeper depth charts, injuries, trending adds/drops)
+    def archive(kind, obj):
+        if FIX or not obj:
+            return
+        d_ = os.path.join(ROOT, "docs", "archive", kind); os.makedirs(d_, exist_ok=True)
+        today = time.strftime("%Y-%m-%d", time.gmtime()); f_ = os.path.join(d_, today[:7] + ".json")
+        try:
+            A_ = json.load(open(f_)) if os.path.exists(f_) else {}
+        except Exception:  # noqa
+            A_ = {}
+        if today not in A_:
+            A_[today] = obj
+            json.dump(A_, open(f_, "w"), separators=(",", ":"))
+    try:
+        archive(f"fc_{DYN or '512'}", dict(players={k: v for k, v in fc_vals.items() if v}, picks={f"{k[0]}|{k[1]}|{t}": round(sum(v) / len(v)) for k, d_ in fc_pick_raw.items() for t, v in d_.items()}))
+        if not DYN:
+            dep = {}
+            for pid_, d_ in (players_db or {}).items():
+                if d_.get("position") in ("QB", "RB", "WR", "TE") and d_.get("team") and (d_.get("depth_chart_order") is not None or d_.get("injury_status")):
+                    dep[pid_] = [d_.get("team"), d_.get("depth_chart_position"), d_.get("depth_chart_order"), d_.get("injury_status"), d_.get("practice_participation")]
+            archive("sleeper_depth", dep)
+            tr_add = get(f"{API}/players/nfl/trending/add?lookback_hours=24&limit=150", required=False) or []
+            tr_drop = get(f"{API}/players/nfl/trending/drop?lookback_hours=24&limit=150", required=False) or []
+            archive("sleeper_trending", dict(add={str(x["player_id"]): x["count"] for x in tr_add if isinstance(x, dict)},
+                                             drop={str(x["player_id"]): x["count"] for x in tr_drop if isinstance(x, dict)}))
+    except Exception as e:  # noqa
+        print(f"WARN archive: {e}")
     fc_tier = {}
     for key, d_ in fc_pick_raw.items():
         for tier, vs in d_.items():
@@ -965,7 +993,67 @@ def main():
         te_mult.clear(); te_default = 1.0
         te_test["dropped"] = True
         val_src["label"] = val_src["label"].split(" + TE premium")[0] + " (no extra TE premium: this league's trades don't pay one)"
-    val_src.update(k=VAL_K, k_err=k_err, k_trades=len(tr_fit), te_test=te_test)
+    # ---------- value source check: which public values make this league's completed trades look most even?
+    # FantasyCalc (what the app uses) vs DynastyProcess (what the Futures model learns from), each with its best package rule.
+    src_check = None
+    try:
+        import csv, io
+        fp2sl_ = {}
+        if ids_csv:
+            for r_ in csv.DictReader(io.StringIO(ids_csv)):
+                if r_.get("fantasypros_id") not in (None, "", "NA") and r_.get("sleeper_id") not in (None, "", "NA"):
+                    fp2sl_[str(r_["fantasypros_id"])] = str(r_["sleeper_id"])
+        dpv_ = get("https://raw.githubusercontent.com/dynastyprocess/data/master/files/values.csv", cache_hours=12, required=False, raw=True)
+        dpp_ = get("https://raw.githubusercontent.com/dynastyprocess/data/master/files/values-picks.csv", cache_hours=12, required=False, raw=True)
+        if dpv_ and dpp_ and fp2sl_:
+            dp_val, curve = {}, []
+            for r_ in csv.DictReader(io.StringIO(dpv_.lstrip("\ufeff"))):
+                try:
+                    v_ = float(r_["value_2qb"]); e_ = float(r_["ecr_2qb"])
+                except Exception:  # noqa
+                    continue
+                curve.append((e_, v_))
+                if fp2sl_.get(str(r_.get("fp_id"))):
+                    dp_val[fp2sl_[str(r_["fp_id"])]] = v_
+            curve.sort()
+            def at_ecr(e_):
+                for (e0, v0), (e1, v1) in zip(curve, curve[1:]):
+                    if e0 <= e_ <= e1:
+                        return v0 + (v1 - v0) * (e_ - e0) / max(e1 - e0, 1e-9)
+                return curve[-1][1] if curve else 0
+            dp_pick = {}
+            for r_ in csv.DictReader(io.StringIO(dpp_)):
+                m_ = re.match(r"(\d{4}) (\d)(?:st|nd|rd|th)$", r_.get("player", ""))
+                if m_:
+                    dp_pick[(int(m_.group(1)), int(m_.group(2)))] = at_ecr(float(r_["ecr_2qb"]))
+            def dp_pick_now(pk):
+                y_ = pk[0] if pk[0] > season else season + 1
+                ys_ = [y for (y, r) in dp_pick if r == pk[1]]
+                return dp_pick.get((min(max(y_, min(ys_)), max(ys_)), pk[1]), 0) if ys_ else 0
+            def pk2(vs, k, floor):
+                vs = [v for v in vs if v > floor]
+                return sum(v ** k for v in vs) ** (1 / k) if vs else 0.0
+            pairs = []
+            for tr in trades:
+                if len(tr["sides"]) != 2 or tr["season"] != season:
+                    continue
+                if any(fc_vals.get(x, 0) >= 1500 and not dp_val.get(x) for sd in tr["sides"] for x in sd["got"]):
+                    continue   # a real player DynastyProcess doesn't list: not a fair comparison
+                fc_s = [[fc_vals.get(x, 0) for x in sd["got"]] + [pick_now(x) for x in sd["pin"]] for sd in tr["sides"]]
+                dp_s = [[dp_val.get(x, 0) for x in sd["got"]] + [dp_pick_now(x) for x in sd["pin"]] for sd in tr["sides"]]
+                if min(pk2(x, 1, 300) for x in fc_s) >= 500 and min(pk2(x, 1, 30) for x in dp_s) >= 50:
+                    pairs.append((fc_s, dp_s))
+            if len(pairs) >= 10:
+                KG = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 2.5, 3.0]
+                def best(idx, floor):
+                    errs = {k: st.median(abs(math.log(max(pk2(p_[idx][0], k, floor), 1) / max(pk2(p_[idx][1], k, floor), 1))) for p_ in pairs) for k in KG}
+                    k_ = min(errs, key=errs.get); return k_, round(errs[k_], 3)
+                fk_, fe_ = best(0, 300); dk_, de_ = best(1, 30)
+                src_check = dict(n=len(pairs), fc=fe_, fc_k=fk_, dp=de_, dp_k=dk_, better="FantasyCalc" if fe_ <= de_ else "DynastyProcess")
+    except Exception as e:  # noqa
+        print(f"WARN value source check: {e}")
+    print(f"value source check: {src_check}")
+    val_src.update(k=VAL_K, k_err=k_err, k_trades=len(tr_fit), te_test=te_test, src_check=src_check)
     print(f"package rule: k={VAL_K} from {len(tr_fit)} trades, median miss by k {k_err}")
     trade_pids = {p for tr in trades if tr["season"] == season for s in tr["sides"] for p in s["got"] + s["gave"]}
 
